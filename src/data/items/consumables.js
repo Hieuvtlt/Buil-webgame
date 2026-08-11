@@ -14,14 +14,17 @@ const potionBaseValues = {
   skillExp: 50,
 }
 
+function getRangeText(level) {
+  if (level === 10) return '100-200'
+  return `${level * 10 - 9}-${level * 10}`
+}
+
 function createLevelledPills(type) {
   return Array.from({ length: 10 }, (_, index) => {
     const level = index + 1
     const multiplier = Math.pow(2, index)
     const name = `${potionNames[type]} Lv${level}`
     const value = potionBaseValues[type] * multiplier
-    const rangeMax = level === 10 ? 200 : level * 10
-
     const effect = type === 'hp'
       ? { hp: value }
       : type === 'mp'
@@ -40,7 +43,7 @@ function createLevelledPills(type) {
       stackable: true,
       maxStack: 99,
       price: { buy: value, sell: Math.floor(value / 2) },
-      description: `Đan dược cấp ${level}, sử dụng cho nhân vật Lv${level === 10 ? '91-200' : `${level * 10 - 9}-${rangeMax}`}.`,
+      description: `Đan dược cấp ${level}, sử dụng cho nhân vật Lv${getRangeText(level)}.`,
       effect,
     })
   })
