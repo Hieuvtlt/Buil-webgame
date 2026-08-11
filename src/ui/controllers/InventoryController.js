@@ -15,6 +15,15 @@ const STAT_LABELS = {
   externalAttack: 'Ngoại công %',
 }
 
+function getEffectText(item) {
+  if (item.effect?.hp) return `Phục hồi HP ${item.effect.hp}`
+  if (item.effect?.mp) return `Phục hồi MP ${item.effect.mp}`
+  if (item.effect?.characterExp) return `Nhận ${item.effect.characterExp} EXP`
+  if (item.effect?.skillExp) return `Nhận ${item.effect.skillExp} EXP võ kỹ`
+  if (item.effect?.rebirth) return `Dùng cho Trùng Sinh ${item.effect.rebirth}`
+  return ''
+}
+
 function getItemStatsText(item) {
   const lines = []
 
@@ -26,13 +35,8 @@ function getItemStatsText(item) {
     if (value) lines.push(`${STAT_LABELS[key] ?? key}: ${value}`)
   })
 
-  if (item.effect) {
-    if (item.effect.hp) lines.push(`Phục hồi HP ${item.effect.hp}`)
-    if (item.effect.mp) lines.push(`Phục hồi MP ${item.effect.mp}`)
-    if (item.effect.characterExp) lines.push(`Nhận ${item.effect.characterExp} EXP`)
-    if (item.effect.skillExp) lines.push(`Nhận ${item.effect.skillExp} EXP võ kỹ`)
-    if (item.effect.rebirth) lines.push(`Dùng cho Trùng Sinh ${item.effect.rebirth}`)
-  }
+  const effectText = getEffectText(item)
+  if (effectText) lines.push(effectText)
 
   return lines.length ? lines.join(' • ') : '-'
 }
@@ -59,7 +63,7 @@ export function mountInventoryScreen() {
     if (item.potionLevel) {
       const range = item.usableLevelRange
       meta.textContent = `Đẳng cấp yêu cầu ${range.min}-${range.max}`
-      stats.textContent = getItemStatsText(item)
+      stats.textContent = getEffectText(item)
       desc.textContent = ''
       return
     }
