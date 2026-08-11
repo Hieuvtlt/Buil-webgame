@@ -57,7 +57,8 @@ export function createItem(data) {
     quality: data.quality ?? null,
     icon: getDefaultIcon(data, isEquipment),
     stackable: isEquipment ? false : (data.stackable ?? false),
-    maxStack: isEquipment ? 1 : (data.maxStack ?? 1),
+    // Đan dược luôn xếp chồng tối đa 99. Trang bị luôn là từng món/từng slot.
+    maxStack: isEquipment ? 1 : (data.type === 'consumable' ? 99 : (data.maxStack ?? 1)),
     potionLevel: data.potionLevel ?? null,
     usableLevelRange: potionRange,
     requirements: {
