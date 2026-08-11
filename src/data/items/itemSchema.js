@@ -35,10 +35,10 @@ export function getPotionLevelRange(level) {
 
 function getDefaultIcon(data, isEquipment) {
   if (data.icon) return data.icon
-  if (isEquipment) return '/src/assets/icons/equipment.svg'
-  if (data.type === 'consumable') return '/src/assets/icons/potion.svg'
-  if (data.type === 'material') return '/src/assets/icons/material.svg'
-  return '/src/assets/icons/material.svg'
+  if (isEquipment) return '/assets/icons/equipment.svg'
+  if (data.type === 'consumable') return '/assets/icons/potion.svg'
+  if (data.type === 'material') return '/assets/icons/material.svg'
+  return '/assets/icons/material.svg'
 }
 
 export function createItem(data) {
@@ -57,7 +57,6 @@ export function createItem(data) {
     quality: data.quality ?? null,
     icon: getDefaultIcon(data, isEquipment),
     stackable: isEquipment ? false : (data.stackable ?? false),
-    // Đan dược luôn xếp chồng tối đa 99. Trang bị luôn là từng món/từng slot.
     maxStack: isEquipment ? 1 : (data.type === 'consumable' ? 99 : (data.maxStack ?? 1)),
     potionLevel: data.potionLevel ?? null,
     usableLevelRange: potionRange,
