@@ -1,4 +1,5 @@
 import './style.css'
+import './game.css'
 
 import { CharacterScreen } from './ui/screens/CharacterScreen.js'
 import { InventoryScreen } from './ui/screens/InventoryScreen.js'
@@ -49,12 +50,10 @@ document.querySelector('#app').innerHTML = `
 
     <aside id="col-right">
       <section>
-        <h2 class="panel-title">UI Túi đồ</h2>
-        <div>Placeholder: lưới slot túi đồ</div>
-      </section>
-      <section>
-        <h2 class="panel-title">UI Thông tin/Chọn item</h2>
-        <div>Placeholder: vùng dưới</div>
+        <h2 class="panel-title">Thông tin hệ thống</h2>
+        <div>Level nhân vật: 1–200</div>
+        <div>Trang bị: Lv1–120</div>
+        <div>Võ kỹ: 10 + 10 × Trùng Sinh</div>
       </section>
     </aside>
   </div>
@@ -66,7 +65,6 @@ const menuButtons = Array.from(document.querySelectorAll('#left-menu .menu-item'
 function openScreen(name) {
   const screen = screens[name]
   if (!screen) return
-
   contentRoot.innerHTML = screen.render()
   screen.mount?.()
 }
