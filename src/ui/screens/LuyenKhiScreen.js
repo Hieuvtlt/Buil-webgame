@@ -1,3 +1,4 @@
+import '../../craft.css'
 import { forgingMaterials } from '../../data/items/forging.js'
 
 export function LuyenKhiScreen() {
