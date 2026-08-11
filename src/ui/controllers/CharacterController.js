@@ -1,8 +1,28 @@
+import { player, addFreeAttributePoints, getPlayerStats, getMaxSkillLevel } from '../../data/character.js'
+
 export function mountCharacterScreen() {
   const equipGrid = document.getElementById('equip-grid')
   const inventoryGrid = document.getElementById('inventory-grid')
-  const btnEquip = document.getElementById('btn-equip')
-  const btnUnequip = document.getElementById('btn-unequip')
+
+  document.querySelectorAll('.attr-add-btn').forEach((button) => {
+    button.addEventListener('click', () => {
+      const attribute = button.dataset.attribute
+      if (!addFreeAttributePoints(attribute, 1)) return
+      const stats = getPlayerStats()
+      const row = button.closest('.attr-item')
+      if (row) row.querySelector('b').textContent = player.attributes[attribute]
+      const points = document.getElementById('free-points-value')
+      if (points) points.textContent = player.freePoints
+      const values = document.querySelectorAll('.char-stat-list b')
+      if (values[0]) values[0].textContent = stats.maxHp
+      if (values[1]) values[1].textContent = stats.maxMp
+      if (values[2]) values[2].textContent = `${stats.attackMin} - ${stats.attackMax}`
+      if (values[3]) values[3].textContent = stats.defense
+      if (values[4]) values[4].textContent = stats.accuracy
+      if (values[5]) values[5].textContent = stats.dodge
+      if (values[6]) values[6].textContent = getMaxSkillLevel()
+    })
+  })
 
   if (!equipGrid || !inventoryGrid) return
 
@@ -36,7 +56,7 @@ export function mountCharacterScreen() {
     })
   })
 
-  btnEquip?.addEventListener('click', () => {
+  document.getElementById('btn-equip')?.addEventListener('click', () => {
     if (selectedEquipIndex === null || selectedInvIndex === null) return
     const equip = equipGrid.querySelector(`[data-slot-index="${selectedEquipIndex}"]`)
     const inv = inventoryGrid.querySelector(`[data-inv-index="${selectedInvIndex}"]`)
@@ -46,7 +66,7 @@ export function mountCharacterScreen() {
     refresh()
   })
 
-  btnUnequip?.addEventListener('click', () => {
+  document.getElementById('btn-unequip')?.addEventListener('click', () => {
     if (selectedEquipIndex === null) return
     const equip = equipGrid.querySelector(`[data-slot-index="${selectedEquipIndex}"]`)
     if (!equip || equip.dataset.hasItem !== 'true') return
@@ -54,9 +74,5 @@ export function mountCharacterScreen() {
     refresh()
   })
 
-  const firstEquip = equipGrid.querySelector('.equip-slot')
-  const firstInv = inventoryGrid.querySelector('.inv-slot')
-  if (firstEquip) firstEquip.click()
-  if (firstInv) firstInv.click()
   refresh()
 }
