@@ -1,3 +1,5 @@
+import { getVltkIcon } from '../vltkIconCatalog.js'
+
 // Schema chung cho Item.
 // Hoàng/Huyền/Địa/Thiên chỉ áp dụng cho TRANG BỊ.
 // Đan dược dùng hệ cấp riêng 1-10.
@@ -34,6 +36,8 @@ export function getPotionLevelRange(level) {
 }
 
 function getDefaultIcon(data, isEquipment) {
+  const vltkIcon = getVltkIcon(data)
+  if (vltkIcon) return vltkIcon
   if (data.icon) return data.icon
   if (isEquipment) return '/assets/icons/equipment.svg'
   if (data.type === 'consumable') return '/assets/icons/potion.svg'
