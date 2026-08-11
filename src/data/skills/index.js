@@ -34,6 +34,12 @@ export function getSkillById(id) {
   return skillById.get(id) ?? null
 }
 
-export function getSkillsForSect(sect) {
-  return skills.filter((skill) => skill.availableFor.includes(sect))
+// Môn phái thông thường: hiển thị sẵn toàn bộ skill của phái.
+// Tán Tu: ban đầu để trống; chỉ hiển thị những skill đã học bằng bí kíp.
+export function getSkillsForSect(sect, learnedSkills = {}) {
+  if (sect === 'tanTu') {
+    return skills.filter((skill) => learnedSkills[skill.id] > 0)
+  }
+
+  return skills.filter((skill) => skill.sect === sect && skill.availableFor.includes(sect))
 }
