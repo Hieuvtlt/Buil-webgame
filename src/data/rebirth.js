@@ -1,4 +1,4 @@
-import { player } from './character.js'
+import { player, syncDerivedStats } from './character.js'
 
 export const rebirthRules = {
   1: { requiredLevel: 100, itemId: 'rebirth_1' },
@@ -36,10 +36,10 @@ export function performRebirth(hasRequiredPill, consumePill) {
   player.level = 1
   player.exp = 0
   player.expToNextLevel = 100
-  player.freePoints = 0
   player.attributes = { strength: 0, dexterity: 0, vitality: 0, energy: 0 }
-  player.permanentRebirthPoints += 50
-  player.freePoints += player.permanentRebirthPoints
+  player.permanentRebirthPoints = 50 * player.rebirth
+  player.freePoints = player.permanentRebirthPoints
+  syncDerivedStats()
   player.hp = player.maxHp
   player.mp = player.maxMp
   return true
