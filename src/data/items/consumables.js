@@ -33,6 +33,14 @@ function createLevelledPills(type) {
           ? { characterExp: value }
           : { skillExp: value }
 
+    const effectText = type === 'hp'
+      ? `Phục hồi HP ${value}`
+      : type === 'mp'
+        ? `Phục hồi MP ${value}`
+        : type === 'exp'
+          ? `Nhận ${value} EXP`
+          : `Nhận ${value} EXP võ kỹ`
+
     return createItem({
       id: `${type}_pill_${String(level).padStart(2, '0')}`,
       name,
@@ -43,7 +51,7 @@ function createLevelledPills(type) {
       stackable: true,
       maxStack: 99,
       price: { buy: value, sell: Math.floor(value / 2) },
-      description: `Đan dược cấp ${level}, sử dụng cho nhân vật Lv${getRangeText(level)}.`,
+      description: `${name}, đẳng cấp yêu cầu ${getRangeText(level)}, ${effectText}.`,
       effect,
     })
   })
@@ -59,10 +67,10 @@ const rebirthPills = Array.from({ length: 6 }, (_, index) => {
     category: 'rebirth_pill',
     level: rebirth,
     stackable: true,
-    maxStack: 20,
+    maxStack: 99,
     requirements: { level: requiredLevel },
     price: { buy: 0, sell: 0 },
-    description: `Đan dược dùng để thực hiện Trùng Sinh ${rebirth}. Yêu cầu nhân vật đạt Lv${requiredLevel}.`,
+    description: `Trùng Sinh ${rebirth}, đẳng cấp yêu cầu ${requiredLevel}.`,
     effect: { rebirth },
   })
 })
