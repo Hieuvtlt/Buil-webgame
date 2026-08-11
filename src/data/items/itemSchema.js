@@ -29,13 +29,13 @@ export function getEquipmentTierMeta(level) {
 
 export function getPotionLevelRange(level) {
   if (level < 1 || level > 10) throw new Error('Cấp đan dược phải từ 1 đến 10')
-  if (level === 10) return { min: 91, max: 200 }
+  if (level === 10) return { min: 100, max: 200 }
   return { min: level * 10 - 9, max: level * 10 }
 }
 
 export function createItem(data) {
   const isEquipment = data.type === 'equipment' || data.type === 'weapon' || data.type === 'armor' || data.type === 'accessory'
-  const equipmentLevel = isEquipment ? Math.max(1, Math.min(120, data.level ?? 1)) : data.level ?? 1
+  const itemLevel = isEquipment ? Math.max(1, Math.min(120, data.level ?? 1)) : data.level ?? 1
   const potionRange = data.potionLevel ? getPotionLevelRange(data.potionLevel) : null
 
   return {
@@ -43,9 +43,9 @@ export function createItem(data) {
     name: data.name,
     type: data.type,
     category: data.category ?? null,
-    level: equipmentLevel,
-    tier: isEquipment ? getEquipmentTier(equipmentLevel) : null,
-    tierMeta: isEquipment ? getEquipmentTierMeta(equipmentLevel) : null,
+    level: itemLevel,
+    tier: isEquipment ? getEquipmentTier(itemLevel) : null,
+    tierMeta: isEquipment ? getEquipmentTierMeta(itemLevel) : null,
     quality: data.quality ?? null,
     icon: data.icon ?? null,
     stackable: data.stackable ?? false,
