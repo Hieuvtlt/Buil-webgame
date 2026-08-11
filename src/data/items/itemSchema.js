@@ -33,6 +33,14 @@ export function getPotionLevelRange(level) {
   return { min: level * 10 - 9, max: level * 10 }
 }
 
+function getDefaultIcon(data, isEquipment) {
+  if (data.icon) return data.icon
+  if (isEquipment) return '/src/assets/icons/equipment.svg'
+  if (data.type === 'consumable') return '/src/assets/icons/potion.svg'
+  if (data.type === 'material') return '/src/assets/icons/material.svg'
+  return '/src/assets/icons/material.svg'
+}
+
 export function createItem(data) {
   const isEquipment = data.type === 'equipment' || data.type === 'weapon' || data.type === 'armor' || data.type === 'accessory'
   const itemLevel = isEquipment ? Math.max(1, Math.min(120, data.level ?? 1)) : data.level ?? 1
@@ -47,9 +55,9 @@ export function createItem(data) {
     tier: isEquipment ? getEquipmentTier(itemLevel) : null,
     tierMeta: isEquipment ? getEquipmentTierMeta(itemLevel) : null,
     quality: data.quality ?? null,
-    icon: data.icon ?? null,
-    stackable: data.stackable ?? false,
-    maxStack: data.maxStack ?? 1,
+    icon: getDefaultIcon(data, isEquipment),
+    stackable: isEquipment ? false : (data.stackable ?? false),
+    maxStack: isEquipment ? 1 : (data.maxStack ?? 1),
     potionLevel: data.potionLevel ?? null,
     usableLevelRange: potionRange,
     requirements: {
@@ -74,6 +82,7 @@ export function createItem(data) {
       mp: data.stats?.mp ?? 0,
       externalAttack: data.stats?.externalAttack ?? 0,
     },
+    effects: data.effects ?? [],
     effect: data.effect ?? null,
     price: {
       buy: data.price?.buy ?? 0,
