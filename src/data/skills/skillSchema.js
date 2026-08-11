@@ -42,6 +42,7 @@ export function createSkill(data) {
     manaCost: data.manaCost ?? 0,
     damageType: 'external',
     weaponType: data.weaponType ?? null,
+    icon: data.icon ?? '/src/assets/icons/skill.svg',
     effects: data.effects ?? {},
     requirements: {
       characterLevel: data.requirements?.characterLevel ?? 1,
