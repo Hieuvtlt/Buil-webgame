@@ -2,8 +2,9 @@ import { player, getMaxSkillLevel } from '../../data/character.js'
 import { getSkillsForSect, SECT_NAMES } from '../../data/skills/index.js'
 
 export function SkillsScreen() {
-  const skills = getSkillsForSect(player.sect)
+  const skills = getSkillsForSect(player.sect, player.skills)
   const maxSkillLevel = getMaxSkillLevel()
+  const isTanTu = player.sect === 'tanTu'
 
   return `
     <div class="skills-screen game-screen">
@@ -11,7 +12,9 @@ export function SkillsScreen() {
       <div class="skill-summary">
         <span>Môn phái: <b>${SECT_NAMES[player.sect]}</b></span>
         <span>Max cấp võ kỹ hiện tại: <b>${maxSkillLevel}</b></span>
-        <span>${player.sect === 'tanTu' ? 'Tán Tu: học võ kỹ của các môn phái bằng bí kíp.' : 'Gia nhập phái để mở hệ võ học, đạt Level và học bí kíp tương ứng.'}</span>
+        <span>${isTanTu
+          ? 'Tán Tu: chưa học bí kíp nào.'
+          : 'Môn phái: skill của phái được mở theo hệ phái; đạt Level và học bí kíp tương ứng để nâng cấp.'}</span>
       </div>
 
       <div class="skills-layout">
@@ -29,7 +32,13 @@ export function SkillsScreen() {
                   <span>Lv ${current}/${maxSkillLevel}</span>
                 </button>
               `
-            }).join('') : '<div class="empty-state">Chưa có võ kỹ trong dữ liệu.</div>'}
+            }).join('') : `
+              <div class="empty-state">
+                ${isTanTu
+                  ? 'Tán Tu chưa có võ kỹ. Hãy học bí kíp của môn phái khác để mở võ kỹ.'
+                  : 'Chưa có võ kỹ trong dữ liệu.'}
+              </div>
+            `}
           </div>
         </div>
 
