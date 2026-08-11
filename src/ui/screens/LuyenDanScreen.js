@@ -1,3 +1,4 @@
+import '../../craft.css'
 import { alchemyMaterials } from '../../data/items/alchemy.js'
 
 export function LuyenDanScreen() {
