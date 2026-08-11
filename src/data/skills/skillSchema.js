@@ -33,7 +33,9 @@ export function createSkill(data) {
     id: data.id,
     name: data.name,
     sect: data.sect,
-    availableFor: data.availableFor ?? [data.sect, 'tanTu'],
+    // Mặc định chỉ môn phái gốc được mở skill.
+    // Tán Tu chỉ nhìn thấy skill sau khi đã học bí kíp tương ứng.
+    availableFor: data.availableFor ?? [data.sect],
     type: 'external',
     level: data.level ?? 1,
     maxLevel: data.maxLevel ?? 10,
