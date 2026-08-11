@@ -59,7 +59,7 @@ Các nhóm chính:
 
 ## 6. Cấp đan dược
 
-Đan dược có cấp riêng 1–10. Lv1 dùng cho nhân vật Lv1–10; Lv2 dùng Lv11–20; ...; Lv9 dùng Lv81–90; Lv10 là cấp cuối, dùng cho Lv91–200.
+Đan dược có cấp riêng 1–10. Lv1 dùng cho nhân vật Lv1–10; Lv2 dùng Lv11–20; ...; Lv9 dùng Lv81–90; Lv10 là cấp cuối, dùng cho Lv100–200.
 
 ## 7. Thư mục dữ liệu
 
