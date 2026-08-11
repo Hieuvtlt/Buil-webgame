@@ -17,14 +17,23 @@ const STAT_LABELS = {
 
 function getItemStatsText(item) {
   const lines = []
-  if (item.tierMeta) lines.push(`${item.tierMeta.label} • ${item.quality ?? 'phẩm chất chưa xác định'}`)
-  if (item.stackable) lines.push(`Xếp chồng: tối đa ${item.maxStack}`)
+
+  if (item.tierMeta) {
+    lines.push(`${item.tierMeta.label} • ${item.quality ?? 'phẩm chất chưa xác định'}`)
+  }
+
   Object.entries(item.stats ?? {}).forEach(([key, value]) => {
     if (value) lines.push(`${STAT_LABELS[key] ?? key}: ${value}`)
   })
+
   if (item.effect) {
-    Object.entries(item.effect).forEach(([key, value]) => lines.push(`Hiệu quả ${key}: +${value}`))
+    if (item.effect.hp) lines.push(`Phục hồi HP ${item.effect.hp}`)
+    if (item.effect.mp) lines.push(`Phục hồi MP ${item.effect.mp}`)
+    if (item.effect.characterExp) lines.push(`Nhận ${item.effect.characterExp} EXP`)
+    if (item.effect.skillExp) lines.push(`Nhận ${item.effect.skillExp} EXP võ kỹ`)
+    if (item.effect.rebirth) lines.push(`Dùng cho Trùng Sinh ${item.effect.rebirth}`)
   }
+
   return lines.length ? lines.join(' • ') : '-'
 }
 
@@ -47,11 +56,16 @@ export function mountInventoryScreen() {
     title.textContent = item.name
     title.style.color = color
 
-    if (item.tierMeta) {
-      meta.textContent = `${item.tierMeta.label} | Lv ${item.level} | Trang bị • Không xếp chồng`
-    } else if (item.potionLevel) {
+    if (item.potionLevel) {
       const range = item.usableLevelRange
-      meta.textContent = `Đan dược Lv${item.potionLevel} | Dùng cho Lv${range.min}-${range.max} | Xếp chồng ${item.maxStack}`
+      meta.textContent = `Đẳng cấp yêu cầu ${range.min}-${range.max}`
+      stats.textContent = getItemStatsText(item)
+      desc.textContent = ''
+      return
+    }
+
+    if (item.tierMeta) {
+      meta.textContent = `${item.tierMeta.label} | Lv ${item.level}`
     } else {
       meta.textContent = `Loại: ${item.type} | Cấp: ${item.level ?? '-'}`
     }
