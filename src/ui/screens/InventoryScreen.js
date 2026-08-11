@@ -28,7 +28,7 @@ export function InventoryScreen() {
                     style="${item ? `color:${color}` : ''}">
                     ${item ? `
                       <span class="item-icon-wrap">
-                        <img class="item-icon" src="${item.icon}" alt="" />
+                        <img class="item-icon" src="${item.icon}" alt="${item.name}" loading="lazy" />
                         ${item.stackable ? `<span class="stack-badge">${quantityText}</span>` : ''}
                       </span>
                       <span class="item-name">${item.name}</span>
@@ -42,6 +42,9 @@ export function InventoryScreen() {
 
         <div class="inventory-right">
           <div class="inv-info-box" id="inv-info-box">
+            <div class="inv-info-icon-wrap">
+              <img class="inv-info-icon" id="inv-info-icon" src="/assets/icons/potion.svg" alt="" />
+            </div>
             <div class="inv-info-title" id="inv-info-title">Chọn vật phẩm</div>
             <div class="inv-info-meta" id="inv-info-meta">Loại: - | Cấp: -</div>
             <div class="inv-info-stats" id="inv-info-stats">Thuộc tính: -</div>
