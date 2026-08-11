@@ -43,11 +43,12 @@ function getItemStatsText(item) {
 
 export function mountInventoryScreen() {
   const grid = document.getElementById('inventory-screen-grid')
+  const icon = document.getElementById('inv-info-icon')
   const title = document.getElementById('inv-info-title')
   const meta = document.getElementById('inv-info-meta')
   const stats = document.getElementById('inv-info-stats')
   const desc = document.getElementById('inv-info-desc')
-  if (!grid || !title || !meta || !stats || !desc) return
+  if (!grid || !icon || !title || !meta || !stats || !desc) return
 
   const slots = Array.from(grid.querySelectorAll('.inv-slot2'))
   const select = (slot) => {
@@ -57,6 +58,9 @@ export function mountInventoryScreen() {
     if (!item) return
 
     const color = item.tierMeta?.color ?? '#00ff66'
+    icon.src = item.icon
+    icon.alt = item.name
+    icon.style.borderColor = color
     title.textContent = item.name
     title.style.color = color
 
