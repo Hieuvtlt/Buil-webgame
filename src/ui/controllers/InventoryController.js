@@ -12,7 +12,18 @@ const STAT_LABELS = {
   dodge: 'Né tránh',
   hp: 'HP',
   mp: 'MP',
-  externalAttack: 'Ngoại công %',
+  externalAttack: 'Ngoại công cộng thêm',
+  poisonResist: 'Kháng độc',
+  fireResist: 'Kháng hỏa',
+  iceResist: 'Kháng băng',
+  lightningResist: 'Kháng lôi',
+}
+
+const RESIST_KEYS = new Set(['poisonResist', 'fireResist', 'iceResist', 'lightningResist'])
+
+function formatStat(key, value) {
+  if (!value) return ''
+  return `${STAT_LABELS[key] ?? key}: ${value}${RESIST_KEYS.has(key) ? '%' : ''}`
 }
 
 function getEffectText(item) {
@@ -27,12 +38,9 @@ function getEffectText(item) {
 function getItemStatsText(item) {
   const lines = []
 
-  if (item.tierMeta) {
-    lines.push(`${item.tierMeta.label} • ${item.quality ?? 'phẩm chất chưa xác định'}`)
-  }
-
   Object.entries(item.stats ?? {}).forEach(([key, value]) => {
-    if (value) lines.push(`${STAT_LABELS[key] ?? key}: ${value}`)
+    const text = formatStat(key, value)
+    if (text) lines.push(text)
   })
 
   const effectText = getEffectText(item)
@@ -42,8 +50,6 @@ function getItemStatsText(item) {
 }
 
 function findItemFromSlot(slot) {
-  // data-* attributes are always strings, while the item Map uses numeric IDs.
-  // Convert numeric IDs back before lookup so clicking an item always opens its data.
   const rawId = slot?.dataset?.itemId
   if (!rawId) return null
   const numericId = Number(rawId)
@@ -68,7 +74,7 @@ export function mountInventoryScreen() {
     if (!item) return
 
     const color = item.tierMeta?.color ?? '#00ff66'
-    icon.src = item.icon
+    icon.src = item.icon || '/assets/icons/potion.svg'
     icon.alt = item.name
     icon.style.borderColor = color
     title.textContent = item.name
@@ -83,9 +89,10 @@ export function mountInventoryScreen() {
     }
 
     if (item.tierMeta) {
-      meta.textContent = `${item.tierMeta.label} | Lv ${item.level}`
+      const quality = item.quality ? ` - ${item.quality}` : ''
+      meta.textContent = `${item.tierMeta.label}${quality} | Đẳng cấp yêu cầu: ${item.requirements.level}`
     } else {
-      meta.textContent = `Loại: ${item.type} | Cấp: ${item.level ?? '-'}`
+      meta.textContent = `Loại: ${item.type} | Đẳng cấp yêu cầu: ${item.requirements?.level ?? item.level ?? '-'}`
     }
 
     stats.textContent = getItemStatsText(item)
