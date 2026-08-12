@@ -42,24 +42,19 @@ function getEffectText(item) {
   return ''
 }
 
-function getItemStatLines(item) {
+function getItemStatsText(item) {
+  const statSource = item.displayedStats ?? item.stats ?? {}
   const lines = []
 
-  Object.entries(item.stats ?? {}).forEach(([key, value]) => {
+  Object.entries(statSource).forEach(([key, value]) => {
     const text = formatStat(key, value)
-    if (text) lines.push(text)
+    if (text) lines.push(`<div class="item-stat-line" style="color:${item.tierMeta?.color ?? 'inherit'}">${text}</div>`)
   })
 
   const effectText = getEffectText(item)
-  if (effectText) lines.push(effectText)
+  if (effectText) lines.push(`<div class="item-stat-line">${effectText}</div>`)
 
-  return lines
-}
-
-function renderStatLines(element, lines) {
-  element.innerHTML = lines.length
-    ? lines.map((line) => `<div class="inv-stat-line">${line}</div>`).join('')
-    : '<div class="inv-stat-line">-</div>'
+  return lines.length ? lines.join('') : '<div class="item-stat-line">-</div>'
 }
 
 function findItemFromSlot(slot) {
@@ -75,7 +70,8 @@ export function mountInventoryScreen() {
   const title = document.getElementById('inv-info-title')
   const meta = document.getElementById('inv-info-meta')
   const stats = document.getElementById('inv-info-stats')
-  if (!grid || !icon || !title || !meta || !stats) return
+  const desc = document.getElementById('inv-info-desc')
+  if (!grid || !icon || !title || !meta || !stats || !desc) return
 
   const slots = Array.from(grid.querySelectorAll('.inv-slot2'))
   const select = (slot) => {
@@ -95,7 +91,8 @@ export function mountInventoryScreen() {
     if (item.potionLevel) {
       const range = item.usableLevelRange
       meta.textContent = `Đẳng cấp yêu cầu: ${range.min}-${range.max}`
-      renderStatLines(stats, getItemStatLines(item))
+      stats.innerHTML = getEffectText(item) ? `<div class="item-stat-line">${getEffectText(item)}</div>` : '<div class="item-stat-line">-</div>'
+      desc.textContent = item.description || '-'
       return
     }
 
@@ -106,7 +103,8 @@ export function mountInventoryScreen() {
       meta.textContent = `Loại: ${item.type} | Đẳng cấp yêu cầu: ${item.requirements?.level ?? item.level ?? '-'}`
     }
 
-    renderStatLines(stats, getItemStatLines(item))
+    stats.innerHTML = getItemStatsText(item)
+    desc.textContent = ''
   }
 
   slots.forEach((slot) => slot.addEventListener('click', () => select(slot)))
