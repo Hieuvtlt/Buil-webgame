@@ -3,6 +3,8 @@ import './game.css'
 import './responsive.css'
 import './game-ui.css'
 
+import characterImg from './assets/character.png'
+import { player, getPlayerStats } from './data/character.js'
 import { CharacterScreen } from './ui/screens/CharacterScreen.js'
 import { InventoryScreen } from './ui/screens/InventoryScreen.js'
 import { SkillsScreen } from './ui/screens/SkillsScreen.js'
@@ -36,53 +38,102 @@ const screens = {
 
 const menuNames = Object.keys(screens)
 
-document.querySelector('#app').innerHTML = `
-  <div id="game-grid">
+function getHudStats() {
+  const stats = getPlayerStats()
+  return { stats, hp: Math.min(player.hp, stats.maxHp), mp: Math.min(player.mp, stats.maxMp) }
+}
+
+function hudMarkup() {
+  const { stats, hp, mp } = getHudStats()
+  const hpPct = stats.maxHp ? Math.max(0, Math.min(100, hp / stats.maxHp * 100)) : 0
+  const mpPct = stats.maxMp ? Math.max(0, Math.min(100, mp / stats.maxMp * 100)) : 0
+  const expPct = player.expToNextLevel ? Math.max(0, Math.min(100, player.exp / player.expToNextLevel * 100)) : 0
+  const nav = menuNames.map((name, index) => `<button class="menu-item${index === 0 ? ' active' : ''}" type="button" data-screen="${name}"><span class="menu-icon">${['◈','♙','◉','⚗','⚒','◆','▣','✦','◌','⚙','☷'][index] ?? '•'}</span><span>${name}</span></button>`).join('')
+  return `
     <aside id="col-left">
-      <h2 class="panel-title">Menu</h2>
-      <nav id="left-menu">
-        ${menuNames.map((name, index) => `
-          <button class="menu-item${index === 0 ? ' active' : ''}" type="button" data-screen="${name}">${name}</button>
-        `).join('')}
-      </nav>
-    </aside>
-
-    <main id="col-center">
-      <h2 class="panel-title">Màn hình</h2>
-      <div id="content-root"></div>
-    </main>
-
-    <aside id="col-right" aria-label="Auto và nhật ký">
-      <section id="auto-panel" class="side-panel">
-        <h3 class="side-panel-title">[ AUTO ]</h3>
-        <div class="auto-options">
-          <label><input type="checkbox" checked /> Auto đánh</label>
-          <label><input type="checkbox" checked /> Auto nhặt</label>
-          <label><input type="checkbox" checked /> Auto dùng buff</label>
-          <label><input type="checkbox" /> Auto dùng HP &lt; 50%</label>
-          <label><input type="checkbox" /> Auto dùng MP &lt; 30%</label>
-          <label><input type="checkbox" /> Auto dùng đan dược</label>
-          <label><input type="checkbox" /> Auto luyện võ kỹ</label>
+      <section class="profile-card">
+        <div class="profile-head">
+          <img src="${characterImg}" alt="Nhân vật" class="profile-avatar" />
+          <div class="profile-info">
+            <div class="profile-name">${player.name}</div>
+            <div class="profile-level">Lv. ${player.level}</div>
+            <div class="profile-exp">${player.exp} / ${player.expToNextLevel} (${expPct.toFixed(2)}%)</div>
+            <div class="hud-progress exp"><span style="width:${expPct}%"></span></div>
+          </div>
         </div>
-        <div class="auto-range-row">
-          <span>Phạm vi tìm</span>
-          <input id="auto-range" type="number" min="1" max="20" value="5" />
-        </div>
-        <div class="auto-actions">
-          <button class="side-action danger" type="button" id="auto-pause">TẠM DỪNG</button>
-          <button class="side-action" type="button" id="auto-stop">DỪNG</button>
-        </div>
+        <div class="resource-row"><span>HP</span><strong>${hp}/${stats.maxHp}</strong><div class="hud-progress hp"><span style="width:${hpPct}%"></span></div></div>
+        <div class="resource-row"><span>MP</span><strong>${mp}/${stats.maxMp}</strong><div class="hud-progress mp"><span style="width:${mpPct}%"></span></div></div>
       </section>
 
-      <section id="log-panel" class="side-panel">
-        <h3 class="side-panel-title log-title">[ NHẬT KÝ ]</h3>
-        <div id="game-log" class="game-log" aria-live="polite">
-          <div class="log-line">[Hệ thống] Sẵn sàng.</div>
-          <div class="log-line">[Nhân vật] Đã vào trò chơi.</div>
-          <div class="log-line">[Túi đồ] Hệ thống trang bị đã sẵn sàng.</div>
-        </div>
+      <nav id="left-menu" class="main-menu">${nav}</nav>
+
+      <section class="left-stats-card">
+        <h3>THUỘC TÍNH</h3>
+        <div class="left-stat"><span>Sức mạnh</span><b>${stats.strength}</b></div>
+        <div class="left-stat"><span>Thân pháp</span><b>${stats.dexterity}</b></div>
+        <div class="left-stat"><span>Sinh khí</span><b>${stats.vitality}</b></div>
+        <div class="left-stat"><span>Nội lực</span><b>${stats.energy}</b></div>
+        <div class="left-stat"><span>Chính xác</span><b>${stats.accuracy}</b></div>
+        <div class="left-stat"><span>Né tránh</span><b>${stats.dodge}</b></div>
+        <div class="left-stat resistance"><span>Kháng độc</span><b>${stats.poisonResistance}%</b></div>
+        <div class="left-stat resistance"><span>Kháng hỏa</span><b>${stats.fireResistance}%</b></div>
+        <div class="left-stat resistance"><span>Kháng băng</span><b>${stats.iceResistance}%</b></div>
+        <div class="left-stat resistance"><span>Kháng lôi</span><b>${stats.lightningResistance}%</b></div>
       </section>
     </aside>
+  `
+}
+
+document.querySelector('#app').innerHTML = `
+  <div id="game-shell">
+    <div id="game-grid">
+      ${hudMarkup()}
+
+      <main id="col-center">
+        <header class="screen-header">
+          <span class="ornament">◆</span>
+          <h2 id="screen-title">NHÂN VẬT</h2>
+          <span class="ornament">◆</span>
+          <div class="header-actions"><button type="button" title="Trợ giúp">?</button><button type="button" title="Đóng">×</button></div>
+        </header>
+        <div id="content-root"></div>
+      </main>
+
+      <aside id="col-right" aria-label="Auto và nhật ký">
+        <section id="auto-panel" class="side-panel">
+          <h3 class="side-panel-title"><span>⚙</span> AUTO</h3>
+          <div class="auto-options">
+            <label><input type="checkbox" checked /> Auto đánh</label>
+            <label><input type="checkbox" checked /> Auto nhặt</label>
+            <label><input type="checkbox" checked /> Auto dùng buff</label>
+            <label><input type="checkbox" /> Auto dùng HP &lt; 50%</label>
+            <label><input type="checkbox" /> Auto dùng MP &lt; 30%</label>
+            <label><input type="checkbox" /> Auto dùng đan dược</label>
+            <label><input type="checkbox" /> Auto luyện võ kỹ</label>
+          </div>
+          <div class="auto-range-row"><span>Phạm vi tìm</span><select id="auto-range"><option>Toàn bản đồ</option><option>5</option><option>10</option><option>15</option></select></div>
+          <div class="auto-actions"><button class="side-action danger" type="button" id="auto-pause">TẠM DỪNG</button><button class="side-action" type="button" id="auto-stop">DỪNG</button></div>
+        </section>
+
+        <section id="log-panel" class="side-panel">
+          <h3 class="side-panel-title log-title">▣ NHẬT KÝ</h3>
+          <div id="game-log" class="game-log" aria-live="polite">
+            <div class="log-line">[Hệ thống] Sẵn sàng.</div>
+            <div class="log-line">[Nhân vật] Đã vào trò chơi.</div>
+            <div class="log-line">[Túi đồ] Hệ thống trang bị đã sẵn sàng.</div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <footer id="bottom-bar">
+      <div class="world-status"><span>◉ Map: Tân Thủ Thôn</span><span class="ping">● Ping: 18ms</span></div>
+      <div class="hotbar" aria-label="Phím tắt vật phẩm">
+        ${[1,2,3,4,5,6].map((n) => `<button class="hot-slot" type="button"><span class="hot-key">${n}</span></button>`).join('')}
+      </div>
+      <div class="currency-bar"><span>🪙 <b>${player.gold.toLocaleString('vi-VN')}</b></span><span>◈ <b>${player.spiritStone}</b></span><button type="button">NẠP THẺ</button></div>
+      <div class="footer-actions"><button type="button">♙<small>Nhân vật</small></button><button type="button">↪<small>Thoát</small></button></div>
+    </footer>
   </div>
 `
 
@@ -94,6 +145,7 @@ function openScreen(name) {
   const screen = screens[name]
   if (!screen) return
   currentScreenName = name
+  document.querySelector('#screen-title').textContent = name.toUpperCase()
   contentRoot.innerHTML = screen.render()
   screen.mount?.()
 }
@@ -109,37 +161,34 @@ function addGameLog(message, type = 'system') {
   log.scrollTop = log.scrollHeight
 }
 
-menuButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    menuButtons.forEach((item) => item.classList.remove('active'))
-    button.classList.add('active')
-    openScreen(button.dataset.screen)
-    addGameLog(`Mở menu ${button.dataset.screen}.`, 'system')
+function refreshHud() {
+  const oldLeft = document.querySelector('#col-left')
+  if (!oldLeft) return
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = hudMarkup()
+  const freshLeft = wrapper.firstElementChild
+  oldLeft.replaceWith(freshLeft)
+  bindMenuButtons()
+}
+
+function bindMenuButtons() {
+  document.querySelectorAll('#left-menu .menu-item').forEach((button) => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('#left-menu .menu-item').forEach((item) => item.classList.remove('active'))
+      button.classList.add('active')
+      openScreen(button.dataset.screen)
+      addGameLog(`Mở menu ${button.dataset.screen}.`, 'system')
+    })
   })
-})
+}
 
-document.querySelector('#auto-pause')?.addEventListener('click', () => {
-  addGameLog('Auto đã tạm dừng.', 'warning')
-})
+bindMenuButtons()
+document.querySelector('#auto-pause')?.addEventListener('click', () => addGameLog('Auto đã tạm dừng.', 'warning'))
+document.querySelector('#auto-stop')?.addEventListener('click', () => addGameLog('Auto đã dừng.', 'danger'))
 
-document.querySelector('#auto-stop')?.addEventListener('click', () => {
-  addGameLog('Auto đã dừng.', 'danger')
-})
-
-window.addEventListener('game:inventory-changed', () => {
-  if (currentScreenName === 'Túi đồ') openScreen('Túi đồ')
-  addGameLog('Túi đồ đã được cập nhật.', 'item')
-})
-
-window.addEventListener('game:item-equipped', () => {
-  if (currentScreenName === 'Túi đồ') openScreen('Túi đồ')
-  addGameLog('Trang bị đã được cập nhật.', 'item')
-})
-
-window.addEventListener('game:log', (event) => {
-  const detail = event.detail
-  if (typeof detail === 'string') addGameLog(detail)
-  else if (detail?.message) addGameLog(detail.message, detail.type ?? 'system')
-})
+window.addEventListener('game:inventory-changed', () => { if (currentScreenName === 'Túi đồ') openScreen('Túi đồ'); addGameLog('Túi đồ đã được cập nhật.', 'item') })
+window.addEventListener('game:item-equipped', () => { if (currentScreenName === 'Túi đồ') openScreen('Túi đồ'); addGameLog('Trang bị đã được cập nhật.', 'item') })
+window.addEventListener('game:log', (event) => { const detail = event.detail; if (typeof detail === 'string') addGameLog(detail); else if (detail?.message) addGameLog(detail.message, detail.type ?? 'system') })
+window.addEventListener('game:character-changed', refreshHud)
 
 openScreen('Nhân vật')
