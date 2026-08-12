@@ -1,6 +1,8 @@
 // Dữ liệu nhân vật trung tâm của game.
 // Level nhân vật: 1-200. Mỗi lần lên cấp nhận 5 điểm tự do.
 
+import { clampCharacterResistances } from './attributeRules.js'
+
 export const MAX_CHARACTER_LEVEL = 200
 export const POINTS_PER_LEVEL = 5
 export const REBIRTH_POINTS = 50
@@ -28,6 +30,12 @@ export const player = {
   maxMp: 100,
   gold: 0,
   spiritStone: 0,
+  resistances: {
+    poisonResistance: 0,
+    fireResistance: 0,
+    iceResistance: 0,
+    lightningResistance: 0,
+  },
 }
 
 export function getMaxSkillLevel() {
@@ -36,6 +44,9 @@ export function getMaxSkillLevel() {
 
 export function getPlayerStats() {
   const { strength, dexterity, vitality, energy } = player.attributes
+  const resistances = clampCharacterResistances(player.resistances)
+  player.resistances = resistances
+
   return {
     strength,
     dexterity,
@@ -48,6 +59,7 @@ export function getPlayerStats() {
     defense: 5 + dexterity,
     accuracy: 10 + dexterity * 2,
     dodge: 5 + dexterity,
+    ...resistances,
   }
 }
 
@@ -57,6 +69,13 @@ export function addFreeAttributePoints(attribute, amount = 1) {
   player.attributes[attribute] += amount
   player.freePoints -= amount
   syncDerivedStats()
+  return true
+}
+
+export function addCharacterResistance(attribute, amount) {
+  if (!Object.prototype.hasOwnProperty.call(player.resistances, attribute)) return false
+  if (!Number.isFinite(amount)) return false
+  player.resistances[attribute] = Math.min(80, Math.max(0, player.resistances[attribute] + amount))
   return true
 }
 
