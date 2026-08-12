@@ -1,5 +1,14 @@
 import characterImg from '../../assets/character.png'
-import { player, getPlayerStats, getMaxSkillLevel } from '../../data/character.js'
+import { player, getPlayerStats, getMaxSkillLevel, getEquippedItem } from '../../data/character.js'
+import { getItemById } from '../../data/items/index.js'
+import { EQUIPMENT_SLOTS } from '../../data/equipmentSlots.js'
+
+const RESISTANCE_LABELS = [
+  ['poisonResistance', 'Kháng độc'],
+  ['fireResistance', 'Kháng hỏa'],
+  ['iceResistance', 'Kháng băng'],
+  ['lightningResistance', 'Kháng lôi'],
+]
 
 export function CharacterScreen() {
   const stats = getPlayerStats()
@@ -52,6 +61,9 @@ export function CharacterScreen() {
             <div><span>Ngoại phòng</span><b>${stats.defense}</b></div>
             <div><span>Chính xác</span><b>${stats.accuracy}</b></div>
             <div><span>Né tránh</span><b>${stats.dodge}</b></div>
+            ${RESISTANCE_LABELS.map(([key, label]) => `
+              <div><span>${label}</span><b>${stats[key]}%</b></div>
+            `).join('')}
             <div><span>Max võ kỹ</span><b>${getMaxSkillLevel()}</b></div>
           </div>
         </div>
@@ -66,23 +78,36 @@ export function CharacterScreen() {
           <div class="equip-panel">
             <div class="equip-title">Trang bị</div>
             <div class="equip-grid" id="equip-grid">
-              ${Array.from({ length: 10 }, (_, i) => `
-                <button class="equip-slot" type="button" data-slot-index="${i}" data-has-item="false">Slot ${i + 1}</button>
-              `).join('')}
+              ${EQUIPMENT_SLOTS.map((slot, index) => {
+                const item = getEquippedItem(slot.id)
+                return `
+                  <button class="equip-slot${item ? ' has-item' : ''}" type="button"
+                    data-slot-id="${slot.id}" data-slot-index="${index}" data-has-item="${item ? 'true' : 'false'}">
+                    ${item ? `<img class="equip-slot-icon" src="${item.icon}" alt="" /><span>${item.name}</span>` : `${slot.name}: Trống`}
+                  </button>
+                `
+              }).join('')}
             </div>
             <div class="equip-actions">
               <button class="action-btn" type="button" id="btn-equip">Trang bị</button>
               <button class="action-btn danger" type="button" id="btn-unequip">Gỡ</button>
             </div>
+            <div class="equip-hint">Chọn slot và item trong túi rồi bấm Trang bị.</div>
           </div>
         </div>
 
         <div class="inventory-under-panel">
           <div class="inventory-under-title">Túi đồ</div>
           <div class="inventory-under-grid" id="inventory-grid">
-            ${Array.from({ length: 24 }, (_, i) => `
-              <button class="inv-slot" type="button" data-inv-index="${i}" data-has-item="false">Slot ${i + 1}</button>
-            `).join('')}
+            ${player.inventory.map((id, i) => {
+              const item = getItemById(id)
+              return `
+                <button class="inv-slot${item ? ' has-item' : ''}" type="button"
+                  data-inv-index="${i}" data-item-id="${item?.id ?? ''}" data-has-item="${item ? 'true' : 'false'}">
+                  ${item ? `<img class="equip-slot-icon" src="${item.icon}" alt="" /><span>${item.name}</span>` : `Slot ${i + 1}: Trống`}
+                </button>
+              `
+            }).join('')}
           </div>
         </div>
       </section>
