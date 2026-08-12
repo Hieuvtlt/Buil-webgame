@@ -1,42 +1,53 @@
 import { createItem } from './itemSchema.js'
 
-// Khung dữ liệu trang bị phòng thủ.
+// Chỉ tạo trang bị tương ứng với các thư mục/icon người dùng đã chuẩn bị.
+// Không còn các item mẫu "Tân Thủ" hay item tự sinh không có asset.
 
-export const armors = [
-  createItem({
-    id: 20001,
-    name: 'Mũ Vải Tân Thủ',
-    type: 'armor',
-    category: 'helmet',
-    level: 1,
-    quality: 'normal',
-    requirements: { level: 1 },
-    stats: { defense: 2 },
-    price: { buy: 60, sell: 30 },
-    description: 'Mũ vải đơn giản giúp bảo vệ đầu.',
-  }),
-  createItem({
-    id: 20002,
-    name: 'Áo Vải Tân Thủ',
-    type: 'armor',
-    category: 'body',
-    level: 1,
-    quality: 'normal',
-    requirements: { level: 1 },
-    stats: { defense: 5 },
-    price: { buy: 100, sell: 50 },
-    description: 'Áo vải cơ bản dành cho người mới.',
-  }),
-  createItem({
-    id: 20003,
-    name: 'Giày Vải Tân Thủ',
-    type: 'armor',
-    category: 'boots',
-    level: 1,
-    quality: 'normal',
-    requirements: { level: 1 },
-    stats: { defense: 2, dodge: 1 },
-    price: { buy: 70, sell: 35 },
-    description: 'Đôi giày nhẹ, giúp di chuyển linh hoạt hơn.',
-  }),
+const TIERS = [
+  { key: 'hoang', label: 'Hoàng cấp', level: 1 },
+  { key: 'huyen', label: 'Huyền cấp', level: 31 },
+  { key: 'dia', label: 'Địa cấp', level: 61 },
+  { key: 'thien', label: 'Thiên cấp', level: 91 },
 ]
+
+const SIMPLE_ARMOR = [
+  ['helmet', 'Mũ', 2],
+  ['gauntlet', 'Bao Tay', 3],
+  ['belt', 'Đai Lưng', 3],
+  ['boots', 'Giày', 2],
+  ['necklace', 'Dây Chuyền', 1],
+  ['amulet', 'Ngọc Bội', 1],
+  ['ring', 'Nhẫn', 1],
+]
+
+const BODY_QUALITIES = [
+  ['haPham', 'Hạ Phẩm'],
+  ['trungPham', 'Trung Phẩm'],
+  ['thuongPham', 'Thượng Phẩm'],
+  ['cucPham', 'Cực Phẩm'],
+]
+
+let nextId = 20001
+const armors = []
+
+for (const tier of TIERS) {
+  for (const [category, label, defense] of SIMPLE_ARMOR) {
+    armors.push(createItem({
+      id: nextId++, name: `${label} ${tier.label}`, type: 'armor', category,
+      level: tier.level, requirements: { level: tier.level },
+      stats: { defense },
+      description: `${label} ${tier.label}.`,
+    }))
+  }
+
+  for (const [quality, qualityLabel] of BODY_QUALITIES) {
+    armors.push(createItem({
+      id: nextId++, name: `Áo ${tier.label} ${qualityLabel}`, type: 'armor', category: 'body',
+      level: tier.level, quality, requirements: { level: tier.level },
+      stats: { defense: 5 },
+      description: `Áo ${tier.label}, ${qualityLabel}.`,
+    }))
+  }
+}
+
+export { armors }
