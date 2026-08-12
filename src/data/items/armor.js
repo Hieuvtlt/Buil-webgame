@@ -30,11 +30,12 @@ const SIMPLE_ARMOR = [
   ['ring', 3],
 ]
 
+// Phẩm chất được áp dụng tập trung trong itemSchema.js theo quy tắc chung.
 const BODY_QUALITIES = [
-  ['haPham', 'Hạ phẩm', 0.8, 140],
-  ['trungPham', 'Trung phẩm', 0.95, 170],
-  ['thuongPham', 'Thượng phẩm', 1.0, 200],
-  ['cucPham', 'Cực phẩm', 1.2, 250],
+  ['haPham', 'Hạ phẩm'],
+  ['trungPham', 'Trung phẩm'],
+  ['thuongPham', 'Thượng phẩm'],
+  ['cucPham', 'Cực phẩm'],
 ]
 
 const TIER_SCALE = {
@@ -45,10 +46,10 @@ const TIER_SCALE = {
 }
 
 const RESIST_BY_TIER = {
-  hoang: 1,
-  huyen: 2,
-  dia: 4,
-  thien: 6,
+  hoang: 2,
+  huyen: 7,
+  dia: 14,
+  thien: 20,
 }
 
 function simpleArmorStats(category, tierKey, baseDefense) {
@@ -59,7 +60,7 @@ function simpleArmorStats(category, tierKey, baseDefense) {
   const stats = { defense }
 
   if (category === 'helmet') {
-    stats.hp = Math.round(35 * scale)
+    stats.hp = 100
     stats.dodge = Math.round(3 * scale)
     stats.fireResist = resist
   } else if (category === 'gauntlet') {
@@ -67,7 +68,7 @@ function simpleArmorStats(category, tierKey, baseDefense) {
     stats.strength = Math.round(2 * scale)
     stats.poisonResist = resist
   } else if (category === 'belt') {
-    stats.hp = Math.round(45 * scale)
+    stats.hp = 100
     stats.vitality = Math.round(2 * scale)
     stats.iceResist = resist
   } else if (category === 'boots') {
@@ -76,11 +77,11 @@ function simpleArmorStats(category, tierKey, baseDefense) {
     stats.lightningResist = resist
   } else if (category === 'necklace') {
     stats.accuracy = Math.round(6 * scale)
-    stats.hp = Math.round(30 * scale)
+    stats.hp = 100
     stats.fireResist = resist
   } else if (category === 'amulet') {
     stats.dodge = Math.round(6 * scale)
-    stats.mp = Math.round(30 * scale)
+    stats.mp = 100
     stats.poisonResist = resist
   } else if (category === 'ring') {
     stats.strength = Math.round(2 * scale)
@@ -109,11 +110,11 @@ for (const tier of TIERS) {
     }))
   }
 
-  for (const [quality, qualityLabel, qualityScale, hp] of BODY_QUALITIES) {
+  // Áo có đủ 4 phẩm chất để kiểm thử rõ hệ màu và hệ số thuộc tính.
+  // Giá trị nền là 100%; itemSchema sẽ hạ/tăng theo phẩm chất của từng món.
+  for (const [quality, qualityLabel] of BODY_QUALITIES) {
     const scale = TIER_SCALE[tier.key]
-    const defense = Math.round(18 * scale * qualityScale)
-    const mp = Math.round(hp * 0.8)
-    const resist = Math.max(1, Math.round(RESIST_BY_TIER[tier.key] * qualityScale))
+    const defense = Math.round(18 * scale)
 
     armors.push(createItem({
       id: nextId++,
@@ -125,14 +126,14 @@ for (const tier of TIERS) {
       requirements: { level: tier.level },
       stats: {
         defense,
-        hp,
-        mp,
-        vitality: Math.round(3 * scale * qualityScale),
-        strength: Math.round(2 * scale * qualityScale),
-        poisonResist: resist,
-        fireResist: resist,
-        iceResist: resist,
-        lightningResist: resist,
+        hp: 100,
+        mp: 100,
+        vitality: Math.round(3 * scale),
+        strength: Math.round(2 * scale),
+        poisonResist: RESIST_BY_TIER[tier.key],
+        fireResist: RESIST_BY_TIER[tier.key],
+        iceResist: RESIST_BY_TIER[tier.key],
+        lightningResist: RESIST_BY_TIER[tier.key],
       },
       description: `${ARMOR_NAMES.body[tier.key]} — ${tier.label} - ${qualityLabel}.`,
     }))
