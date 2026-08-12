@@ -1,4 +1,5 @@
 import { getItemById } from '../../data/items/index.js'
+import { player, equipItem, getEquippedItem } from '../../data/character.js'
 
 const STAT_LABELS = {
   attackMin: 'Ngoại công thấp',
@@ -27,6 +28,11 @@ const QUALITY_LABELS = {
 }
 
 const RESIST_KEYS = new Set(['poisonResist', 'fireResist', 'iceResist', 'lightningResist'])
+const SLOT_BY_CATEGORY = {
+  sword: 'weapon', blade: 'weapon', staff: 'weapon', spear: 'weapon',
+  helmet: 'helmet', body: 'armor', gauntlet: 'gloves', belt: 'belt', boots: 'boots',
+  ring: 'ring1', necklace: 'necklace', amulet: 'amulet',
+}
 
 function formatStat(key, value) {
   if (!value) return ''
@@ -42,73 +48,164 @@ function getEffectText(item) {
   return ''
 }
 
-function getItemStatsText(item) {
-  const statSource = item.displayedStats ?? item.stats ?? {}
-  const lines = []
-  const attributeColor = item.qualityColor ?? item.tierMeta?.color ?? '#ffffff'
-
-  Object.entries(statSource).forEach(([key, value]) => {
-    const text = formatStat(key, value)
-    if (text) lines.push(`<div class="item-stat-line" style="color:${attributeColor}">${text}</div>`)
-  })
-
-  const effectText = getEffectText(item)
-  if (effectText) lines.push(`<div class="item-stat-line">${effectText}</div>`)
-
-  return lines.length ? lines.join('') : '<div class="item-stat-line">-</div>'
+function getStats(item) {
+  return item?.displayedStats ?? item?.stats ?? {}
 }
 
-function findItemFromSlot(slot) {
-  const rawId = slot?.dataset?.itemId
-  if (!rawId) return null
-  const numericId = Number(rawId)
-  return getItemById(Number.isNaN(numericId) ? rawId : numericId)
+function statLines(item, compareTo = null) {
+  const source = getStats(item)
+  const compare = getStats(compareTo)
+  const color = item.qualityColor ?? item.tierMeta?.color ?? '#ffffff'
+
+  return Object.entries(source)
+    .filter(([, value]) => Number(value) > 0)
+    .map(([key, value]) => {
+      const text = formatStat(key, value)
+      const oldValue = Number(compare[key] ?? 0)
+      const delta = Number(value) - oldValue
+      let suffix = ''
+      if (compareTo && delta !== 0) {
+        const sign = delta > 0 ? '+' : ''
+        const cls = delta > 0 ? 'compare-up' : 'compare-down'
+        suffix = ` <span class="${cls}">${delta > 0 ? '▲' : '▼'} ${sign}${delta}</span>`
+      }
+      return `<div class="item-stat-line" style="color:${color}">${text}${suffix}</div>`
+    }).join('') || '<div class="item-stat-line">-</div>'
+}
+
+function getMeta(item) {
+  if (item.potionLevel) {
+    const range = item.usableLevelRange
+    return `Đẳng cấp yêu cầu: ${range.min}-${range.max}`
+  }
+  if (item.tierMeta) {
+    const quality = item.quality ? ` - ${QUALITY_LABELS[item.quality] ?? item.quality}` : ''
+    return `${item.tierMeta.label}${quality} | Đẳng cấp yêu cầu: ${item.requirements.level}`
+  }
+  return `Loại: ${item.type} | Đẳng cấp yêu cầu: ${item.requirements?.level ?? item.level ?? '-'}`
+}
+
+function getSlot(item) {
+  return SLOT_BY_CATEGORY[item?.category] ?? null
+}
+
+function getAction(item) {
+  if (!item) return null
+  const slot = getSlot(item)
+  const equipped = slot ? getEquippedItem(slot) : null
+  if (item.type === 'equipment' || item.type === 'weapon' || item.type === 'armor' || item.type === 'accessory') {
+    return { label: equipped ? 'Thay thế' : 'Trang bị', slot, equipped }
+  }
+  if (item.type === 'consumable') return { label: 'Sử dụng', slot: null, equipped: null }
+  return null
+}
+
+function ensureTooltip() {
+  let tooltip = document.getElementById('item-context-tooltip')
+  if (tooltip) return tooltip
+  tooltip = document.createElement('div')
+  tooltip.id = 'item-context-tooltip'
+  tooltip.className = 'item-context-tooltip'
+  document.body.appendChild(tooltip)
+  return tooltip
+}
+
+function positionTooltip(tooltip, x, y) {
+  tooltip.style.left = '0px'
+  tooltip.style.top = '0px'
+  const rect = tooltip.getBoundingClientRect()
+  const gap = 12
+  const left = x + rect.width + gap <= window.innerWidth ? x + gap : Math.max(gap, x - rect.width - gap)
+  const top = y + rect.height + gap <= window.innerHeight ? y + gap : Math.max(gap, window.innerHeight - rect.height - gap)
+  tooltip.style.left = `${left}px`
+  tooltip.style.top = `${top}px`
+}
+
+function renderItemCard(item, title, compareTo = null) {
+  const color = item.qualityColor ?? item.tierMeta?.color ?? '#ffffff'
+  return `
+    <div class="item-context-card">
+      <div class="item-context-heading">${title}</div>
+      <img class="item-context-icon" src="${item.icon || '/assets/icons/material.svg'}" alt="${item.name}" />
+      <div class="item-context-name" style="color:${color}">${item.name}</div>
+      <div class="item-context-meta">${getMeta(item)}</div>
+      <div class="item-context-stats">${statLines(item, compareTo)}</div>
+      ${getEffectText(item) ? `<div class="item-context-effect">${getEffectText(item)}</div>` : ''}
+    </div>
+  `
 }
 
 export function mountInventoryScreen() {
   const grid = document.getElementById('inventory-screen-grid')
-  const icon = document.getElementById('inv-info-icon')
-  const title = document.getElementById('inv-info-title')
-  const meta = document.getElementById('inv-info-meta')
-  const stats = document.getElementById('inv-info-stats')
-  const desc = document.getElementById('inv-info-desc')
-  if (!grid || !icon || !title || !meta || !stats || !desc) return
+  if (!grid) return
 
   const slots = Array.from(grid.querySelectorAll('.inv-slot2'))
-  const select = (slot) => {
-    slots.forEach((item) => item.classList.remove('is-selected'))
-    slot.classList.add('is-selected')
+  const tooltip = ensureTooltip()
+  let selectedItem = null
 
-    const item = findItemFromSlot(slot)
-    if (!item) return
-
-    const color = item.tierMeta?.color ?? '#00ff66'
-    icon.src = item.icon || '/assets/icons/potion.svg'
-    icon.alt = item.name
-    icon.style.borderColor = color
-    title.textContent = item.name
-    title.style.color = color
-
-    if (item.potionLevel) {
-      const range = item.usableLevelRange
-      meta.textContent = `Đẳng cấp yêu cầu: ${range.min}-${range.max}`
-      stats.innerHTML = getEffectText(item) ? `<div class="item-stat-line">${getEffectText(item)}</div>` : '<div class="item-stat-line">-</div>'
-      desc.textContent = item.description || '-'
-      return
-    }
-
-    if (item.tierMeta) {
-      const quality = item.quality ? ` - ${QUALITY_LABELS[item.quality] ?? item.quality}` : ''
-      meta.textContent = `${item.tierMeta.label}${quality} | Đẳng cấp yêu cầu: ${item.requirements.level}`
-    } else {
-      meta.textContent = `Loại: ${item.type} | Đẳng cấp yêu cầu: ${item.requirements?.level ?? item.level ?? '-'}`
-    }
-
-    stats.innerHTML = getItemStatsText(item)
-    desc.textContent = ''
+  const hide = () => {
+    tooltip.classList.remove('is-open')
+    selectedItem = null
   }
 
-  slots.forEach((slot) => slot.addEventListener('click', () => select(slot)))
-  const firstItem = slots.find((slot) => slot.dataset.itemId)
-  if (firstItem) select(firstItem)
+  const show = (slot, item) => {
+    const action = getAction(item)
+    const equipped = action?.equipped ?? null
+    const hasCompare = Boolean(equipped && equipped.id !== item.id)
+
+    tooltip.innerHTML = `
+      <div class="item-context-grid ${hasCompare ? 'has-compare' : ''}">
+        ${hasCompare ? renderItemCard(equipped, 'ĐANG TRANG BỊ') : ''}
+        ${renderItemCard(item, hasCompare ? 'TRANG BỊ MỚI' : '')}
+      </div>
+      <div class="item-context-actions">
+        ${action ? `<button type="button" class="context-action primary" data-action="main">${action.label}</button>` : ''}
+        <button type="button" class="context-action sell" data-action="sell">Bán shop</button>
+      </div>
+    `
+    tooltip.classList.add('is-open')
+    positionTooltip(tooltip, slot.getBoundingClientRect().right, slot.getBoundingClientRect().top)
+    selectedItem = item
+
+    tooltip.querySelector('[data-action="main"]')?.addEventListener('click', () => {
+      if (!selectedItem) return
+      const currentAction = getAction(selectedItem)
+      if (currentAction?.slot && equipItem(currentAction.slot, selectedItem.id)) {
+        hide()
+        window.dispatchEvent(new CustomEvent('game:item-equipped', { detail: { itemId: selectedItem.id } }))
+      }
+    })
+
+    tooltip.querySelector('[data-action="sell"]')?.addEventListener('click', () => {
+      if (!selectedItem) return
+      const index = player.inventory.indexOf(selectedItem.id)
+      if (index < 0) return
+      const equipped = Object.values(player.equipment).includes(selectedItem.id)
+      if (equipped) return
+      const price = Number(selectedItem.price?.sell ?? 0)
+      player.inventory.splice(index, 1)
+      player.gold += price
+      hide()
+      window.dispatchEvent(new CustomEvent('game:inventory-changed'))
+    })
+  }
+
+  slots.forEach((slot) => {
+    slot.addEventListener('click', (event) => {
+      const id = Number(slot.dataset.itemId)
+      if (!slot.dataset.itemId || Number.isNaN(id)) return
+      const item = getItemById(id)
+      if (!item) return
+      slots.forEach((s) => s.classList.remove('is-selected'))
+      slot.classList.add('is-selected')
+      show(slot, item)
+      event.stopPropagation()
+    })
+  })
+
+  document.addEventListener('click', (event) => {
+    if (!tooltip.contains(event.target) && !grid.contains(event.target)) hide()
+  })
+
+  window.addEventListener('resize', hide)
 }
