@@ -5,10 +5,10 @@ import { getVltkIcon } from '../vltkIconCatalog.js'
 // Đan dược dùng hệ cấp riêng 1-10.
 
 export const EQUIPMENT_TIERS = {
-  hoang: { minLevel: 1, maxLevel: 30, color: '#ffffff', label: 'Hoàng cấp' },
-  huyen: { minLevel: 31, maxLevel: 60, color: '#4da6ff', label: 'Huyền cấp' },
-  dia: { minLevel: 61, maxLevel: 90, color: '#ffd54a', label: 'Địa cấp' },
-  thien: { minLevel: 91, maxLevel: 120, color: '#ff4d4d', label: 'Thiên cấp' },
+  hoang: { minLevel: 1, maxLevel: 30, color: '#ffffff', label: 'Hoàng cấp', attributeRange: [0, 2] },
+  huyen: { minLevel: 31, maxLevel: 60, color: '#4da6ff', label: 'Huyền cấp', attributeRange: [3, 5] },
+  dia: { minLevel: 61, maxLevel: 90, color: '#ffd54a', label: 'Địa cấp', attributeRange: [6, 8] },
+  thien: { minLevel: 91, maxLevel: 120, color: '#ff4d4d', label: 'Thiên cấp', attributeRange: [8, 10] },
 }
 
 export const QUALITY_MULTIPLIERS = {
@@ -46,10 +46,49 @@ function getDefaultIcon(data, isEquipment) {
   return '/assets/icons/material.svg'
 }
 
+// Tạo số lượng thuộc tính ổn định theo ID, không thay đổi mỗi lần mở game.
+function getAttributeCount(itemId, tierMeta, availableCount) {
+  const [min, max] = tierMeta.attributeRange
+  if (availableCount <= 0) return 0
+  const span = max - min + 1
+  const seed = Math.abs(Number(itemId) || 0)
+  const wanted = min + (seed % span)
+  return Math.min(wanted, availableCount)
+}
+
+// Chỉ các dòng có giá trị > 0 mới được xem là thuộc tính.
+// Ưu tiên giữ các thuộc tính đã khai báo trong data, sau đó mới lấy các dòng bổ sung.
+function buildDisplayedStats(stats, itemId, tierMeta) {
+  const entries = Object.entries(stats ?? {}).filter(([, value]) => Number(value) > 0)
+  const count = getAttributeCount(itemId, tierMeta, entries.length)
+  return Object.fromEntries(entries.slice(0, count))
+}
+
 export function createItem(data) {
   const isEquipment = data.type === 'equipment' || data.type === 'weapon' || data.type === 'armor' || data.type === 'accessory'
   const itemLevel = isEquipment ? Math.max(1, Math.min(120, data.level ?? 1)) : data.level ?? 1
+  const tier = isEquipment ? getEquipmentTier(itemLevel) : null
+  const tierMeta = isEquipment ? getEquipmentTierMeta(itemLevel) : null
   const potionRange = data.potionLevel ? getPotionLevelRange(data.potionLevel) : null
+
+  const stats = {
+    attackMin: data.stats?.attackMin ?? 0,
+    attackMax: data.stats?.attackMax ?? 0,
+    defense: data.stats?.defense ?? 0,
+    strength: data.stats?.strength ?? 0,
+    dexterity: data.stats?.dexterity ?? 0,
+    vitality: data.stats?.vitality ?? 0,
+    energy: data.stats?.energy ?? 0,
+    accuracy: data.stats?.accuracy ?? 0,
+    dodge: data.stats?.dodge ?? 0,
+    hp: data.stats?.hp ?? 0,
+    mp: data.stats?.mp ?? 0,
+    externalAttack: data.stats?.externalAttack ?? 0,
+    poisonResist: data.stats?.poisonResist ?? 0,
+    fireResist: data.stats?.fireResist ?? 0,
+    iceResist: data.stats?.iceResist ?? 0,
+    lightningResist: data.stats?.lightningResist ?? 0,
+  }
 
   return {
     id: data.id,
@@ -57,8 +96,10 @@ export function createItem(data) {
     type: data.type,
     category: data.category ?? null,
     level: itemLevel,
-    tier: isEquipment ? getEquipmentTier(itemLevel) : null,
-    tierMeta: isEquipment ? getEquipmentTierMeta(itemLevel) : null,
+    tier,
+    tierMeta,
+    attributeRange: tierMeta?.attributeRange ?? null,
+    displayedStats: isEquipment ? buildDisplayedStats(stats, data.id, tierMeta) : stats,
     quality: data.quality ?? null,
     icon: getDefaultIcon(data, isEquipment),
     stackable: isEquipment ? false : (data.stackable ?? false),
@@ -73,24 +114,7 @@ export function createItem(data) {
       energy: data.requirements?.energy ?? 0,
       rebirth: data.requirements?.rebirth ?? 0,
     },
-    stats: {
-      attackMin: data.stats?.attackMin ?? 0,
-      attackMax: data.stats?.attackMax ?? 0,
-      defense: data.stats?.defense ?? 0,
-      strength: data.stats?.strength ?? 0,
-      dexterity: data.stats?.dexterity ?? 0,
-      vitality: data.stats?.vitality ?? 0,
-      energy: data.stats?.energy ?? 0,
-      accuracy: data.stats?.accuracy ?? 0,
-      dodge: data.stats?.dodge ?? 0,
-      hp: data.stats?.hp ?? 0,
-      mp: data.stats?.mp ?? 0,
-      externalAttack: data.stats?.externalAttack ?? 0,
-      poisonResist: data.stats?.poisonResist ?? 0,
-      fireResist: data.stats?.fireResist ?? 0,
-      iceResist: data.stats?.iceResist ?? 0,
-      lightningResist: data.stats?.lightningResist ?? 0,
-    },
+    stats,
     effects: data.effects ?? [],
     effect: data.effect ?? null,
     price: {
