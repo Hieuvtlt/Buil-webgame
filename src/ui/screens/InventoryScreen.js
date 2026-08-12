@@ -46,9 +46,8 @@ export function InventoryScreen() {
               <img class="inv-info-icon" id="inv-info-icon" src="/assets/icons/potion.svg" alt="" />
             </div>
             <div class="inv-info-title" id="inv-info-title">Chọn vật phẩm</div>
-            <div class="inv-info-meta" id="inv-info-meta">Loại: - | Cấp: -</div>
-            <div class="inv-info-stats" id="inv-info-stats">Thuộc tính: -</div>
-            <div class="inv-info-desc" id="inv-info-desc">Mô tả: -</div>
+            <div class="inv-info-meta" id="inv-info-meta">Đẳng cấp yêu cầu: -</div>
+            <div class="inv-info-stats" id="inv-info-stats">-</div>
           </div>
         </div>
       </div>
