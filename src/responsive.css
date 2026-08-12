@@ -41,12 +41,19 @@
   background: rgba(7, 12, 9, .75);
 }
 
-/* AUTO có thanh cuộn riêng để không bị mất các nút phía dưới */
-#auto-panel {
+/* AUTO phải tự cuộn khi nội dung dài. Dùng selector có độ ưu tiên cao hơn
+   #col-right .side-panel để overflow:hidden không ghi đè overflow:auto. */
+#col-right #auto-panel {
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #4b8f63 #0b120e;
+}
+
+#col-right #log-panel {
+  min-height: 0;
+  overflow: hidden;
 }
 
 #auto-panel::-webkit-scrollbar,
@@ -73,10 +80,6 @@
 #log-panel::-webkit-scrollbar-thumb:hover,
 .game-log::-webkit-scrollbar-thumb:hover {
   background: #63b77e;
-}
-
-#log-panel {
-  overflow: hidden;
 }
 
 #left-menu { gap: 6px; }
@@ -158,6 +161,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 6px;
   margin-top: 9px;
+  padding-bottom: 2px;
 }
 
 .side-action {
