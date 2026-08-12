@@ -1,8 +1,8 @@
 import { createItem } from './itemSchema.js'
 
 const potionMeta = {
-  hp: { name: 'Hồi Khí Đan', icon: '/assets/vltk/danduoc/hoimau.png', base: 500 },
-  mp: { name: 'Hồi Mana Đan', icon: '/assets/vltk/danduoc/hoimana.png', base: 300 },
+  hp: { name: 'Khí Huyết Đan', icon: '/assets/vltk/danduoc/hoimau.png', base: 500 },
+  mp: { name: 'Hồi Khí Đan', icon: '/assets/vltk/danduoc/hoimana.png', base: 300 },
   exp: { name: 'Tụ Linh Đan', icon: '/assets/vltk/danduoc/exp.png', base: 1000 },
   skillExp: { name: 'Ngộ Đạo Đan', icon: '/assets/vltk/danduoc/expskill.png', base: 100 },
 }
@@ -55,7 +55,7 @@ const rebirthPills = Array.from({ length: 6 }, (_, index) => {
   const requiredLevel = rebirth === 1 ? 100 : Math.min(200, 100 + (rebirth - 1) * 20)
   return createItem({
     id: `rebirth_${rebirth}`,
-    name: `Trùng Sinh Đan ${['I', 'II', 'III', 'IV', 'V', 'VI'][index]}`,
+    name: `Trùng Sinh Đan ${rebirth}`,
     type: 'consumable',
     category: 'rebirth_pill',
     level: rebirth,
@@ -64,9 +64,29 @@ const rebirthPills = Array.from({ length: 6 }, (_, index) => {
     maxStack: 99,
     requirements: { level: requiredLevel },
     price: { buy: 0, sell: 0 },
-    description: `Trùng Sinh ${rebirth}, đẳng cấp yêu cầu ${requiredLevel}.`,
+    description: `Dùng cho Trùng Sinh ${rebirth}, đẳng cấp yêu cầu ${requiredLevel}.`,
     effect: { rebirth },
   })
+})
+
+const thienCoDan = createItem({
+  id: 'thien_co_dan',
+  name: 'Thiên Cơ Đan',
+  type: 'consumable',
+  category: 'thien_co_dan',
+  icon: '/assets/vltk/danduoc/thiencodan.png',
+  stackable: true,
+  maxStack: 99,
+  requirements: { level: 1 },
+  price: { buy: 0, sell: 0 },
+  description: 'Khi phục dụng, ngẫu nhiên nhận 1 thuộc tính. Thuộc tính dạng điểm nhận ngẫu nhiên +1 đến +100; thuộc tính kháng nhận ngẫu nhiên +1% đến +5%. Kháng riêng của nhân vật tối đa 80%.',
+  effect: {
+    thienCoDan: true,
+    pointMin: 1,
+    pointMax: 100,
+    resistanceMin: 1,
+    resistanceMax: 5,
+  },
 })
 
 export const consumables = [
@@ -75,4 +95,5 @@ export const consumables = [
   ...createLevelledPills('exp'),
   ...createLevelledPills('skillExp'),
   ...rebirthPills,
+  thienCoDan,
 ]
