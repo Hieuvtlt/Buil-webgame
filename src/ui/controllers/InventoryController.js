@@ -41,6 +41,15 @@ function getItemStatsText(item) {
   return lines.length ? lines.join(' • ') : '-'
 }
 
+function findItemFromSlot(slot) {
+  // data-* attributes are always strings, while the item Map uses numeric IDs.
+  // Convert numeric IDs back before lookup so clicking an item always opens its data.
+  const rawId = slot?.dataset?.itemId
+  if (!rawId) return null
+  const numericId = Number(rawId)
+  return getItemById(Number.isNaN(numericId) ? rawId : numericId)
+}
+
 export function mountInventoryScreen() {
   const grid = document.getElementById('inventory-screen-grid')
   const icon = document.getElementById('inv-info-icon')
@@ -54,7 +63,8 @@ export function mountInventoryScreen() {
   const select = (slot) => {
     slots.forEach((item) => item.classList.remove('is-selected'))
     slot.classList.add('is-selected')
-    const item = getItemById(slot.dataset.itemId)
+
+    const item = findItemFromSlot(slot)
     if (!item) return
 
     const color = item.tierMeta?.color ?? '#00ff66'
@@ -67,8 +77,8 @@ export function mountInventoryScreen() {
     if (item.potionLevel) {
       const range = item.usableLevelRange
       meta.textContent = `Đẳng cấp yêu cầu ${range.min}-${range.max}`
-      stats.textContent = getEffectText(item)
-      desc.textContent = ''
+      stats.textContent = getEffectText(item) || '-'
+      desc.textContent = item.description || '-'
       return
     }
 
