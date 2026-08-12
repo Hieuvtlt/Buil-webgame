@@ -49,7 +49,6 @@ export const player = {
     necklace: null,
     amulet: null,
   },
-  // Túi ban đầu dùng chính các item đã khai báo trong data, không tạo item giả.
   inventory: items.slice(0, 24).map((item) => item.id),
 }
 
@@ -109,10 +108,8 @@ export function getEquipmentStats() {
   for (const item of getEquippedItems()) {
     for (const [key, value] of Object.entries(item.stats ?? {})) {
       if (!Number.isFinite(value)) continue
-
       const statKey = EQUIPMENT_ATTRIBUTE_MAP[key]
       if (statKey) bonuses[statKey] += value
-
       const resistanceKey = RESISTANCE_MAP[key]
       if (resistanceKey) bonuses[resistanceKey] += value
     }
@@ -172,25 +169,38 @@ export function addCharacterResistance(attribute, amount) {
   return true
 }
 
+const VALID_EQUIPMENT_CATEGORIES = {
+  weapon: ['sword', 'blade', 'staff', 'spear'],
+  helmet: ['helmet'],
+  armor: ['body'],
+  gloves: ['gauntlet'],
+  belt: ['belt'],
+  boots: ['boots'],
+  ring1: ['ring'],
+  ring2: ['ring'],
+  necklace: ['necklace'],
+  amulet: ['amulet'],
+}
+
 export function equipItem(slot, itemId) {
   const item = items.find((candidate) => candidate.id === Number(itemId))
-  if (!item || !['weapon', 'armor'].includes(item.type)) return false
+  if (!item || !['weapon', 'armor', 'equipment', 'accessory'].includes(item.type)) return false
+  if (!VALID_EQUIPMENT_CATEGORIES[slot]?.includes(item.category)) return false
+  if (Number(item.requirements?.level ?? item.level ?? 1) > player.level) return false
 
-  const validSlots = {
-    weapon: ['sword', 'blade', 'staff', 'spear'],
-    helmet: ['helmet'],
-    armor: ['body'],
-    gloves: ['gauntlet'],
-    belt: ['belt'],
-    boots: ['boots'],
-    ring1: ['ring'],
-    ring2: ['ring'],
-    necklace: ['necklace'],
-    amulet: ['amulet'],
+  const inventoryIndex = player.inventory.indexOf(item.id)
+  const currentlyEquippedId = player.equipment[slot]
+
+  // Item phải nằm trong túi mới được trang bị từ tooltip.
+  if (inventoryIndex < 0 && currentlyEquippedId !== item.id) return false
+
+  // Tháo món cũ về túi trước khi thay thế.
+  if (currentlyEquippedId && currentlyEquippedId !== item.id) {
+    if (!player.inventory.includes(currentlyEquippedId)) player.inventory.push(currentlyEquippedId)
   }
 
-  if (!validSlots[slot]?.includes(item.category)) return false
-  if (item.requirements?.level > player.level) return false
+  // Món mới rời khỏi túi khi được trang bị.
+  if (inventoryIndex >= 0) player.inventory.splice(inventoryIndex, 1)
 
   player.equipment[slot] = item.id
   syncDerivedStats()
@@ -199,6 +209,9 @@ export function equipItem(slot, itemId) {
 
 export function unequipItem(slot) {
   if (!Object.prototype.hasOwnProperty.call(player.equipment, slot)) return false
+  const itemId = player.equipment[slot]
+  if (!itemId) return false
+  if (!player.inventory.includes(itemId)) player.inventory.push(itemId)
   player.equipment[slot] = null
   syncDerivedStats()
   return true
