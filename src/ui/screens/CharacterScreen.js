@@ -1,6 +1,5 @@
 import characterImg from '../../assets/character.png'
 import { player, getPlayerStats, getMaxSkillLevel, getEquippedItem } from '../../data/character.js'
-import { getItemById } from '../../data/items/index.js'
 import { EQUIPMENT_SLOTS } from '../../data/equipmentSlots.js'
 
 const RESISTANCE_LABELS = [
@@ -89,25 +88,9 @@ export function CharacterScreen() {
               }).join('')}
             </div>
             <div class="equip-actions">
-              <button class="action-btn" type="button" id="btn-equip">Trang bị</button>
               <button class="action-btn danger" type="button" id="btn-unequip">Gỡ</button>
             </div>
-            <div class="equip-hint">Chọn slot và item trong túi rồi bấm Trang bị.</div>
-          </div>
-        </div>
-
-        <div class="inventory-under-panel">
-          <div class="inventory-under-title">Túi đồ</div>
-          <div class="inventory-under-grid" id="inventory-grid">
-            ${player.inventory.map((id, i) => {
-              const item = getItemById(id)
-              return `
-                <button class="inv-slot${item ? ' has-item' : ''}" type="button"
-                  data-inv-index="${i}" data-item-id="${item?.id ?? ''}" data-has-item="${item ? 'true' : 'false'}">
-                  ${item ? `<img class="equip-slot-icon" src="${item.icon}" alt="" /><span>${item.name}</span>` : `Slot ${i + 1}: Trống`}
-                </button>
-              `
-            }).join('')}
+            <div class="equip-hint">Chọn ô đang trang bị rồi bấm Gỡ. Muốn trang bị hoặc thay thế, chọn item trong Túi đồ.</div>
           </div>
         </div>
       </section>
