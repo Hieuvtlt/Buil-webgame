@@ -19,6 +19,13 @@ const STAT_LABELS = {
   lightningResist: 'Kháng lôi',
 }
 
+const QUALITY_LABELS = {
+  haPham: 'Hạ phẩm',
+  trungPham: 'Trung phẩm',
+  thuongPham: 'Thượng phẩm',
+  cucPham: 'Cực phẩm',
+}
+
 const RESIST_KEYS = new Set(['poisonResist', 'fireResist', 'iceResist', 'lightningResist'])
 
 function formatStat(key, value) {
@@ -82,14 +89,14 @@ export function mountInventoryScreen() {
 
     if (item.potionLevel) {
       const range = item.usableLevelRange
-      meta.textContent = `Đẳng cấp yêu cầu ${range.min}-${range.max}`
+      meta.textContent = `Đẳng cấp yêu cầu: ${range.min}-${range.max}`
       stats.textContent = getEffectText(item) || '-'
       desc.textContent = item.description || '-'
       return
     }
 
     if (item.tierMeta) {
-      const quality = item.quality ? ` - ${item.quality}` : ''
+      const quality = item.quality ? ` - ${QUALITY_LABELS[item.quality] ?? item.quality}` : ''
       meta.textContent = `${item.tierMeta.label}${quality} | Đẳng cấp yêu cầu: ${item.requirements.level}`
     } else {
       meta.textContent = `Loại: ${item.type} | Đẳng cấp yêu cầu: ${item.requirements?.level ?? item.level ?? '-'}`
