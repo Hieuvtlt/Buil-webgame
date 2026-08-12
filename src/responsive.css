@@ -1,32 +1,19 @@
-/* ===== Giao diện game: tối ưu 3 cột và font ===== */
+/* ===== Giao diện game: 2 cột, ưu tiên khu vực trung tâm ===== */
 #game-grid {
-  grid-template-columns: 220px minmax(0, 1fr) 220px;
+  grid-template-columns: 190px minmax(0, 1fr);
   gap: 8px;
   height: calc(100svh - 16px);
 }
 
 #col-left,
-#col-center,
-#col-right {
+#col-center {
   padding: 10px;
   border-radius: 10px;
 }
 
-#col-center {
-  min-width: 0;
-}
+#col-center { min-width: 0; }
 
-#col-right {
-  grid-template-rows: minmax(0, 1fr);
-}
-
-#col-right section {
-  padding: 10px;
-}
-
-#left-menu {
-  gap: 6px;
-}
+#left-menu { gap: 6px; }
 
 .menu-item {
   height: 38px;
@@ -49,13 +36,13 @@
   line-height: 1.35;
 }
 
-.inventory-layout-2col {
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
-  gap: 10px;
+.inventory-layout-single {
+  width: 100%;
 }
 
 .inventory-grid-wrap {
   padding: 9px;
+  max-height: calc(100svh - 170px);
 }
 
 .inventory-grid {
@@ -87,33 +74,6 @@
   font-size: 12px;
 }
 
-.inv-info-box {
-  min-height: 0;
-  height: 100%;
-  padding: 12px;
-  box-sizing: border-box;
-}
-
-.inv-info-icon {
-  width: 72px;
-  height: 72px;
-}
-
-.inv-info-title {
-  font-size: 19px;
-  line-height: 1.25;
-}
-
-.inv-info-meta,
-.inv-info-desc {
-  font-size: 14px;
-}
-
-.inv-info-stats {
-  font-size: 14px;
-  line-height: 1.55;
-}
-
 /* Trang bị nhân vật */
 .character-screen {
   grid-template-columns: minmax(330px, .9fr) minmax(0, 1.1fr);
@@ -121,27 +81,18 @@
 }
 
 .char-left,
-.char-right {
-  min-width: 0;
-}
+.char-right { min-width: 0; }
 
 .char-basic,
-.char-stat-list {
-  font-size: 14px;
-}
+.char-stat-list { font-size: 14px; }
 
 .char-figure-area {
   grid-template-columns: minmax(150px, .7fr) minmax(0, 1.3fr);
   gap: 8px;
 }
 
-.equip-panel {
-  padding: 8px;
-}
-
-.equip-grid {
-  gap: 5px;
-}
+.equip-panel { padding: 8px; }
+.equip-grid { gap: 5px; }
 
 .equip-slot,
 .inv-slot {
@@ -171,9 +122,7 @@
   object-fit: contain;
 }
 
-.inventory-under-panel {
-  padding: 9px;
-}
+.inventory-under-panel { padding: 9px; }
 
 .inventory-under-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -196,26 +145,18 @@
 }
 
 @media (max-width: 1200px) {
-  #game-grid {
-    grid-template-columns: 190px minmax(0, 1fr) 190px;
-  }
-
-  .inventory-layout-2col {
-    grid-template-columns: minmax(0, 1.25fr) minmax(250px, .75fr);
-  }
+  #game-grid { grid-template-columns: 175px minmax(0, 1fr); }
+  .inventory-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
 
 @media (max-width: 900px) {
-  #game-grid {
-    grid-template-columns: 170px minmax(0, 1fr);
-  }
+  #game-grid { grid-template-columns: 150px minmax(0, 1fr); }
+  .character-screen { grid-template-columns: 1fr; }
+  .inventory-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 
-  #col-right {
-    display: none;
-  }
-
-  .inventory-layout-2col,
-  .character-screen {
-    grid-template-columns: 1fr;
-  }
+@media (max-width: 600px) {
+  #game-grid { grid-template-columns: 1fr; height: auto; }
+  #col-left { position: sticky; top: 0; z-index: 20; }
+  .inventory-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
