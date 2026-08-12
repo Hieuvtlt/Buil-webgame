@@ -2,7 +2,7 @@ import '../../craft.css'
 import { mountLuyenKhi } from '../controllers/CraftController.js'
 
 export function LuyenKhiScreen() {
-  return `
+  const html = `
     <div class="craft-screen game-screen">
       <h1 class="craft-title">LUYỆN KHÍ</h1>
       <div class="craft-layout">
@@ -17,10 +17,12 @@ export function LuyenKhiScreen() {
           </div>
         </section>
         <aside class="craft-side-panel">
-          <section class="craft-info-box"><h3>Thông tin luyện</h3><div data-craft-info class="craft-result-placeholder">Chọn loại trang bị, level và phẩm cấp để xem thông tin và nguyên liệu.</div></section>
+          <section class="craft-info-box"><h3>Thông tin luyện</h3><div data-craft-info class="craft-result-placeholder">Chọn loại trang bị để xem thông tin và nguyên liệu.</div></section>
         </aside>
       </div>
     </div>`
+  setTimeout(() => mountLuyenKhi(document.querySelector('.craft-screen')), 0)
+  return html
 }
 
 export function mountLuyenKhiScreen(root) {
