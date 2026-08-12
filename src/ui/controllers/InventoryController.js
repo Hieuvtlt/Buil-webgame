@@ -1,5 +1,5 @@
 import { getItemById } from '../../data/items/index.js'
-import { player, equipItem, getEquippedItem } from '../../data/character.js'
+import { player, equipItem, getEquippedItem, getEquipFailureReason } from '../../data/character.js'
 
 const STAT_LABELS = {
   attackMin: 'Ngoại công thấp',
@@ -29,8 +29,8 @@ const QUALITY_LABELS = {
 
 const RESIST_KEYS = new Set(['poisonResist', 'fireResist', 'iceResist', 'lightningResist'])
 const SLOT_BY_CATEGORY = {
-  sword: 'weapon', blade: 'weapon', staff: 'weapon', spear: 'weapon',
-  helmet: 'helmet', body: 'armor', gauntlet: 'gloves', belt: 'belt', boots: 'boots',
+  sword: 'weapon', blade: 'weapon', staff: 'weapon', spear: 'weapon', weapon: 'weapon',
+  helmet: 'helmet', body: 'armor', armor: 'armor', gauntlet: 'gloves', gloves: 'gloves', belt: 'belt', boots: 'boots',
   ring: 'ring1', necklace: 'necklace', amulet: 'amulet',
 }
 
@@ -170,7 +170,17 @@ export function mountInventoryScreen() {
     tooltip.querySelector('[data-action="main"]')?.addEventListener('click', () => {
       if (!selectedItem) return
       const currentAction = getAction(selectedItem)
-      if (currentAction?.slot && equipItem(currentAction.slot, selectedItem.id)) {
+      if (!currentAction?.slot) return
+
+      const reason = getEquipFailureReason(selectedItem.id, currentAction.slot)
+      if (reason) {
+        window.dispatchEvent(new CustomEvent('game:log', {
+          detail: { message: `Không thể trang bị ${selectedItem.name}: ${reason}`, type: 'danger' },
+        }))
+        return
+      }
+
+      if (equipItem(currentAction.slot, selectedItem.id)) {
         hide()
         window.dispatchEvent(new CustomEvent('game:item-equipped', { detail: { itemId: selectedItem.id } }))
       }
@@ -178,9 +188,9 @@ export function mountInventoryScreen() {
 
     tooltip.querySelector('[data-action="sell"]')?.addEventListener('click', () => {
       if (!selectedItem) return
-      const index = player.inventory.indexOf(selectedItem.id)
+      const index = player.inventory.findIndex((id) => Number(id) === Number(selectedItem.id))
       if (index < 0) return
-      const equipped = Object.values(player.equipment).includes(selectedItem.id)
+      const equipped = Object.values(player.equipment).some((id) => Number(id) === Number(selectedItem.id))
       if (equipped) return
       const price = Number(selectedItem.price?.sell ?? 0)
       player.inventory.splice(index, 1)
