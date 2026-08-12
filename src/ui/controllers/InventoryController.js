@@ -42,7 +42,7 @@ function getEffectText(item) {
   return ''
 }
 
-function getItemStatsText(item) {
+function getItemStatLines(item) {
   const lines = []
 
   Object.entries(item.stats ?? {}).forEach(([key, value]) => {
@@ -53,7 +53,13 @@ function getItemStatsText(item) {
   const effectText = getEffectText(item)
   if (effectText) lines.push(effectText)
 
-  return lines.length ? lines.join(' • ') : '-'
+  return lines
+}
+
+function renderStatLines(element, lines) {
+  element.innerHTML = lines.length
+    ? lines.map((line) => `<div class="inv-stat-line">${line}</div>`).join('')
+    : '<div class="inv-stat-line">-</div>'
 }
 
 function findItemFromSlot(slot) {
@@ -69,8 +75,7 @@ export function mountInventoryScreen() {
   const title = document.getElementById('inv-info-title')
   const meta = document.getElementById('inv-info-meta')
   const stats = document.getElementById('inv-info-stats')
-  const desc = document.getElementById('inv-info-desc')
-  if (!grid || !icon || !title || !meta || !stats || !desc) return
+  if (!grid || !icon || !title || !meta || !stats) return
 
   const slots = Array.from(grid.querySelectorAll('.inv-slot2'))
   const select = (slot) => {
@@ -90,8 +95,7 @@ export function mountInventoryScreen() {
     if (item.potionLevel) {
       const range = item.usableLevelRange
       meta.textContent = `Đẳng cấp yêu cầu: ${range.min}-${range.max}`
-      stats.textContent = getEffectText(item) || '-'
-      desc.textContent = item.description || '-'
+      renderStatLines(stats, getItemStatLines(item))
       return
     }
 
@@ -102,8 +106,7 @@ export function mountInventoryScreen() {
       meta.textContent = `Loại: ${item.type} | Đẳng cấp yêu cầu: ${item.requirements?.level ?? item.level ?? '-'}`
     }
 
-    stats.textContent = getItemStatsText(item)
-    desc.textContent = item.description || '-'
+    renderStatLines(stats, getItemStatLines(item))
   }
 
   slots.forEach((slot) => slot.addEventListener('click', () => select(slot)))
