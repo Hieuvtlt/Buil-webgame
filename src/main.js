@@ -54,10 +54,12 @@ document.querySelector('#app').innerHTML = `
 
 const contentRoot = document.querySelector('#content-root')
 const menuButtons = Array.from(document.querySelectorAll('#left-menu .menu-item'))
+let currentScreenName = null
 
 function openScreen(name) {
   const screen = screens[name]
   if (!screen) return
+  currentScreenName = name
   contentRoot.innerHTML = screen.render()
   screen.mount?.()
 }
@@ -68,6 +70,14 @@ menuButtons.forEach((button) => {
     button.classList.add('active')
     openScreen(button.dataset.screen)
   })
+})
+
+window.addEventListener('game:inventory-changed', () => {
+  if (currentScreenName === 'Túi đồ') openScreen('Túi đồ')
+})
+
+window.addEventListener('game:item-equipped', () => {
+  if (currentScreenName === 'Túi đồ') openScreen('Túi đồ')
 })
 
 openScreen('Nhân vật')
