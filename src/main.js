@@ -49,14 +49,6 @@ document.querySelector('#app').innerHTML = `
       <h2 class="panel-title">Màn hình</h2>
       <div id="content-root"></div>
     </main>
-    <aside id="col-right">
-      <section>
-        <h2 class="panel-title">Thông tin hệ thống</h2>
-        <div>Level nhân vật: 1–200</div>
-        <div>Trang bị: Lv1–120</div>
-        <div>Võ kỹ: 10 + 10 × Trùng Sinh</div>
-      </section>
-    </aside>
   </div>
 `
 
