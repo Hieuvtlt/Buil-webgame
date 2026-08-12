@@ -1,17 +1,10 @@
 import { createItem } from './itemSchema.js'
 
-const potionNames = {
-  hp: 'Hồi Khí Đan',
-  mp: 'Hồi Linh Đan',
-  exp: 'Tụ Linh Đan',
-  skillExp: 'Ngộ Đạo Đan',
-}
-
-const potionBaseValues = {
-  hp: 100,
-  mp: 60,
-  exp: 100,
-  skillExp: 50,
+const potionMeta = {
+  hp: { name: 'Hồi Khí Đan', icon: '/assets/vltk/danduoc/hoimau.png', base: 500 },
+  mp: { name: 'Hồi Mana Đan', icon: '/assets/vltk/danduoc/hoimana.png', base: 300 },
+  exp: { name: 'Tụ Linh Đan', icon: '/assets/vltk/danduoc/exp.png', base: 1000 },
+  skillExp: { name: 'Ngộ Đạo Đan', icon: '/assets/vltk/danduoc/expskill.png', base: 100 },
 }
 
 function getRangeText(level) {
@@ -20,11 +13,10 @@ function getRangeText(level) {
 }
 
 function createLevelledPills(type) {
+  const meta = potionMeta[type]
   return Array.from({ length: 10 }, (_, index) => {
     const level = index + 1
-    const multiplier = Math.pow(2, index)
-    const name = `${potionNames[type]} Lv${level}`
-    const value = potionBaseValues[type] * multiplier
+    const value = meta.base * Math.pow(2, index)
     const effect = type === 'hp'
       ? { hp: value }
       : type === 'mp'
@@ -34,24 +26,25 @@ function createLevelledPills(type) {
           : { skillExp: value }
 
     const effectText = type === 'hp'
-      ? `Phục hồi HP ${value}`
+      ? `Phục hồi ${value} HP`
       : type === 'mp'
-        ? `Phục hồi MP ${value}`
+        ? `Phục hồi ${value} MP`
         : type === 'exp'
           ? `Nhận ${value} EXP`
           : `Nhận ${value} EXP võ kỹ`
 
     return createItem({
       id: `${type}_pill_${String(level).padStart(2, '0')}`,
-      name,
+      name: `${meta.name} Lv${level}`,
       type: 'consumable',
       category: `${type}_pill`,
       level,
       potionLevel: level,
+      icon: meta.icon,
       stackable: true,
       maxStack: 99,
       price: { buy: value, sell: Math.floor(value / 2) },
-      description: `${name}, đẳng cấp yêu cầu ${getRangeText(level)}, ${effectText}.`,
+      description: `${meta.name} Lv${level}, đẳng cấp yêu cầu ${getRangeText(level)}, ${effectText}.`,
       effect,
     })
   })
@@ -66,6 +59,7 @@ const rebirthPills = Array.from({ length: 6 }, (_, index) => {
     type: 'consumable',
     category: 'rebirth_pill',
     level: rebirth,
+    icon: '/assets/vltk/danduoc/trungsinh.png',
     stackable: true,
     maxStack: 99,
     requirements: { level: requiredLevel },
