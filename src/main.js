@@ -45,10 +45,43 @@ document.querySelector('#app').innerHTML = `
         `).join('')}
       </nav>
     </aside>
+
     <main id="col-center">
       <h2 class="panel-title">Màn hình</h2>
       <div id="content-root"></div>
     </main>
+
+    <aside id="col-right" aria-label="Auto và nhật ký">
+      <section id="auto-panel" class="side-panel">
+        <h3 class="side-panel-title">[ AUTO ]</h3>
+        <div class="auto-options">
+          <label><input type="checkbox" checked /> Auto đánh</label>
+          <label><input type="checkbox" checked /> Auto nhặt</label>
+          <label><input type="checkbox" checked /> Auto dùng buff</label>
+          <label><input type="checkbox" /> Auto dùng HP &lt; 50%</label>
+          <label><input type="checkbox" /> Auto dùng MP &lt; 30%</label>
+          <label><input type="checkbox" /> Auto dùng đan dược</label>
+          <label><input type="checkbox" /> Auto luyện võ kỹ</label>
+        </div>
+        <div class="auto-range-row">
+          <span>Phạm vi tìm</span>
+          <input id="auto-range" type="number" min="1" max="20" value="5" />
+        </div>
+        <div class="auto-actions">
+          <button class="side-action danger" type="button" id="auto-pause">TẠM DỪNG</button>
+          <button class="side-action" type="button" id="auto-stop">DỪNG</button>
+        </div>
+      </section>
+
+      <section id="log-panel" class="side-panel">
+        <h3 class="side-panel-title log-title">[ NHẬT KÝ ]</h3>
+        <div id="game-log" class="game-log" aria-live="polite">
+          <div class="log-line">[Hệ thống] Sẵn sàng.</div>
+          <div class="log-line">[Nhân vật] Đã vào trò chơi.</div>
+          <div class="log-line">[Túi đồ] Hệ thống trang bị đã sẵn sàng.</div>
+        </div>
+      </section>
+    </aside>
   </div>
 `
 
@@ -64,20 +97,48 @@ function openScreen(name) {
   screen.mount?.()
 }
 
+function addGameLog(message, type = 'system') {
+  const log = document.querySelector('#game-log')
+  if (!log) return
+  const line = document.createElement('div')
+  line.className = `log-line log-${type}`
+  line.textContent = `[${new Date().toLocaleTimeString('vi-VN')}] ${message}`
+  log.appendChild(line)
+  while (log.children.length > 100) log.removeChild(log.firstElementChild)
+  log.scrollTop = log.scrollHeight
+}
+
 menuButtons.forEach((button) => {
   button.addEventListener('click', () => {
     menuButtons.forEach((item) => item.classList.remove('active'))
     button.classList.add('active')
     openScreen(button.dataset.screen)
+    addGameLog(`Mở menu ${button.dataset.screen}.`, 'system')
   })
+})
+
+document.querySelector('#auto-pause')?.addEventListener('click', () => {
+  addGameLog('Auto đã tạm dừng.', 'warning')
+})
+
+document.querySelector('#auto-stop')?.addEventListener('click', () => {
+  addGameLog('Auto đã dừng.', 'danger')
 })
 
 window.addEventListener('game:inventory-changed', () => {
   if (currentScreenName === 'Túi đồ') openScreen('Túi đồ')
+  addGameLog('Túi đồ đã được cập nhật.', 'item')
 })
 
 window.addEventListener('game:item-equipped', () => {
   if (currentScreenName === 'Túi đồ') openScreen('Túi đồ')
+  addGameLog('Trang bị đã được cập nhật.', 'item')
+})
+
+window.addEventListener('game:log', (event) => {
+  const detail = event.detail
+  if (typeof detail === 'string') addGameLog(detail)
+  else if (detail?.message) addGameLog(detail.message, detail.type ?? 'system')
 })
 
 openScreen('Nhân vật')
