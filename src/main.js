@@ -6,6 +6,7 @@ import { InventoryScreen } from './ui/screens/InventoryScreen.js'
 import { SkillsScreen } from './ui/screens/SkillsScreen.js'
 import { LuyenDanScreen } from './ui/screens/LuyenDanScreen.js'
 import { LuyenKhiScreen } from './ui/screens/LuyenKhiScreen.js'
+import { HopThanhScreen, mountHopThanhScreen } from './ui/screens/HopThanhScreen.js'
 import { ThuongHoiScreen } from './ui/screens/ThuongHoiScreen.js'
 import { NhiemVuScreen } from './ui/screens/NhiemVuScreen.js'
 import { NgoaiCanhScreen } from './ui/screens/NgoaiCanhScreen.js'
@@ -23,6 +24,7 @@ const screens = {
   'Kỹ năng': { render: SkillsScreen, mount: mountSkillsScreen },
   'Luyện đan': { render: LuyenDanScreen },
   'Luyện khí': { render: LuyenKhiScreen },
+  'Hợp thành': { render: HopThanhScreen, mount: mountHopThanhScreen },
   'Thương hội': { render: ThuongHoiScreen, mount: mountMerchantScreen },
   'Nhiệm vụ': { render: NhiemVuScreen },
   'Ngoại cảnh': { render: NgoaiCanhScreen },
@@ -42,12 +44,10 @@ document.querySelector('#app').innerHTML = `
         `).join('')}
       </nav>
     </aside>
-
     <main id="col-center">
       <h2 class="panel-title">Màn hình</h2>
       <div id="content-root"></div>
     </main>
-
     <aside id="col-right">
       <section>
         <h2 class="panel-title">Thông tin hệ thống</h2>
