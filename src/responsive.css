@@ -1,0 +1,221 @@
+/* ===== Giao diện game: tối ưu 3 cột và font ===== */
+#game-grid {
+  grid-template-columns: 220px minmax(0, 1fr) 220px;
+  gap: 8px;
+  height: calc(100svh - 16px);
+}
+
+#col-left,
+#col-center,
+#col-right {
+  padding: 10px;
+  border-radius: 10px;
+}
+
+#col-center {
+  min-width: 0;
+}
+
+#col-right {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+#col-right section {
+  padding: 10px;
+}
+
+#left-menu {
+  gap: 6px;
+}
+
+.menu-item {
+  height: 38px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.panel-title {
+  font-size: 21px;
+  margin-bottom: 8px;
+}
+
+.panel-title-sm {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.game-screen {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.inventory-layout-2col {
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+  gap: 10px;
+}
+
+.inventory-grid-wrap {
+  padding: 9px;
+}
+
+.inventory-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.inv-slot2 {
+  min-width: 0;
+  height: 58px;
+  min-height: 58px;
+  padding: 5px;
+  gap: 5px;
+  font-size: 12px;
+}
+
+.item-icon-wrap {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+}
+
+.item-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.item-name {
+  font-size: 12px;
+}
+
+.inv-info-box {
+  min-height: 0;
+  height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.inv-info-icon {
+  width: 72px;
+  height: 72px;
+}
+
+.inv-info-title {
+  font-size: 19px;
+  line-height: 1.25;
+}
+
+.inv-info-meta,
+.inv-info-desc {
+  font-size: 14px;
+}
+
+.inv-info-stats {
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* Trang bị nhân vật */
+.character-screen {
+  grid-template-columns: minmax(330px, .9fr) minmax(0, 1.1fr);
+  gap: 10px;
+}
+
+.char-left,
+.char-right {
+  min-width: 0;
+}
+
+.char-basic,
+.char-stat-list {
+  font-size: 14px;
+}
+
+.char-figure-area {
+  grid-template-columns: minmax(150px, .7fr) minmax(0, 1.3fr);
+  gap: 8px;
+}
+
+.equip-panel {
+  padding: 8px;
+}
+
+.equip-grid {
+  gap: 5px;
+}
+
+.equip-slot,
+.inv-slot {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+}
+
+.equip-slot {
+  height: 46px;
+  padding: 4px 6px;
+  gap: 5px;
+}
+
+.equip-slot span,
+.inv-slot span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.equip-slot-icon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  object-fit: contain;
+}
+
+.inventory-under-panel {
+  padding: 9px;
+}
+
+.inventory-under-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.inv-slot {
+  height: 48px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+}
+
+.equip-hint {
+  margin-top: 7px;
+  font-size: 12px;
+  color: #79bd8f;
+}
+
+@media (max-width: 1200px) {
+  #game-grid {
+    grid-template-columns: 190px minmax(0, 1fr) 190px;
+  }
+
+  .inventory-layout-2col {
+    grid-template-columns: minmax(0, 1.25fr) minmax(250px, .75fr);
+  }
+}
+
+@media (max-width: 900px) {
+  #game-grid {
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+
+  #col-right {
+    display: none;
+  }
+
+  .inventory-layout-2col,
+  .character-screen {
+    grid-template-columns: 1fr;
+  }
+}
