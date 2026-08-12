@@ -1,4 +1,5 @@
-import { items } from '../../data/items/index.js'
+import { player } from '../../data/character.js'
+import { getItemById } from '../../data/items/index.js'
 
 function getItemColor(item) {
   return item?.qualityColor ?? item?.tierMeta?.color ?? '#d7d7d7'
@@ -6,7 +7,10 @@ function getItemColor(item) {
 
 export function InventoryScreen() {
   const slotsPerPage = 50
-  const previewItems = items.slice(0, slotsPerPage)
+  const inventoryItems = player.inventory
+    .map((id) => getItemById(id))
+    .filter(Boolean)
+    .slice(0, slotsPerPage)
 
   return `
     <div class="inventory-screen game-screen">
@@ -15,7 +19,7 @@ export function InventoryScreen() {
         <div class="inventory-grid-wrap">
           <div class="inventory-grid" id="inventory-screen-grid">
             ${Array.from({ length: slotsPerPage }, (_, i) => {
-              const item = previewItems[i]
+              const item = inventoryItems[i]
               const color = getItemColor(item)
               const quantityText = item ? (item.stackable ? `x1/${item.maxStack}` : 'x1') : ''
               return `
@@ -37,8 +41,8 @@ export function InventoryScreen() {
         </div>
       </div>
       <div class="inventory-currency">
-        <div class="currency-box">Ngân lượng: 0</div>
-        <div class="currency-box">Linh thạch: 0</div>
+        <div class="currency-box">Ngân lượng: ${player.gold}</div>
+        <div class="currency-box">Linh thạch: ${player.spiritStone}</div>
       </div>
     </div>
   `
