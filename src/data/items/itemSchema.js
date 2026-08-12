@@ -11,11 +11,25 @@ export const EQUIPMENT_TIERS = {
   thien: { minLevel: 91, maxLevel: 120, color: '#ff4d4d', label: 'Thiên cấp', attributeRange: [8, 10] },
 }
 
-export const QUALITY_MULTIPLIERS = {
-  haPham: [0, 0.2],
-  trungPham: [0.4, 0.5],
-  thuongPham: [0.6, 0.8],
-  cucPham: [0.8, 1.2],
+// Phẩm chất quyết định hệ số sức mạnh của các dòng thuộc tính và màu hiển thị.
+// Đây là quy tắc riêng với màu cấp trang bị Hoàng/Huyền/Địa/Thiên.
+export const QUALITY_META = {
+  haPham: { label: 'Hạ phẩm', range: [0, 20], multiplier: [0, 0.2], color: '#ffffff' },
+  trungPham: { label: 'Trung phẩm', range: [40, 50], multiplier: [0.4, 0.5], color: '#4da6ff' },
+  thuongPham: { label: 'Thượng phẩm', range: [60, 80], multiplier: [0.6, 0.8], color: '#ffd54a' },
+  cucPham: { label: 'Cực phẩm', range: [80, 120], multiplier: [0.8, 1.2], color: '#ff4d4d' },
+}
+
+export const QUALITY_MULTIPLIERS = Object.fromEntries(
+  Object.entries(QUALITY_META).map(([key, meta]) => [key, meta.multiplier]),
+)
+
+export function getQualityMeta(quality) {
+  return QUALITY_META[quality] ?? null
+}
+
+export function getQualityColor(quality, fallback = '#ffffff') {
+  return QUALITY_META[quality]?.color ?? fallback
 }
 
 export function getEquipmentTier(level) {
@@ -104,6 +118,8 @@ export function createItem(data) {
   const itemLevel = isEquipment ? Math.max(1, Math.min(120, data.level ?? 1)) : data.level ?? 1
   const tier = isEquipment ? getEquipmentTier(itemLevel) : null
   const tierMeta = isEquipment ? getEquipmentTierMeta(itemLevel) : null
+  const quality = data.quality ?? null
+  const qualityMeta = isEquipment ? getQualityMeta(quality) : null
   const potionRange = data.potionLevel ? getPotionLevelRange(data.potionLevel) : null
 
   let stats = {
@@ -137,7 +153,11 @@ export function createItem(data) {
     tierMeta,
     attributeRange: tierMeta?.attributeRange ?? null,
     displayedStats: isEquipment ? buildDisplayedStats(stats, data.id, tierMeta) : stats,
-    quality: data.quality ?? null,
+    quality,
+    qualityMeta,
+    qualityColor: qualityMeta?.color ?? tierMeta?.color ?? '#ffffff',
+    qualityRange: qualityMeta?.range ?? null,
+    qualityMultiplier: qualityMeta?.multiplier ?? null,
     icon: getDefaultIcon(data, isEquipment),
     stackable: isEquipment ? false : (data.stackable ?? false),
     maxStack: isEquipment ? 1 : (data.type === 'consumable' ? 99 : (data.maxStack ?? 1)),
