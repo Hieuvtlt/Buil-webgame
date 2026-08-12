@@ -9,7 +9,8 @@ const groups = {
   danduoc: {
     label: 'Đan dược',
     options: ['Hồi Khí Đan', 'Hồi Mana Đan', 'Tụ Linh Đan', 'Ngộ Đạo Đan'],
-    icon: () => '/assets/vltk/danduoc/hoimau.png',
+    icons: ['hoimau.png', 'hoimana.png', 'exp.png', 'expskill.png'],
+    icon: (index) => `/assets/vltk/danduoc/${groups.danduoc.icons[index]}`,
   },
 }
 
@@ -36,11 +37,18 @@ export function HopThanhScreen() {
     </div>`
 }
 
-function getCurrentCount() {
+function getCurrentCount(itemName, level) {
   const inventory = globalThis.gameState?.inventory ?? globalThis.player?.inventory ?? globalThis.inventory
   if (!inventory) return 0
-  if (!Array.isArray(inventory)) return 0
-  return inventory.reduce((sum, entry) => sum + Number(entry?.quantity ?? entry?.count ?? 0), 0)
+  if (Array.isArray(inventory)) {
+    return inventory.reduce((sum, entry) => {
+      if (entry?.name === `${itemName} Lv${level}` || (entry?.name === itemName && Number(entry?.level) === level)) {
+        return sum + Number(entry.quantity ?? entry.count ?? entry.amount ?? 0)
+      }
+      return sum
+    }, 0)
+  }
+  return 0
 }
 
 export function mountHopThanhScreen() {
@@ -61,9 +69,9 @@ export function mountHopThanhScreen() {
     const lv = Number(level.value)
     const next = lv + 1
     const over = lv + 2
-    const chance = lv < 9 ? `${Math.floor(Math.random() * 5) + 1}%` : '0% (Lv9 → Lv10)'
-    const current = getCurrentCount()
+    const chance = lv < 9 ? `${Math.floor(Math.random() * 5) + 1}%` : '0%'
     const name = data.options[itemIndex]
+    const current = getCurrentCount(name, lv)
     const icon = data.icon(itemIndex)
     info.innerHTML = `
       <div class="craft-selected-head"><img class="craft-selected-icon" src="${icon}" alt=""><div><div class="craft-selected-name">${name} Lv${lv}</div><div class="craft-subtitle">2 Lv${lv} → 1 Lv${next}</div></div></div>
