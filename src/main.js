@@ -2,6 +2,7 @@ import './style.css'
 import './game.css'
 import './responsive.css'
 import './game-ui-redesign.css'
+import './game-ui-compact.css'
 
 import characterImg from './assets/character.png'
 import { player, getPlayerStats } from './data/character.js'
