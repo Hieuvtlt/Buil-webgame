@@ -2,6 +2,7 @@
 // Level nhân vật: 1-200. Mỗi lần lên cấp nhận 5 điểm tự do.
 
 import { clampCharacterResistances } from './attributeRules.js'
+import { items } from './items/index.js'
 
 export const MAX_CHARACTER_LEVEL = 200
 export const POINTS_PER_LEVEL = 5
@@ -36,29 +37,121 @@ export const player = {
     iceResistance: 0,
     lightningResistance: 0,
   },
+  equipment: {
+    weapon: null,
+    helmet: null,
+    armor: null,
+    gloves: null,
+    belt: null,
+    boots: null,
+    ring1: null,
+    ring2: null,
+    necklace: null,
+    amulet: null,
+  },
+  // Túi ban đầu dùng chính các item đã khai báo trong data, không tạo item giả.
+  inventory: items.slice(0, 24).map((item) => item.id),
+}
+
+const EQUIPMENT_ATTRIBUTE_MAP = {
+  strength: 'strength',
+  dexterity: 'dexterity',
+  vitality: 'vitality',
+  energy: 'energy',
+  accuracy: 'accuracy',
+  dodge: 'dodge',
+  hp: 'hp',
+  mp: 'mp',
+  defense: 'defense',
+  attackMin: 'attackMin',
+  attackMax: 'attackMax',
+  externalAttack: 'externalAttack',
+}
+
+const RESISTANCE_MAP = {
+  poisonResist: 'poisonResistance',
+  fireResist: 'fireResistance',
+  iceResist: 'iceResistance',
+  lightningResist: 'lightningResistance',
 }
 
 export function getMaxSkillLevel() {
   return 10 + player.rebirth * 10
 }
 
+function getEquippedItems() {
+  return Object.values(player.equipment)
+    .filter(Boolean)
+    .map((id) => items.find((item) => item.id === id))
+    .filter(Boolean)
+}
+
+export function getEquipmentStats() {
+  const bonuses = {
+    attackMin: 0,
+    attackMax: 0,
+    defense: 0,
+    accuracy: 0,
+    dodge: 0,
+    hp: 0,
+    mp: 0,
+    externalAttack: 0,
+    strength: 0,
+    dexterity: 0,
+    vitality: 0,
+    energy: 0,
+    poisonResistance: 0,
+    fireResistance: 0,
+    iceResistance: 0,
+    lightningResistance: 0,
+  }
+
+  for (const item of getEquippedItems()) {
+    for (const [key, value] of Object.entries(item.stats ?? {})) {
+      if (!Number.isFinite(value)) continue
+
+      const statKey = EQUIPMENT_ATTRIBUTE_MAP[key]
+      if (statKey) bonuses[statKey] += value
+
+      const resistanceKey = RESISTANCE_MAP[key]
+      if (resistanceKey) bonuses[resistanceKey] += value
+    }
+  }
+
+  return bonuses
+}
+
+export function getEquippedItem(slot) {
+  const id = player.equipment[slot]
+  return id ? items.find((item) => item.id === id) ?? null : null
+}
+
 export function getPlayerStats() {
-  const { strength, dexterity, vitality, energy } = player.attributes
-  const resistances = clampCharacterResistances(player.resistances)
-  player.resistances = resistances
+  const equipment = getEquipmentStats()
+  const strength = player.attributes.strength + equipment.strength
+  const dexterity = player.attributes.dexterity + equipment.dexterity
+  const vitality = player.attributes.vitality + equipment.vitality
+  const energy = player.attributes.energy + equipment.energy
+
+  const resistances = clampCharacterResistances({
+    poisonResistance: player.resistances.poisonResistance + equipment.poisonResistance,
+    fireResistance: player.resistances.fireResistance + equipment.fireResistance,
+    iceResistance: player.resistances.iceResistance + equipment.iceResistance,
+    lightningResistance: player.resistances.lightningResistance + equipment.lightningResistance,
+  })
 
   return {
     strength,
     dexterity,
     vitality,
     energy,
-    maxHp: 100 + vitality * 20,
-    maxMp: 100 + energy * 10,
-    attackMin: 10 + strength * 2,
-    attackMax: 15 + strength * 3,
-    defense: 5 + dexterity,
-    accuracy: 10 + dexterity * 2,
-    dodge: 5 + dexterity,
+    maxHp: 100 + vitality * 20 + equipment.hp,
+    maxMp: 100 + energy * 10 + equipment.mp,
+    attackMin: 10 + strength * 2 + equipment.attackMin + equipment.externalAttack,
+    attackMax: 15 + strength * 3 + equipment.attackMax + equipment.externalAttack,
+    defense: 5 + dexterity + equipment.defense,
+    accuracy: 10 + dexterity * 2 + equipment.accuracy,
+    dodge: 5 + dexterity + equipment.dodge,
     ...resistances,
   }
 }
@@ -76,6 +169,38 @@ export function addCharacterResistance(attribute, amount) {
   if (!Object.prototype.hasOwnProperty.call(player.resistances, attribute)) return false
   if (!Number.isFinite(amount)) return false
   player.resistances[attribute] = Math.min(80, Math.max(0, player.resistances[attribute] + amount))
+  return true
+}
+
+export function equipItem(slot, itemId) {
+  const item = items.find((candidate) => candidate.id === Number(itemId))
+  if (!item || !['weapon', 'armor'].includes(item.type)) return false
+
+  const validSlots = {
+    weapon: ['sword', 'blade', 'staff', 'spear'],
+    helmet: ['helmet'],
+    armor: ['body'],
+    gloves: ['gauntlet'],
+    belt: ['belt'],
+    boots: ['boots'],
+    ring1: ['ring'],
+    ring2: ['ring'],
+    necklace: ['necklace'],
+    amulet: ['amulet'],
+  }
+
+  if (!validSlots[slot]?.includes(item.category)) return false
+  if (item.requirements?.level > player.level) return false
+
+  player.equipment[slot] = item.id
+  syncDerivedStats()
+  return true
+}
+
+export function unequipItem(slot) {
+  if (!Object.prototype.hasOwnProperty.call(player.equipment, slot)) return false
+  player.equipment[slot] = null
+  syncDerivedStats()
   return true
 }
 
