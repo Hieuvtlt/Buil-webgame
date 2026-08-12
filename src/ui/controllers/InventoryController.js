@@ -45,10 +45,11 @@ function getEffectText(item) {
 function getItemStatsText(item) {
   const statSource = item.displayedStats ?? item.stats ?? {}
   const lines = []
+  const attributeColor = item.qualityColor ?? item.tierMeta?.color ?? '#ffffff'
 
   Object.entries(statSource).forEach(([key, value]) => {
     const text = formatStat(key, value)
-    if (text) lines.push(`<div class="item-stat-line" style="color:${item.tierMeta?.color ?? 'inherit'}">${text}</div>`)
+    if (text) lines.push(`<div class="item-stat-line" style="color:${attributeColor}">${text}</div>`)
   })
 
   const effectText = getEffectText(item)
