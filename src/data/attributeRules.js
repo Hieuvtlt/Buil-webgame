@@ -2,10 +2,10 @@
 // Không có Kháng tất cả và Tốc độ đánh.
 
 export const ELEMENTAL_RESISTANCES = [
-  'poisonResistance',
-  'fireResistance',
-  'iceResistance',
-  'lightningResistance',
+  'poisonResist',
+  'fireResist',
+  'iceResist',
+  'lightningResist',
 ]
 
 // Kháng của nhân vật không bao giờ vượt 80%, dù đến từ trang bị, võ kỹ,
@@ -82,8 +82,6 @@ export function getEquipmentQualityColor(quality) {
   return QUALITY_COLORS[quality] ?? QUALITY_COLORS.haPham
 }
 
-// HP/MP được cố ý giữ thấp để tránh phình chỉ số nhân vật.
-// 100% = 200 điểm; 120% = 250 điểm.
 export function getHpMpByPercent(percent) {
   const p = Math.max(0, Number(percent) || 0)
   if (p <= 100) return Math.round(p * 2)
