@@ -1,6 +1,17 @@
 import '../../craft.css'
 
-const types = ['Linh dược', 'Đan dược']
+const groups = {
+  linhduoc: {
+    label: 'Linh dược',
+    options: ['Huyết Linh Chi', 'Nhân Sâm', 'Cam Thảo', 'Tử Linh Hoa', 'Bích Huyết Thảo', 'Thanh Tâm Thảo', 'Hỏa Linh Thảo', 'Băng Tâm Liên', 'Ngọc Linh Quả', 'Tử Vân Thảo', 'Long Huyết Thảo', 'Thiên Linh Chi'],
+    icon: (index) => `/assets/vltk/linhduoc/${index + 1}.png`,
+  },
+  danduoc: {
+    label: 'Đan dược',
+    options: ['Hồi Khí Đan', 'Hồi Mana Đan', 'Tụ Linh Đan', 'Ngộ Đạo Đan'],
+    icon: () => '/assets/vltk/danduoc/hoimau.png',
+  },
+}
 
 export function HopThanhScreen() {
   return `
@@ -10,35 +21,59 @@ export function HopThanhScreen() {
         <section class="craft-main-panel">
           <div class="craft-machine-frame"><div class="craft-machine-placeholder">KHUNG HỢP THÀNH</div></div>
           <div class="craft-fields">
-            <label class="craft-field"><span>Loại</span><select id="fusion-type">${types.map((x) => `<option>${x}</option>`).join('')}</select></label>
+            <label class="craft-field"><span>Loại</span><select id="fusion-group"><option value="linhduoc">Linh dược</option><option value="danduoc">Đan dược</option></select></label>
+            <label class="craft-field"><span>Vật phẩm</span><select id="fusion-item"></select></label>
             <label class="craft-field"><span>Level</span><select id="fusion-level">${Array.from({length:9},(_,i)=>`<option value="${i+1}">Lv${i+1}</option>`).join('')}</select></label>
             <div class="fusion-rule">2 vật phẩm cùng loại + cùng level → 1 vật phẩm level kế tiếp.</div>
-            <div class="fusion-rule">Vượt cấp: tỷ lệ 1%–5% → nhận vật phẩm cao hơn 1 level.</div>
-            <button class="craft-button" type="button">HỢP THÀNH</button>
+            <div class="fusion-rule">Tỷ lệ vượt cấp: 1%-5% → có thể nhận cao hơn thêm 1 level.</div>
+            <button class="craft-button" type="button" id="fusion-button">HỢP THÀNH</button>
           </div>
         </section>
         <aside class="craft-side-panel">
-          <section class="craft-info-box"><h3>Thông tin</h3><div id="fusion-info" class="craft-result-placeholder">Chọn loại và level để xem kết quả.</div></section>
-          <section class="craft-info-box"><h3>Nguyên liệu</h3><div id="fusion-material" class="craft-material-list"></div></section>
+          <section class="craft-info-box craft-info-unified"><h3>Thông tin hợp thành</h3><div id="fusion-info" class="craft-result-placeholder">Chọn vật phẩm và level để xem kết quả.</div><div class="craft-material-title">Nguyên liệu cần:</div><div id="fusion-material" class="craft-material-list"></div></section>
         </aside>
       </div>
     </div>`
 }
 
+function getCurrentCount() {
+  const inventory = globalThis.gameState?.inventory ?? globalThis.player?.inventory ?? globalThis.inventory
+  if (!inventory) return 0
+  if (!Array.isArray(inventory)) return 0
+  return inventory.reduce((sum, entry) => sum + Number(entry?.quantity ?? entry?.count ?? 0), 0)
+}
+
 export function mountHopThanhScreen() {
-  const type = document.querySelector('#fusion-type')
+  const group = document.querySelector('#fusion-group')
+  const item = document.querySelector('#fusion-item')
   const level = document.querySelector('#fusion-level')
   const info = document.querySelector('#fusion-info')
   const material = document.querySelector('#fusion-material')
+
+  const updateItems = () => {
+    const data = groups[group.value]
+    item.innerHTML = data.options.map((name, index) => `<option value="${index}">${name}</option>`).join('')
+  }
+
   const update = () => {
+    const data = groups[group.value]
+    const itemIndex = Number(item.value || 0)
     const lv = Number(level.value)
     const next = lv + 1
     const over = lv + 2
-    const chance = lv < 9 ? Math.floor(Math.random() * 5) + 1 : 0
-    info.innerHTML = `${type.value} Lv${lv}<br><strong>2 Lv${lv} → 1 Lv${next}</strong><br>Vượt cấp lên Lv${over}: ${chance}%`
-    material.innerHTML = `<div class="craft-material-row"><span>${type.value} Lv${lv}</span><b>0/2</b></div>`
+    const chance = lv < 9 ? `${Math.floor(Math.random() * 5) + 1}%` : '0% (Lv9 → Lv10)'
+    const current = getCurrentCount()
+    const name = data.options[itemIndex]
+    const icon = data.icon(itemIndex)
+    info.innerHTML = `
+      <div class="craft-selected-head"><img class="craft-selected-icon" src="${icon}" alt=""><div><div class="craft-selected-name">${name} Lv${lv}</div><div class="craft-subtitle">2 Lv${lv} → 1 Lv${next}</div></div></div>
+      <div class="craft-effect">Vượt cấp lên Lv${over}: ${chance}</div>`
+    material.innerHTML = `<div class="craft-material-row ${current >= 2 ? 'is-enough' : 'is-short'}"><span>${name} Lv${lv}</span><b>${current}/2</b></div>`
   }
-  type.addEventListener('change', update)
+
+  group.addEventListener('change', () => { updateItems(); update() })
+  item.addEventListener('change', update)
   level.addEventListener('change', update)
+  updateItems()
   update()
 }
