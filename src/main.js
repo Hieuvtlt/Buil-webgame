@@ -1,6 +1,7 @@
 import './style.css'
 import './game.css'
 import './responsive.css'
+import './game-ui.css'
 
 import { CharacterScreen } from './ui/screens/CharacterScreen.js'
 import { InventoryScreen } from './ui/screens/InventoryScreen.js'
