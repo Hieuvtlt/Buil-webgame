@@ -41,6 +41,44 @@
   background: rgba(7, 12, 9, .75);
 }
 
+/* AUTO có thanh cuộn riêng để không bị mất các nút phía dưới */
+#auto-panel {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #4b8f63 #0b120e;
+}
+
+#auto-panel::-webkit-scrollbar,
+#log-panel::-webkit-scrollbar,
+.game-log::-webkit-scrollbar {
+  width: 7px;
+}
+
+#auto-panel::-webkit-scrollbar-track,
+#log-panel::-webkit-scrollbar-track,
+.game-log::-webkit-scrollbar-track {
+  background: #0b120e;
+  border-radius: 6px;
+}
+
+#auto-panel::-webkit-scrollbar-thumb,
+#log-panel::-webkit-scrollbar-thumb,
+.game-log::-webkit-scrollbar-thumb {
+  background: #4b8f63;
+  border-radius: 6px;
+}
+
+#auto-panel::-webkit-scrollbar-thumb:hover,
+#log-panel::-webkit-scrollbar-thumb:hover,
+.game-log::-webkit-scrollbar-thumb:hover {
+  background: #63b77e;
+}
+
+#log-panel {
+  overflow: hidden;
+}
+
 #left-menu { gap: 6px; }
 
 .menu-item {
@@ -146,6 +184,8 @@
   font-size: 11px;
   line-height: 1.5;
   text-align: left;
+  scrollbar-width: thin;
+  scrollbar-color: #4b8f63 #0b120e;
 }
 
 .log-line {
