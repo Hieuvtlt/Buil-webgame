@@ -1,4 +1,13 @@
 import { getVltkIcon } from '../vltkIconCatalog.js'
+import {
+  EQUIPMENT_STAT_CAPS,
+  ELEMENTAL_RESISTANCES,
+  clampEquipmentResistance,
+  clampEquipmentStat,
+  getEquipmentQualityColor,
+  getEquipmentQualityPercent,
+  getHpMpByPercent,
+} from '../attributeRules.js'
 
 // Schema chung cho Item.
 // Hoàng/Huyền/Địa/Thiên chỉ áp dụng cho TRANG BỊ.
@@ -11,18 +20,19 @@ export const EQUIPMENT_TIERS = {
   thien: { minLevel: 91, maxLevel: 120, color: '#ff4d4d', label: 'Thiên cấp', attributeRange: [8, 10] },
 }
 
-// Phẩm chất quyết định hệ số sức mạnh của các dòng thuộc tính và màu hiển thị.
-// Đây là quy tắc riêng với màu cấp trang bị Hoàng/Huyền/Địa/Thiên.
 export const QUALITY_META = {
-  haPham: { label: 'Hạ phẩm', range: [0, 20], multiplier: [0, 0.2], color: '#ffffff' },
-  trungPham: { label: 'Trung phẩm', range: [40, 50], multiplier: [0.4, 0.5], color: '#4da6ff' },
-  thuongPham: { label: 'Thượng phẩm', range: [60, 80], multiplier: [0.6, 0.8], color: '#ffd54a' },
-  cucPham: { label: 'Cực phẩm', range: [80, 120], multiplier: [0.8, 1.2], color: '#ff4d4d' },
+  haPham: { label: 'Hạ phẩm', color: '#ffffff' },
+  trungPham: { label: 'Trung phẩm', color: '#4da6ff' },
+  thuongPham: { label: 'Thượng phẩm', color: '#ffd54a' },
+  cucPham: { label: 'Cực phẩm', color: '#ff4d4d' },
 }
 
-export const QUALITY_MULTIPLIERS = Object.fromEntries(
-  Object.entries(QUALITY_META).map(([key, meta]) => [key, meta.multiplier]),
-)
+export const QUALITY_MULTIPLIERS = {
+  haPham: 0.10,
+  trungPham: 0.15,
+  thuongPham: 0.20,
+  cucPham: 0.30,
+}
 
 export function getQualityMeta(quality) {
   return QUALITY_META[quality] ?? null
@@ -64,40 +74,92 @@ function roundPositive(value) {
   return Math.max(1, Math.round(value))
 }
 
-// Một số bộ trang bị hiện mới khai báo 3-4 dòng cơ bản. Bổ sung các dòng
-// phù hợp để hệ thống có thể thực sự đạt đúng 6-8 dòng ở Địa cấp và 8-10 dòng ở Thiên cấp.
-// Giá trị HP/MP cố ý giữ thấp để tránh phình chỉ số nhân vật.
-function enrichEquipmentStats(stats, data, tier) {
+function getDefaultQuality(itemId) {
+  const qualities = ['haPham', 'trungPham', 'thuongPham', 'cucPham']
+  const seed = Math.abs(Number(itemId) || 0)
+  return qualities[seed % qualities.length]
+}
+
+function getQualityPercent(tier, quality) {
+  return getEquipmentQualityPercent(tier, quality)
+}
+
+// Các dòng thuộc tính được xây dựng theo hướng VLTK: công thủ, sức mạnh,
+// thân pháp, sinh khí/nội lực, chính xác, né tránh và kháng nguyên tố.
+// Không sinh Kháng tất cả và không sinh Tốc độ đánh.
+function enrichEquipmentStats(stats, data, tier, qualityPercent) {
   const result = { ...stats }
-  const scale = { hoang: 1, huyen: 1.7, dia: 2.6, thien: 3.5 }[tier]
+  const tierScale = { hoang: 1, huyen: 1.7, dia: 2.6, thien: 3.5 }[tier]
+  const qualityScale = qualityPercent / 100
   const attackBase = result.attackMax || result.attackMin || 10
   const defenseBase = result.defense || 5
   const accuracyBase = result.accuracy || 4
 
   const extras = {
-    defense: roundPositive(defenseBase * (result.defense ? 1 : 0.9)),
-    dexterity: roundPositive((result.dexterity || accuracyBase / 3) * scale),
-    vitality: roundPositive((result.vitality || 2) * scale),
-    energy: roundPositive((result.energy || 2) * scale),
-    dodge: roundPositive((result.dodge || accuracyBase / 3) * scale),
-    hp: result.hp || roundPositive(35 * scale),
-    mp: result.mp || roundPositive(30 * scale),
+    defense: roundPositive(defenseBase),
+    dexterity: roundPositive((result.dexterity || accuracyBase / 3) * tierScale),
+    vitality: roundPositive((result.vitality || 2) * tierScale),
+    energy: roundPositive((result.energy || 2) * tierScale),
+    dodge: roundPositive((result.dodge || accuracyBase / 3) * tierScale),
+    hp: result.hp || 0,
+    mp: result.mp || 0,
     externalAttack: result.externalAttack || roundPositive(attackBase * 0.08),
-    poisonResist: result.poisonResist || 0,
-    fireResist: result.fireResist || 0,
-    iceResist: result.iceResist || 0,
-    lightningResist: result.lightningResist || 0,
   }
 
-  // Không thêm Kháng tất cả hoặc Tốc độ đánh.
+  // Bổ sung kháng theo cấp nhưng giữ tối đa 25% cho từng dòng trên một món.
+  // Chỉ tạo kháng khi dữ liệu món đã có ít nhất một dòng kháng, tránh mọi món
+  // đều biến thành trang bị chống toàn hệ.
+  const hasResistance = ELEMENTAL_RESISTANCES.some((key) => {
+    const legacyKey = key
+    return Number(result[legacyKey]) > 0
+  })
+
+  if (hasResistance) {
+    const tierResistanceBase = { hoang: 2, huyen: 7, dia: 14, thien: 20 }[tier]
+    for (const key of ELEMENTAL_RESISTANCES) {
+      if (Number(result[key]) > 0) {
+        result[key] = Math.max(Number(result[key]), tierResistanceBase)
+      }
+    }
+  }
+
   for (const [key, value] of Object.entries(extras)) {
     if (!result[key] && value > 0) result[key] = value
+  }
+
+  // Áp dụng phẩm chất vào toàn bộ dòng điểm.
+  for (const [key, value] of Object.entries(result)) {
+    const numeric = Number(value) || 0
+    if (numeric <= 0) continue
+
+    if (ELEMENTAL_RESISTANCES.includes(key)) {
+      result[key] = clampEquipmentResistance(numeric * qualityScale)
+      continue
+    }
+
+    if (key === 'hp' || key === 'mp') {
+      // HP/MP có thang riêng: 100%=200, 120%=250.
+      result[key] = getHpMpByPercent(qualityPercent)
+      continue
+    }
+
+    result[key] = Math.max(1, Math.round(numeric * qualityScale))
+    result[key] = clampEquipmentStat(key, result[key])
+  }
+
+  // Một món không có HP/MP gốc vẫn có thể nhận dòng HP/MP ở phẩm chất cao,
+  // nhưng luôn theo mức thấp đã quy định, không phình máu/mana.
+  if (data.category === 'helmet' || data.category === 'belt' || data.category === 'body' || data.category === 'necklace') {
+    result.hp = getHpMpByPercent(qualityPercent)
+  }
+  if (data.category === 'amulet') {
+    result.mp = getHpMpByPercent(qualityPercent)
   }
 
   return result
 }
 
-// Số lượng thuộc tính ổn định theo ID, không thay đổi mỗi lần mở game.
+// Số lượng dòng thuộc tính ổn định theo ID, không thay đổi mỗi lần mở game.
 function getAttributeCount(itemId, tierMeta, availableCount) {
   const [min, max] = tierMeta.attributeRange
   if (availableCount <= 0) return 0
@@ -118,8 +180,9 @@ export function createItem(data) {
   const itemLevel = isEquipment ? Math.max(1, Math.min(120, data.level ?? 1)) : data.level ?? 1
   const tier = isEquipment ? getEquipmentTier(itemLevel) : null
   const tierMeta = isEquipment ? getEquipmentTierMeta(itemLevel) : null
-  const quality = data.quality ?? null
+  const quality = isEquipment ? (data.quality ?? getDefaultQuality(data.id)) : (data.quality ?? null)
   const qualityMeta = isEquipment ? getQualityMeta(quality) : null
+  const qualityPercent = isEquipment ? getQualityPercent(tier, quality) : null
   const potionRange = data.potionLevel ? getPotionLevelRange(data.potionLevel) : null
 
   let stats = {
@@ -141,7 +204,7 @@ export function createItem(data) {
     lightningResist: data.stats?.lightningResist ?? 0,
   }
 
-  if (isEquipment) stats = enrichEquipmentStats(stats, data, tier)
+  if (isEquipment) stats = enrichEquipmentStats(stats, data, tier, qualityPercent)
 
   return {
     id: data.id,
@@ -155,9 +218,10 @@ export function createItem(data) {
     displayedStats: isEquipment ? buildDisplayedStats(stats, data.id, tierMeta) : stats,
     quality,
     qualityMeta,
-    qualityColor: qualityMeta?.color ?? tierMeta?.color ?? '#ffffff',
-    qualityRange: qualityMeta?.range ?? null,
-    qualityMultiplier: qualityMeta?.multiplier ?? null,
+    qualityPercent,
+    qualityColor: isEquipment ? getEquipmentQualityColor(quality) : '#ffffff',
+    qualityRange: isEquipment ? [qualityPercent, qualityPercent] : null,
+    qualityMultiplier: isEquipment ? qualityPercent / 100 : null,
     icon: getDefaultIcon(data, isEquipment),
     stackable: isEquipment ? false : (data.stackable ?? false),
     maxStack: isEquipment ? 1 : (data.type === 'consumable' ? 99 : (data.maxStack ?? 1)),
