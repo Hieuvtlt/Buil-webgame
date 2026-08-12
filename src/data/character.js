@@ -31,7 +31,7 @@ const EQUIPMENT_ATTRIBUTE_MAP = {
 const RESISTANCE_MAP = { poisonResist: 'poisonResistance', fireResist: 'fireResistance', iceResist: 'iceResistance', lightningResist: 'lightningResistance' }
 
 export function getMaxSkillLevel() { return 10 + player.rebirth * 10 }
-function getEquippedItems() { return Object.values(player.equipment).filter(Boolean).map((id) => items.find((item) => item.id === id)).filter(Boolean) }
+function getEquippedItems() { return Object.values(player.equipment).filter(Boolean).map((id) => items.find((item) => Number(item.id) === Number(id))).filter(Boolean) }
 
 export function getEquipmentStats() {
   const bonuses = { attackMin: 0, attackMax: 0, defense: 0, accuracy: 0, dodge: 0, hp: 0, mp: 0, externalAttack: 0, strength: 0, dexterity: 0, vitality: 0, energy: 0, poisonResistance: 0, fireResistance: 0, iceResistance: 0, lightningResistance: 0 }
@@ -49,7 +49,7 @@ export function getEquipmentStats() {
 
 export function getEquippedItem(slot) {
   const id = player.equipment[slot]
-  return id ? items.find((item) => item.id === id) ?? null : null
+  return id ? items.find((item) => Number(item.id) === Number(id)) ?? null : null
 }
 
 export function getPlayerStats() {
@@ -93,47 +93,70 @@ function findEquipmentSlot(item, requestedSlot = null) {
 
   if (!candidates.length) return null
 
-  // Nếu UI truyền đúng slot thì ưu tiên slot đó.
-  if (requestedSlot && candidates.includes(requestedSlot)) return requestedSlot
+  // Với trang bị thường, nếu UI truyền slot hợp lệ thì dùng slot đó.
+  // Nếu UI truyền sai/không có slot, tự suy ra từ category.
+  if (category !== 'ring') {
+    if (requestedSlot && candidates.includes(requestedSlot)) return requestedSlot
+    return candidates[0]
+  }
 
-  // Nhẫn có 2 ô: ưu tiên ô 1, sau đó ô 2.
-  if (category === 'ring') return player.equipment.ring1 ? 'ring2' : 'ring1'
-  return candidates[0]
+  // Nhẫn có hai ô. Ưu tiên ô mà UI yêu cầu nếu ô đó còn trống;
+  // nếu ô 1 đang có đồ thì tự chuyển sang ô 2. Khi cả hai đều đầy,
+  // giữ đúng ô được yêu cầu để thực hiện Thay thế.
+  const requestedRing = requestedSlot === 'ring2' ? 'ring2' : 'ring1'
+  const otherRing = requestedRing === 'ring1' ? 'ring2' : 'ring1'
+  if (!player.equipment[requestedRing]) return requestedRing
+  if (!player.equipment[otherRing]) return otherRing
+  return requestedRing
+}
+
+export function getEquipFailureReason(itemId, requestedSlot = null) {
+  const numericId = Number(itemId)
+  if (!Number.isFinite(numericId)) return 'Mã trang bị không hợp lệ.'
+
+  const item = items.find((candidate) => Number(candidate.id) === numericId)
+  if (!item) return 'Không tìm thấy trang bị.'
+  if (!['weapon', 'armor', 'equipment', 'accessory'].includes(item.type)) return 'Vật phẩm này không phải trang bị.'
+
+  const targetSlot = findEquipmentSlot(item, requestedSlot)
+  if (!targetSlot) return 'Không xác định được ô trang bị.'
+
+  const requiredLevel = Number(item.requirements?.level ?? item.level ?? 1)
+  if (requiredLevel > player.level) return `Chưa đủ cấp. Yêu cầu Lv ${requiredLevel}, nhân vật hiện tại Lv ${player.level}.`
+
+  const inventoryIndex = player.inventory.findIndex((id) => Number(id) === numericId)
+  if (inventoryIndex < 0) return 'Trang bị không còn trong túi đồ.'
+
+  return null
 }
 
 // Trang bị từ Túi đồ. Nhận cả id số và id dạng chuỗi.
-// Slot được tự xác định lại từ category để không phụ thuộc tuyệt đối vào UI.
+// Slot luôn được xác nhận lại từ category để không phụ thuộc tuyệt đối vào UI.
 export function equipItem(slot, itemId) {
   const numericId = Number(itemId)
-  if (!Number.isFinite(numericId)) return false
+  const reason = getEquipFailureReason(numericId, slot)
+  if (reason) {
+    window.dispatchEvent(new CustomEvent('game:log', { detail: { message: `Trang bị thất bại: ${reason}`, type: 'danger' } }))
+    return false
+  }
 
   const item = items.find((candidate) => Number(candidate.id) === numericId)
-  if (!item || !['weapon', 'armor', 'equipment', 'accessory'].includes(item.type)) return false
-
   const targetSlot = findEquipmentSlot(item, slot)
-  if (!targetSlot) return false
-
-  const requiredLevel = Number(item.requirements?.level ?? item.level ?? 1)
-  if (requiredLevel > player.level) return false
-
   const inventoryIndex = player.inventory.findIndex((id) => Number(id) === numericId)
-  if (inventoryIndex < 0) return false
-
   const currentlyEquippedId = player.equipment[targetSlot]
+
   if (Number(currentlyEquippedId) === numericId) return true
 
-  // Tháo món cũ về túi trước khi gắn món mới.
-  // Chỉ thêm nếu món cũ thực sự chưa có trong túi để tránh nhân bản item.
+  // Đưa món cũ về túi trước, nhưng không bao giờ nhân bản.
   if (currentlyEquippedId != null) {
     const oldInInventory = player.inventory.some((id) => Number(id) === Number(currentlyEquippedId))
     if (!oldInInventory) player.inventory.push(currentlyEquippedId)
   }
 
-  // inventoryIndex được tính trước khi push item cũ. Nếu push xảy ra thì index
-  // của item mới vẫn không đổi vì item cũ được thêm ở cuối mảng.
   player.inventory.splice(inventoryIndex, 1)
   player.equipment[targetSlot] = numericId
   syncDerivedStats()
+  window.dispatchEvent(new CustomEvent('game:log', { detail: { message: `Đã trang bị ${item.name}.`, type: 'item' } }))
   return true
 }
 
