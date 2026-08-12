@@ -39,7 +39,8 @@ function getDefaultIcon(data, isEquipment) {
   const vltkIcon = getVltkIcon(data)
   if (vltkIcon) return vltkIcon
   if (data.icon) return data.icon
-  if (isEquipment) return '/assets/icons/equipment.svg'
+  // Trang bị không có asset do người dùng tạo thì không được tự chèn icon mẫu.
+  if (isEquipment) return null
   if (data.type === 'consumable') return '/assets/icons/potion.svg'
   if (data.type === 'material') return '/assets/icons/material.svg'
   return '/assets/icons/material.svg'
