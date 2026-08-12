@@ -46,7 +46,44 @@ function getDefaultIcon(data, isEquipment) {
   return '/assets/icons/material.svg'
 }
 
-// Tạo số lượng thuộc tính ổn định theo ID, không thay đổi mỗi lần mở game.
+function roundPositive(value) {
+  return Math.max(1, Math.round(value))
+}
+
+// Một số bộ trang bị hiện mới khai báo 3-4 dòng cơ bản. Bổ sung các dòng
+// phù hợp để hệ thống có thể thực sự đạt đúng 6-8 dòng ở Địa cấp và 8-10 dòng ở Thiên cấp.
+// Giá trị HP/MP cố ý giữ thấp để tránh phình chỉ số nhân vật.
+function enrichEquipmentStats(stats, data, tier) {
+  const result = { ...stats }
+  const scale = { hoang: 1, huyen: 1.7, dia: 2.6, thien: 3.5 }[tier]
+  const attackBase = result.attackMax || result.attackMin || 10
+  const defenseBase = result.defense || 5
+  const accuracyBase = result.accuracy || 4
+
+  const extras = {
+    defense: roundPositive(defenseBase * (result.defense ? 1 : 0.9)),
+    dexterity: roundPositive((result.dexterity || accuracyBase / 3) * scale),
+    vitality: roundPositive((result.vitality || 2) * scale),
+    energy: roundPositive((result.energy || 2) * scale),
+    dodge: roundPositive((result.dodge || accuracyBase / 3) * scale),
+    hp: result.hp || roundPositive(35 * scale),
+    mp: result.mp || roundPositive(30 * scale),
+    externalAttack: result.externalAttack || roundPositive(attackBase * 0.08),
+    poisonResist: result.poisonResist || 0,
+    fireResist: result.fireResist || 0,
+    iceResist: result.iceResist || 0,
+    lightningResist: result.lightningResist || 0,
+  }
+
+  // Không thêm Kháng tất cả hoặc Tốc độ đánh.
+  for (const [key, value] of Object.entries(extras)) {
+    if (!result[key] && value > 0) result[key] = value
+  }
+
+  return result
+}
+
+// Số lượng thuộc tính ổn định theo ID, không thay đổi mỗi lần mở game.
 function getAttributeCount(itemId, tierMeta, availableCount) {
   const [min, max] = tierMeta.attributeRange
   if (availableCount <= 0) return 0
@@ -56,8 +93,6 @@ function getAttributeCount(itemId, tierMeta, availableCount) {
   return Math.min(wanted, availableCount)
 }
 
-// Chỉ các dòng có giá trị > 0 mới được xem là thuộc tính.
-// Ưu tiên giữ các thuộc tính đã khai báo trong data, sau đó mới lấy các dòng bổ sung.
 function buildDisplayedStats(stats, itemId, tierMeta) {
   const entries = Object.entries(stats ?? {}).filter(([, value]) => Number(value) > 0)
   const count = getAttributeCount(itemId, tierMeta, entries.length)
@@ -71,7 +106,7 @@ export function createItem(data) {
   const tierMeta = isEquipment ? getEquipmentTierMeta(itemLevel) : null
   const potionRange = data.potionLevel ? getPotionLevelRange(data.potionLevel) : null
 
-  const stats = {
+  let stats = {
     attackMin: data.stats?.attackMin ?? 0,
     attackMax: data.stats?.attackMax ?? 0,
     defense: data.stats?.defense ?? 0,
@@ -89,6 +124,8 @@ export function createItem(data) {
     iceResist: data.stats?.iceResist ?? 0,
     lightningResist: data.stats?.lightningResist ?? 0,
   }
+
+  if (isEquipment) stats = enrichEquipmentStats(stats, data, tier)
 
   return {
     id: data.id,
