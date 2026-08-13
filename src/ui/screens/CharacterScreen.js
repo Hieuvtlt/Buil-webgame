@@ -9,14 +9,34 @@ const RESISTANCE_LABELS = [
   ['lightningResistance', 'Kháng lôi'],
 ]
 
+const ATTRIBUTE_LABELS = [
+  ['strength', 'Sức mạnh'],
+  ['agility', 'Thân pháp'],
+  ['vitality', 'Sinh khí'],
+  ['internalForce', 'Nội lực'],
+]
+
 function renderResource(label, value, max, type) {
   const safeMax = Math.max(1, Number(max) || 1)
   const percent = Math.max(0, Math.min(100, (Number(value) || 0) / safeMax * 100))
   return `
     <div class="character-resource-row">
-      <span>${label}</span>
-      <strong>${value} / ${max}</strong>
+      <div class="character-resource-head">
+        <span>${label}</span>
+        <strong>${value} / ${max}</strong>
+      </div>
       <div class="character-resource-bar ${type}"><span style="width:${percent}%"></span></div>
+    </div>
+  `
+}
+
+function renderAttribute(key, label) {
+  const value = Number(player.attributes?.[key] ?? player[key] ?? 0)
+  return `
+    <div class="character-attr-row">
+      <span>${label}</span>
+      <b>${value}</b>
+      <button class="attr-add-btn" type="button" data-attribute="${key}" title="Tăng ${label}">+</button>
     </div>
   `
 }
@@ -37,12 +57,12 @@ export function CharacterScreen() {
   const stats = getPlayerStats()
   const leftEquip = EQUIPMENT_SLOTS.filter((slot) => ['weapon', 'armor', 'gloves', 'belt', 'boots'].includes(slot.id))
   const rightEquip = EQUIPMENT_SLOTS.filter((slot) => ['helmet', 'necklace', 'amulet', 'ring1', 'ring2'].includes(slot.id))
+  const freePoints = Number(player.freeAttributePoints ?? player.attributePoints ?? 0)
 
   return `
     <div class="character-screen-v2">
       <div class="character-tabs">
         <button class="character-tab active" type="button">Thông tin</button>
-        <button class="character-tab" type="button">Thuộc tính</button>
         <button class="character-tab" type="button">Danh hiệu</button>
         <button class="character-tab" type="button">Kinh mạch</button>
       </div>
@@ -62,6 +82,14 @@ export function CharacterScreen() {
               ${renderResource('MP', player.mp, stats.maxMp, 'mp')}
               ${renderResource('EXP', player.exp, player.expToNextLevel, 'exp')}
             </div>
+          </div>
+
+          <div class="character-panel-v2 character-attributes-panel-v2">
+            <h3 class="character-panel-title-v2">THUỘC TÍNH</h3>
+            <div class="character-attributes-v2">
+              ${ATTRIBUTE_LABELS.map(([key, label]) => renderAttribute(key, label)).join('')}
+            </div>
+            <div class="character-free-points">Điểm tự do: <b>${freePoints}</b></div>
           </div>
         </section>
 
