@@ -1,48 +1,96 @@
-/* ===== UI layout stability: fit at 100% browser zoom =====
-   Chỉ sửa kích thước/overflow, không thay logic game. */
+/* ===== UI layout stability: fit at 100% browser zoom ===== */
 #game-shell{height:100dvh;min-height:0;grid-template-rows:minmax(0,1fr) 60px}
 #game-grid{height:auto;min-height:0}
 #col-left,#col-center,#col-right{min-height:0}
 #col-center{overflow:hidden}
 #content-root{min-height:0;overflow:hidden}
 
-.character-screen-v2{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
-.character-main-v2{min-height:0;height:auto;overflow:hidden;align-items:stretch}
-.character-info-v2,.character-equipment-v2{min-height:0;overflow:auto;scrollbar-width:thin}
-.character-equipment-stage{min-height:220px;height:min(300px,100%)}
-.character-figure-v2{min-height:0}
+/* Character screen: tabs + main area + fixed/scrollable combat area */
+.character-screen-v2{
+  height:100%;
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) minmax(150px,220px);
+  overflow:hidden;
+}
+
+.character-main-v2{
+  min-height:0;
+  height:auto!important;
+  overflow:auto;
+  align-items:stretch;
+  scrollbar-width:thin;
+  scrollbar-color:#435b44 #040a06;
+}
+
+.character-main-v2>*{min-height:0;min-width:0}
+.character-info-v2,.character-equipment-v2{min-height:0}
+.character-info-v2{overflow:auto;scrollbar-width:thin}
+.character-equipment-v2{min-height:0!important;overflow:auto!important;scrollbar-width:thin}
+
+.character-equipment-stage{
+  flex:0 0 auto;
+  min-height:0;
+  height:220px;
+}
+.character-figure-v2{min-height:0;height:100%}
 .character-avatar-v2{max-height:250px}
-.character-combat-v2{min-height:0;overflow:auto;scrollbar-width:thin}
-.character-info-v2::-webkit-scrollbar,.character-equipment-v2::-webkit-scrollbar,.character-combat-v2::-webkit-scrollbar{width:6px}
-.character-info-v2::-webkit-scrollbar-thumb,.character-equipment-v2::-webkit-scrollbar-thumb,.character-combat-v2::-webkit-scrollbar-thumb{background:#435b44;border-radius:8px}
-.character-info-v2::-webkit-scrollbar-track,.character-equipment-v2::-webkit-scrollbar-track,.character-combat-v2::-webkit-scrollbar-track{background:#040a06}
+
+/* Combat stats gets its own visible scrollbar instead of spilling into other panels */
+.character-combat-v2{
+  position:relative;
+  z-index:2;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow:auto!important;
+  margin:0!important;
+  scrollbar-width:thin;
+  scrollbar-color:#435b44 #040a06;
+}
+
+.character-info-v2::-webkit-scrollbar,
+.character-main-v2::-webkit-scrollbar,
+.character-equipment-v2::-webkit-scrollbar,
+.character-combat-v2::-webkit-scrollbar{width:6px}
+.character-info-v2::-webkit-scrollbar-thumb,
+.character-main-v2::-webkit-scrollbar-thumb,
+.character-equipment-v2::-webkit-scrollbar-thumb,
+.character-combat-v2::-webkit-scrollbar-thumb{background:#435b44;border-radius:8px}
+.character-info-v2::-webkit-scrollbar-track,
+.character-main-v2::-webkit-scrollbar-track,
+.character-equipment-v2::-webkit-scrollbar-track,
+.character-combat-v2::-webkit-scrollbar-track{background:#040a06}
 
 @media (max-height:900px){
   #game-shell{grid-template-rows:minmax(0,1fr) 58px;gap:5px;padding:5px}
   .character-tabs{gap:4px}.character-tab{height:31px;padding:0 13px;font-size:13px}
-  .character-main-v2{gap:6px}.character-info-v2{gap:6px}.character-panel-v2{padding:7px}
+  .character-main-v2{gap:6px}
+  .character-info-v2{gap:6px}
+  .character-panel-v2{padding:7px}
   .character-panel-title-v2{margin-bottom:5px;padding-bottom:5px;font-size:12px}
-  .character-basic-grid{gap:5px 9px;font-size:11px}.character-resource-row{margin-top:5px;font-size:10px}.character-resource-bar{height:5px}
-  .character-attributes-v2{gap:4px}.character-attr-row{min-height:29px;padding:4px 6px;font-size:10px}.character-attr-row button{width:23px;height:23px}.character-free-points{margin-top:5px;font-size:10px}
-  .character-equipment-stage{min-height:205px;height:220px;grid-template-columns:76px minmax(140px,1fr) 76px;gap:5px}
-  .character-equip-column{gap:4px}.character-equip-slot-v2{min-height:40px;font-size:9px;padding:3px}.character-equip-icon-v2{width:27px;height:27px;flex-basis:27px}
-  .character-avatar-v2{width:min(82%,220px);max-height:205px}.character-equip-actions-v2{margin-top:4px}.character-equip-actions-v2 button{min-width:110px;height:29px}.character-equip-hint-v2{margin-top:4px;font-size:9px}
-  .character-combat-grid{gap:3px 10px}.character-combat-item{padding:3px 0;font-size:10px}
-}
-@media (max-width:1400px){#game-grid{grid-template-columns:175px minmax(0,1fr) 220px}}
-@media (max-width:1200px){#game-grid{grid-template-columns:165px minmax(0,1fr) 205px}.character-main-v2{grid-template-columns:minmax(205px,.9fr) minmax(360px,1.5fr)}}
-
-/* ===== Character screen: prevent equipment/combat overlap ===== */
-.character-main-v2{height:auto!important;align-items:stretch;min-height:0}
-.character-main-v2>*{min-height:0;min-width:0}
-.character-equipment-v2{min-height:0!important;overflow:hidden!important}
-.character-equipment-stage{flex:0 0 auto;min-height:0;height:220px}
-.character-figure-v2{min-height:0;height:100%}
-.character-combat-v2{position:relative;z-index:2;min-height:0!important;max-height:100%;overflow:auto!important;margin:0!important}
-.character-screen-v2>.character-combat-v2{margin-top:0!important}
-
-@media (max-height:900px){
-  .character-equipment-stage{height:214px;min-height:214px}
-  .character-equip-slot-v2{min-height:38px}
+  .character-basic-grid{gap:5px 9px;font-size:11px}
+  .character-resource-row{margin-top:5px;font-size:10px}
+  .character-resource-bar{height:5px}
+  .character-attributes-v2{gap:4px}
+  .character-attr-row{min-height:29px;padding:4px 6px;font-size:10px}
+  .character-attr-row button{width:23px;height:23px}
+  .character-free-points{margin-top:5px;font-size:10px}
+  .character-equipment-stage{height:214px;min-height:214px;grid-template-columns:76px minmax(140px,1fr) 76px;gap:5px}
   .character-equip-column{gap:4px}
+  .character-equip-slot-v2{min-height:38px;font-size:9px;padding:3px}
+  .character-equip-icon-v2{width:27px;height:27px;flex-basis:27px}
+  .character-avatar-v2{width:min(82%,220px);max-height:205px}
+  .character-equip-actions-v2{margin-top:4px}
+  .character-equip-actions-v2 button{min-width:110px;height:29px}
+  .character-equip-hint-v2{margin-top:4px;font-size:9px}
+  .character-combat-v2{min-height:125px}
+  .character-combat-grid{gap:3px 10px}
+  .character-combat-item{padding:3px 0;font-size:10px}
+}
+
+@media (max-width:1400px){#game-grid{grid-template-columns:175px minmax(0,1fr) 220px}}
+@media (max-width:1200px){
+  #game-grid{grid-template-columns:165px minmax(0,1fr) 205px}
+  .character-main-v2{grid-template-columns:minmax(205px,.9fr) minmax(360px,1.5fr)}
 }
