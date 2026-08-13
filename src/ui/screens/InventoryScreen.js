@@ -39,7 +39,7 @@ export function InventoryScreen() {
     .map((id) => getItemById(id))
     .filter(Boolean)
 
-  const capacity = 50
+  const capacity = 150
   const used = inventoryItems.length
 
   return `
