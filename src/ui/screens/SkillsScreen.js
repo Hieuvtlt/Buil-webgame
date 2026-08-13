@@ -1,53 +1,56 @@
 import { player, getMaxSkillLevel } from '../../data/character.js'
 import { getSkillsForSect, SECT_NAMES } from '../../data/skills/index.js'
 
+const CATEGORY = [
+  ['active', '⚔', 'Kỹ năng chủ động'],
+  ['passive', '🛡', 'Kỹ năng bị động'],
+  ['talent', '✥', 'Thiên phú'],
+  ['manual', '▤', 'Bí kíp'],
+  ['soul', '♨', 'Võ hồn'],
+]
+
 export function SkillsScreen() {
   const skills = getSkillsForSect(player.sect, player.skills)
   const maxSkillLevel = getMaxSkillLevel()
   const isTanTu = player.sect === 'tanTu'
+  const groups = [
+    { label: 'Cấp 1 – 30', items: skills.slice(0, 5) },
+    { label: 'Cấp 31 – 60', items: skills.slice(5, 10) },
+    { label: 'Cấp 61 – 100', items: skills.slice(10, 15) },
+  ]
 
   return `
-    <div class="skills-screen game-screen">
-      <h3 class="panel-title-sm">Võ học</h3>
-      <div class="skill-summary">
-        <span>Môn phái: <b>${SECT_NAMES[player.sect]}</b></span>
-        <span>Max cấp võ kỹ hiện tại: <b>${maxSkillLevel}</b></span>
-        <span>${isTanTu ? 'Tán Tu: chưa học bí kíp nào.' : 'Môn phái: skill của phái được mở theo hệ phái; đạt Level và học bí kíp tương ứng để nâng cấp.'}</span>
+    <div class="skills-screen skill-redesign">
+      <div class="skills-topline">
+        <div><b>Môn phái:</b> ${SECT_NAMES[player.sect]}</div>
+        <div><b>Max cấp võ kỹ:</b> ${maxSkillLevel}</div>
+        <div class="skill-points"><b>Điểm kỹ năng:</b> <strong>${player.freePoints}</strong> <span>!</span></div>
       </div>
-
-      <div class="skills-layout">
-        <div class="skills-left">
-          <div class="skills-grid" id="skills-grid">
-            ${skills.length ? skills.map((skill) => {
-              const current = player.skills[skill.id] ?? 0
-              return `
-                <button class="skill-slot" type="button"
-                  data-skill-id="${skill.id}"
-                  data-skill-name="${skill.name}"
-                  data-skill-level="${current}"
-                  data-skill-max="${maxSkillLevel}">
-                  <img class="skill-icon" src="${skill.icon}" alt="" />
-                  <span class="skill-slot-text">
-                    <b>${skill.name}</b>
-                    <span>Lv ${current}/${maxSkillLevel}</span>
-                  </span>
-                </button>
-              `
-            }).join('') : `
-              <div class="empty-state">
-                ${isTanTu ? 'Tán Tu chưa có võ kỹ. Hãy học bí kíp của môn phái khác để mở võ kỹ.' : 'Chưa có võ kỹ trong dữ liệu.'}
-              </div>
-            `}
+      <div class="skills-layout-v2">
+        <aside class="skills-nav-v2">
+          ${CATEGORY.map(([id, icon, label], i) => `<button class="skill-nav-item ${i === 0 ? 'active' : ''}" type="button" data-skill-category="${id}"><span>${icon}</span>${label}</button>`).join('')}
+          <div class="skill-reset-box"><b>↻ Đặt lại kỹ năng</b><span>Lượt còn: 1 <button type="button" class="skill-plus">+</button></span></div>
+        </aside>
+        <section class="skills-tree-v2">
+          <div class="skill-tabs-v2">
+            <button class="skill-class-tab active" type="button">${SECT_NAMES[player.sect]}</button>
+            <button class="skill-class-tab" type="button">Đao khách</button><button class="skill-class-tab" type="button">Pháp sư</button><button class="skill-class-tab" type="button">Cung thủ</button><button class="skill-class-tab" type="button">Phật môn</button>
           </div>
-        </div>
-
-        <div class="skills-right">
-          <div class="skill-info-box" id="skill-info-box">
-            <div class="skill-info-title" id="skill-info-title">Chọn võ kỹ</div>
-            <div class="skill-info-meta" id="skill-info-meta">Môn phái: - | Loại: Ngoại công</div>
-            <div class="skill-info-desc" id="skill-info-desc">Võ kỹ không có hệ Nội công. Nội lực chỉ là tài nguyên MP để thi triển.</div>
+          <div class="skill-tree-help">${isTanTu ? 'Tán Tu: học bí kíp để mở võ kỹ.' : 'Võ kỹ của môn phái được mở theo cấp nhân vật và bí kíp tương ứng.'}</div>
+          <div class="skill-tree-scroll" id="skills-grid">
+            ${skills.length ? groups.filter(group => group.items.length).map(group => `
+              <div class="skill-tier"><div class="skill-tier-title"><i></i>${group.label}<i></i></div><div class="skill-chain">
+                ${group.items.map((skill, index) => { const current = player.skills[skill.id] ?? 0; const locked = Number(skill.requirements?.characterLevel ?? 1) > player.level; return `
+                  <div class="skill-node-wrap ${locked ? 'locked' : ''}">
+                    <button class="skill-node" type="button" data-skill-id="${skill.id}" data-skill-name="${skill.name}" data-skill-level="${current}" data-skill-max="${maxSkillLevel}" ${locked ? 'aria-disabled="true"' : ''}><span class="skill-node-ring"><img class="skill-icon" src="${skill.icon}" alt="" /></span><b>${skill.name}</b><small>Lv ${current}/${maxSkillLevel}</small></button>
+                    ${index < group.items.length - 1 ? '<span class="skill-arrow">➜</span>' : ''}
+                    <button class="skill-up-mini" type="button" data-skill-up="${skill.id}">${current >= maxSkillLevel ? 'Đã max' : '+'}</button>
+                  </div>` }).join('')}
+              </div></div>`).join('') : '<div class="skill-empty-v2">Chưa có võ kỹ. Hãy học bí kíp để mở kỹ năng.</div>'}
           </div>
-        </div>
+          <div class="skill-hotbar-v2"><span>THANH KỸ NĂNG</span>${skills.slice(0, 6).map((skill, i) => `<button type="button" class="hot-skill" title="${skill.name}"><img src="${skill.icon}" alt=""/><small>${i + 1}</small></button>`).join('')}${Array.from({length: Math.max(0, 6 - Math.min(6, skills.length))}).map((_, i) => `<button type="button" class="hot-skill locked"><span>🔒</span><small>${Math.min(6, skills.length) + i + 1}</small></button>`).join('')}</div>
+        </section>
+        <aside class="skill-detail-v2" id="skill-info-box"><div id="skill-detail-content"><div class="skill-detail-title" id="skill-info-title">Chọn võ kỹ</div><div class="skill-detail-meta" id="skill-info-meta">Môn phái: ${SECT_NAMES[player.sect]} | Loại: Ngoại công</div><div class="skill-detail-desc" id="skill-info-desc">Chọn một võ kỹ để xem mô tả, hiệu quả, yêu cầu và thao tác nâng cấp.</div></div></aside>
       </div>
     </div>
   `
