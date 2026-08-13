@@ -2,25 +2,16 @@ import { player } from '../../data/character.js'
 import { getItemById } from '../../data/items/index.js'
 
 const FILTERS = [
-  ['all', 'Tất cả', '◈'],
-  ['equipment', 'Trang bị', '⚔'],
-  ['consumable', 'Đan dược', '⚗'],
-  ['material', 'Nguyên liệu', '◈'],
-  ['manual', 'Bí kíp', '▤'],
-  ['other', 'Khác', '▪'],
+  ['all', 'Tất cả'],
+  ['equipment', 'Trang bị'],
+  ['consumable', 'Đan dược'],
+  ['material', 'Nguyên liệu'],
+  ['manual', 'Bí kíp'],
+  ['other', 'Khác'],
 ]
 
 function getItemColor(item) {
   return item?.qualityColor ?? item?.tierMeta?.color ?? '#d7d7d7'
-}
-
-function getCategory(item) {
-  if (!item) return 'other'
-  if (['equipment', 'weapon', 'armor', 'accessory'].includes(item.type)) return 'equipment'
-  if (item.type === 'consumable') return 'consumable'
-  if (item.type === 'material') return 'material'
-  if (item.type === 'manual') return 'manual'
-  return 'other'
 }
 
 function renderItem(item, index) {
@@ -58,8 +49,8 @@ export function InventoryScreen() {
         <div class="inventory-capacity">${used}/${capacity} ô sử dụng</div>
       </div>
 
-      <div class="inventory-layout-v2">
-        <section class="inventory-main-panel">
+      <div class="inventory-layout-v2 inventory-layout-tooltip">
+        <section class="inventory-main-panel inventory-main-panel-full">
           <div class="inventory-filter-tabs" role="tablist" aria-label="Loại vật phẩm">
             ${FILTERS.map(([key, label], index) => `
               <button type="button" class="inventory-filter-tab${index === 0 ? ' active' : ''}" data-filter="${key}">${label}</button>
@@ -96,14 +87,6 @@ export function InventoryScreen() {
             <button type="button" class="inventory-page-btn" data-page-action="next">›</button>
           </div>
         </section>
-
-        <aside class="inventory-detail-panel" id="inventory-item-detail">
-          <div class="inventory-detail-empty">
-            <div class="inventory-detail-empty-icon">◈</div>
-            <strong>CHƯA CHỌN VẬT PHẨM</strong>
-            <span>Chọn một vật phẩm trong túi để xem thông tin chi tiết.</span>
-          </div>
-        </aside>
       </div>
 
       <div class="inventory-footer-stats">
