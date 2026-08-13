@@ -6,6 +6,7 @@ import './game-ui-compact.css'
 import './character-screen-redesign.css'
 import './ui-layout-fix.css'
 import './inventory-screen-redesign.css'
+import './inventory-screen-v3.css'
 
 import { player, getPlayerStats } from './data/character.js'
 import { getCharacterImageSrc, CharacterScreen } from './ui/screens/CharacterScreen.js'
