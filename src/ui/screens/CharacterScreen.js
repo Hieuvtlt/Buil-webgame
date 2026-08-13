@@ -9,13 +9,6 @@ const RESISTANCE_LABELS = [
   ['lightningResistance', 'Kháng lôi'],
 ]
 
-const BASIC_ATTRIBUTES = [
-  ['strength', 'Sức mạnh'],
-  ['dexterity', 'Thân pháp'],
-  ['vitality', 'Sinh khí'],
-  ['energy', 'Nội lực'],
-]
-
 function renderResource(label, value, max, type) {
   const safeMax = Math.max(1, Number(max) || 1)
   const percent = Math.max(0, Math.min(100, (Number(value) || 0) / safeMax * 100))
@@ -42,7 +35,6 @@ function renderEquipSlot(slot) {
 
 export function CharacterScreen() {
   const stats = getPlayerStats()
-  const attr = player.attributes
   const leftEquip = EQUIPMENT_SLOTS.filter((slot) => ['weapon', 'armor', 'gloves', 'belt', 'boots'].includes(slot.id))
   const rightEquip = EQUIPMENT_SLOTS.filter((slot) => ['helmet', 'necklace', 'amulet', 'ring1', 'ring2'].includes(slot.id))
 
@@ -70,20 +62,6 @@ export function CharacterScreen() {
               ${renderResource('MP', player.mp, stats.maxMp, 'mp')}
               ${renderResource('EXP', player.exp, player.expToNextLevel, 'exp')}
             </div>
-          </div>
-
-          <div class="character-panel-v2">
-            <h3 class="character-panel-title-v2">THUỘC TÍNH CƠ BẢN</h3>
-            <div class="character-attributes-v2">
-              ${BASIC_ATTRIBUTES.map(([key, label]) => `
-                <div class="character-attr-row">
-                  <span>${label}</span>
-                  <b>${attr[key]}</b>
-                  <button type="button" class="attr-add-btn" data-attribute="${key}">+</button>
-                </div>
-              `).join('')}
-            </div>
-            <div class="character-free-points">Điểm tự do: <b id="free-points-value">${player.freePoints}</b></div>
           </div>
         </section>
 
