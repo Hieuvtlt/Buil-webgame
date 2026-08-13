@@ -6,92 +6,69 @@
 
 - Cấp nhân vật cố định: **Lv1–200**.
 - Mỗi lần lên 1 cấp: **+5 điểm thuộc tính tự do**.
-- Điểm tự do được phân bổ vào các thuộc tính cơ bản của nhân vật.
 - Khi cộng điểm tự do vào **Sinh khí**: 1 điểm = **+5 HP**.
 - Khi cộng điểm tự do vào **Nội lực/Mana**: 1 điểm = **+5 MP**.
 - HP và MP có quy tắc/giới hạn riêng do game này quy định, không lấy nguyên công thức HP/MP của VLTK.
 - Sát thương và các thuộc tính chiến đấu khác lấy VLTK làm nền theo dữ liệu/cơ chế tham khảo từ repo VLTK đã chia sẻ.
-- Không có thuộc tính **Kháng tất cả**.
-- Không có **Tốc độ đánh**.
-- Không xây dựng **kỹ năng nội công**.
-- Võ công/skill dùng hướng **Ngoại công**.
+- Không có **Kháng tất cả**, **Tốc độ đánh** hoặc **kỹ năng nội công**.
 
 ## 2. Trùng sinh
 
-- Trùng Sinh 1: **Nhân vật Lv100 + Trùng Sinh Đan Lv1**.
-- Trùng Sinh 2: **Nhân vật Lv120 + Trùng Sinh Đan Lv2**.
-- Các mốc Trùng Sinh tiếp theo phải được cấu hình theo quy tắc được chốt sau; không tự suy đoán nếu chưa xác nhận.
+- Trùng Sinh 1: **Lv100 + Trùng Sinh Đan Lv1**.
+- Trùng Sinh 2: **Lv120 + Trùng Sinh Đan Lv2**.
+- Các mốc tiếp theo chỉ cấu hình khi được chốt.
 - Sau mỗi lần Trùng Sinh:
-  - Nhân vật quay về **Lv1**.
-  - Các điểm thuộc tính nhận từ quá trình lên cấp và phần phân bổ tương ứng được reset để phân bổ lại.
-  - Nhận **+50 điểm thuộc tính vĩnh viễn**, không phải điểm tự do tạm thời và không bị reset ở các lần Trùng Sinh sau.
-  - Điểm đã tích lũy từ **Tẩy Tủy Kinh** được giữ nguyên.
-  - Điểm đã tích lũy từ **Võ Lâm Mật Tịch** được giữ nguyên.
-  - Các thuộc tính/giá trị đã nhận từ **Thiên Cơ Đan** được giữ nguyên.
+  - Nhân vật về **Lv1**.
+  - Phần điểm thuộc tính do quá trình lên cấp được reset để phân bổ lại.
+  - Nhận **+50 điểm thuộc tính vĩnh viễn**; đây không phải điểm tự do tạm thời và không bị reset.
+  - Điểm từ **Tẩy Tủy Kinh** và **Võ Lâm Mật Tịch** giữ nguyên.
+  - Thuộc tính/giá trị từ **Thiên Cơ Đan** giữ nguyên.
   - **Võ kỹ và cấp luyện kỹ năng giữ nguyên**.
-- Giới hạn cấp luyện võ kỹ: **10 + (cấp Trùng Sinh × 10)**.
+- Max cấp luyện võ kỹ = **10 + (cấp Trùng Sinh × 10)**.
 
 ## 3. Thuộc tính và giới hạn HP/MP
 
-- HP và MP là hệ thống được game tự quy định để tránh chỉ số phình quá lớn.
-- Mốc đã chốt:
-  - **100% = 200 điểm** HP/MP.
-  - **120% = 250 điểm** HP/MP.
-- Với thuộc tính điểm cơ bản:
-  - **Sức mạnh:** 100% = 20 điểm; 120% = 25 điểm.
-  - **Thân pháp:** 100% = 20 điểm; 120% = 25 điểm.
-  - **Sinh khí:** 100% = 20 điểm; 120% = 25 điểm.
-  - **Nội công:** 100% = 20 điểm; 120% = 25 điểm.
-- Các mốc trên là quy tắc giới hạn/qui đổi của game; công thức nội suy giữa các mốc sẽ chỉ được triển khai khi đã chốt.
+- HP/MP là hệ thống riêng của game.
+- **100% = 200 điểm**, **120% = 250 điểm** HP/MP.
+- Sức mạnh, Thân pháp, Sinh khí, Nội công: **100% = 20 điểm; 120% = 25 điểm**.
+- Công thức nội suy giữa các mốc chưa được tự ý chốt.
 
-## 4. Trang bị — đẳng cấp và cấp nhân vật
+## 4. Trang bị
 
-Trang bị có 4 đẳng cấp:
-
-| Đẳng cấp | Cấp nhân vật yêu cầu | Số dòng thuộc tính |
+| Đẳng cấp | Cấp nhân vật | Số dòng thuộc tính |
 |---|---:|---:|
-| **Hoàng cấp** | Lv1–30 | tối đa 3 dòng |
-| **Huyền cấp** | Lv31–60 | 3–5 dòng |
-| **Địa cấp** | Lv61–90 | 5–7 dòng |
-| **Thiên cấp** | Lv91–200 | 8–10 dòng |
+| **Hoàng cấp** | Lv1–30 | tối đa 3 |
+| **Huyền cấp** | Lv31–60 | 3–5 |
+| **Địa cấp** | Lv61–90 | 5–7 |
+| **Thiên cấp** | Lv91–200 | 8–10 |
 
-- Thiên cấp là đẳng cấp cao nhất và đặc biệt vì có thể dùng tới cấp nhân vật 200.
-- Đẳng cấp trang bị **khác** phẩm cấp trang bị.
+Đẳng cấp trang bị độc lập với phẩm cấp.
 
-## 5. Phẩm cấp trang bị và màu sắc
+### Phẩm cấp và màu
 
-Có 4 phẩm cấp:
-
-| Phẩm cấp | Màu hiển thị |
+| Phẩm cấp | Màu |
 |---|---|
 | **Hạ phẩm** | Trắng |
 | **Trung phẩm** | Xanh dương |
 | **Thượng phẩm** | Vàng |
 | **Cực phẩm** | Đỏ |
 
-- Màu của **tên, viền và thuộc tính hiển thị** của trang bị đi theo phẩm cấp.
-- Phẩm cấp và đẳng cấp là hai hệ thống độc lập.
-- Ví dụ: **Thiên cấp – Cực phẩm** là hoàn toàn hợp lệ.
+### Trần thuộc tính
 
-## 6. Giới hạn thuộc tính trang bị
+- Hoàng: tối đa **+30%**.
+- Huyền: tối đa **+50%**.
+- Địa: tối đa **+80%**.
+- Thiên: đặc biệt **+80% đến +120%**.
 
-Trần % thuộc tính theo đẳng cấp trang bị:
+### Kháng tính
 
-- **Hoàng cấp:** tối đa +30%.
-- **Huyền cấp:** tối đa +50%.
-- **Địa cấp:** tối đa +80%.
-- **Thiên cấp:** đặc biệt, +80% đến +120%.
+- Một món trang bị: tối đa **+20% cho một loại kháng tính**.
+- Tổng kháng mỗi loại của nhân vật: hard cap **80%**, dù trang bị cộng vượt mức.
+- Không cho đạt 100% kháng.
 
-Giới hạn kháng tính:
+## 5. Đan dược
 
-- Một món trang bị chỉ được cộng tối đa **+20% cho một loại kháng tính**.
-- Tổng kháng của nhân vật đối với mỗi loại kháng tính bị giới hạn cứng ở **80%**.
-- Dù tổng trang bị cộng vượt 80%, nhân vật vẫn chỉ có tối đa 80% kháng.
-- Không cho kháng đạt 100% để tránh miễn hoàn toàn sát thương thuộc tính.
-
-## 7. Đan dược
-
-Game có đúng **6 loại đan dược chính**:
+Có đúng **6 loại**:
 
 1. **Khí Huyết Đan** — hồi HP.
 2. **Hồi Khí Đan** — hồi MP.
@@ -100,176 +77,114 @@ Game có đúng **6 loại đan dược chính**:
 5. **Trùng Sinh Đan** — dùng cho Trùng Sinh.
 6. **Thiên Cơ Đan** — tăng thuộc tính ngẫu nhiên.
 
-### Cấp đan dược
-
 Đan dược có Level **1–10**:
 
-| Level đan | Cấp nhân vật sử dụng |
+| Level | Cấp nhân vật |
 |---|---:|
-| Lv1 | Lv1–10 |
-| Lv2 | Lv11–20 |
-| Lv3 | Lv21–30 |
-| Lv4 | Lv31–40 |
-| Lv5 | Lv41–50 |
-| Lv6 | Lv51–60 |
-| Lv7 | Lv61–70 |
-| Lv8 | Lv71–80 |
-| Lv9 | Lv81–90 |
-| Lv10 | Lv91–200 |
+| Lv1 | 1–10 |
+| Lv2 | 11–20 |
+| Lv3 | 21–30 |
+| Lv4 | 31–40 |
+| Lv5 | 41–50 |
+| Lv6 | 51–60 |
+| Lv7 | 61–70 |
+| Lv8 | 71–80 |
+| Lv9 | 81–90 |
+| Lv10 | 91–200 |
 
 ### Thiên Cơ Đan
 
-- Nếu tác động vào thuộc tính dạng **%**: tăng ngẫu nhiên **+1% đến +5%**.
-- Nếu tác động vào thuộc tính dạng **điểm**: tăng ngẫu nhiên **+1 đến +100 điểm**.
+- Thuộc tính dạng %: ngẫu nhiên **+1% đến +5%**.
+- Thuộc tính dạng điểm: ngẫu nhiên **+1 đến +100 điểm**.
 - **Không giới hạn số lần sử dụng**.
-- Giá trị đã nhận từ Thiên Cơ Đan được giữ lại sau Trùng Sinh.
+- Giá trị đã nhận được giữ sau Trùng Sinh.
 
-## 8. Linh dược và khoáng thạch
+## 6. Linh dược và khoáng thạch
 
-- **Linh dược:** Level **1–10**.
-- **Khoáng thạch:** Level **1–10**.
-- Hai hệ thống được dùng làm nguyên liệu cho các hệ thống chế tạo tương ứng.
+- **Linh dược:** Level 1–10.
+- **Khoáng thạch:** Level 1–10.
 
-## 9. Tẩy Tủy Kinh và Võ Lâm Mật Tịch
+## 7. Tẩy Tủy Kinh và Võ Lâm Mật Tịch
 
-- **Tẩy Tủy Kinh:** mỗi lần sử dụng **+5 điểm thuộc tính tự do**.
-- **Võ Lâm Mật Tịch:** mỗi lần sử dụng **+10 điểm thuộc tính tự do**.
-- Cả hai đều **không giới hạn số lần sử dụng**.
-- Điểm đã nhận được từ hai loại item này được **giữ lại vĩnh viễn qua Trùng Sinh**.
+- **Tẩy Tủy Kinh:** mỗi lần dùng **+5 điểm thuộc tính tự do**.
+- **Võ Lâm Mật Tịch:** mỗi lần dùng **+10 điểm thuộc tính tự do**.
+- Không giới hạn số lần sử dụng.
+- Điểm đã nhận được giữ vĩnh viễn qua Trùng Sinh.
 
-## 10. Võ học / Skill
+## 8. Võ học / Skill
 
-### Môn phái
-
-Hệ thống môn phái được xây dựng theo VLTK và là nền tảng của skill. Danh sách hiện tại trong code gồm:
-
-- Thiên Vương
-- Thiếu Lâm
-- Võ Đang
-- Nga Mi
-- Đường Môn
-- Ngũ Độc
-- Cái Bang
-- Hoa Sơn
-- Côn Lôn
-- Thiên Nhẫn
-- Tiêu Dao
-- Tán Tu
-
-> Việc bỏ/giữ Đường Môn và các môn phái khác sẽ chỉ thay đổi khi được chốt lại; không tự ý thêm phái mới.
-
-### Skill của môn phái thường
-
-- Khi gia nhập môn phái, nhân vật có **hệ võ công của môn phái đó**.
-- Skill được mở/học theo **môn phái + đẳng cấp kỹ năng + cấp nhân vật + bí kíp + vũ khí và các điều kiện khác của skill**.
-- Không dùng hệ thống cộng điểm kỹ năng.
-- Skill được **luyện** bằng EXP luyện kỹ năng.
-
-### Tán Tu
-
-- Tán Tu là hệ thống riêng.
-- Ban đầu **không có võ công sẵn**.
-- Muốn có skill phải **học bí kíp**.
-- Tán Tu có thể học võ công thông qua bí kíp theo quy tắc được xác định cho từng skill.
-
-### Cấp độ kỹ năng và cấp luyện kỹ năng
-
-Hai khái niệm hoàn toàn khác nhau:
-
-- **Đẳng cấp/cấp độ kỹ năng (`skillLevel`)**: là đẳng cấp yêu cầu để học skill. Ví dụ Skill Level 60 yêu cầu nhân vật đạt Lv60. Sau khi học, skill bắt đầu ở **cấp luyện Lv1**.
-- **Cấp luyện kỹ năng (`skillTrainingLevel`)**: là cấp độ nhân vật đã luyện skill sau khi học.
-
-Ví dụ:
-
-`Skill Level 60 → Nhân vật Lv60 + đủ bí kíp/điều kiện → học thành công → Training Level 1.`
-
-Cấp luyện kỹ năng tăng dần sẽ làm **thuộc tính/hiệu quả của skill tăng dần**.
-
-### Giới hạn cấp luyện
-
-- Chưa Trùng Sinh: tối đa **Lv10**.
-- Trùng Sinh 1: tối đa **Lv20**.
-- Trùng Sinh 2: tối đa **Lv30**.
-- Quy luật: mỗi cấp Trùng Sinh mở thêm **10 cấp luyện**.
-- Không cộng điểm kỹ năng để nâng skill.
+- Skill môn phái được xây theo VLTK; gia nhập môn phái có hệ võ công của môn phái.
+- Tán Tu ban đầu không có võ công; muốn học phải có **bí kíp**.
+- Không cộng điểm kỹ năng.
+- **Skill Level** = đẳng cấp/yêu cầu học skill. Ví dụ Skill Level 60 yêu cầu nhân vật Lv60.
+- Sau khi học, **Skill Training Level = 1**.
+- **Skill Training Level** tăng bằng EXP luyện skill và làm thuộc tính/hiệu quả skill tăng dần.
+- Chưa Trùng Sinh max Training Lv10; mỗi cấp Trùng Sinh mở thêm 10 cấp: TS1 Lv20, TS2 Lv30, ...
+- Skill có thể yêu cầu loại **vũ khí**.
+- Không có kỹ năng nội công.
 - **Ngộ Đạo Đan** tăng EXP luyện kỹ năng.
 - Võ kỹ và cấp luyện giữ nguyên sau Trùng Sinh.
 
-### Vũ khí
+## 9. Túi đồ
 
-- Skill có thể có **yêu cầu loại vũ khí**.
-- Khi sử dụng skill, nhân vật phải trang bị đúng vũ khí nếu skill yêu cầu.
-- Skill không yêu cầu vũ khí có thể sử dụng theo điều kiện riêng của skill.
-
-### Loại bỏ
-
-- Không có **kỹ năng nội công**.
-- Không xây hệ skill nội công.
-- Không có thuộc tính Kháng tất cả.
-- Không dùng Tốc độ đánh làm thuộc tính của game.
-
-## 11. Túi đồ
-
-- Túi đồ có **5 trang**.
-- Mỗi trang có **30 ô**.
-- Tổng sức chứa theo giao diện hiện tại: **150 ô**.
-- Chuyển trang 1–5 phải hoạt động thực tế.
-- Popup thông tin vật phẩm xuất hiện gần con trỏ khi chọn vật phẩm.
-- Trang bị đang mặc có thể được hiển thị để so sánh với vật phẩm mới.
-- Có nút **Thay thế** ngay trong vùng thông tin tương tác.
+- **5 trang × 30 ô = 150 ô**.
+- Trang 1–5 phải hoạt động.
+- Thông tin vật phẩm hiển thị gần con trỏ khi chọn.
+- Trang bị đang mặc có thể hiện để so sánh và có nút **Thay thế**.
 
 ### Bán nhanh
 
-Có menu Bán nhanh với các nhóm:
-
 - Trang bị: Trắng / Xanh / Vàng / Đỏ.
-- Đan dược: Lv1 / Lv2 / ... / Lv10.
-- Linh dược: Lv1 / Lv2 / ... / Lv10.
+- Đan dược: Lv1–Lv10.
+- Linh dược: Lv1–Lv10.
 
-## 12. Luyện Đan, Luyện Khí và Hợp Thành
+## 10. Luyện Đan, Luyện Khí và Hợp Thành
 
-- Các hệ thống **Luyện Đan**, **Luyện Khí** và **Hợp Thành** đã có trong kiến trúc/project và sẽ tiếp tục được phát triển trên hệ thống hiện tại.
-- Linh dược Level 1–10 là nhóm nguyên liệu cho Luyện Đan.
-- Khoáng thạch Level 1–10 là nhóm nguyên liệu cho Luyện Khí.
-- Không tạo ngựa và item liên quan đến ngựa.
+Các menu/hệ thống **Luyện Đan, Luyện Khí và Hợp Thành** đã có trong project và tiếp tục phát triển trên kiến trúc hiện tại.
 
-## 13. Công thức chiến đấu
+### Hợp Thành đan dược và linh dược
+
+- Các vật phẩm **cùng loại và cùng Level** có thể dùng để hợp thành vật phẩm **cùng loại ở Level cao hơn**.
+- Hợp thành theo nguyên tắc tăng cấp tuần tự; ví dụ vật phẩm Level 1 hợp thành thành vật phẩm Level 2, Level 2 thành Level 3, v.v.
+- Khi hợp thành có **xác suất vượt cấp khoảng 1–5%**.
+- Vượt cấp nghĩa là kết quả có thể cao hơn Level kế tiếp theo cơ chế hợp thành; số cấp vượt cụ thể và cách chọn xác suất sẽ được chốt khi triển khai chi tiết.
+- Không áp dụng xác suất vượt cấp để phá vỡ giới hạn Level 10 của đan dược/linh dược, trừ khi có quy tắc mới được chốt.
+- Khoáng thạch tiếp tục thuộc hệ thống Luyện Khí; quy tắc hợp thành khoáng thạch sẽ được xác định riêng nếu cần.
+
+## 11. Công thức chiến đấu
 
 - Sát thương và các thuộc tính chiến đấu khác lấy **VLTK làm nền** theo repo VLTK đã chia sẻ.
-- HP/MP và các giới hạn chỉ số mà người chơi đã chốt là **quy tắc riêng của game**, ưu tiên hơn công thức gốc nếu có khác biệt.
-- Chưa tự ý chốt các công thức chưa được xác nhận.
+- HP/MP và các giới hạn chỉ số riêng đã chốt của game được ưu tiên.
+- Không tự ý chốt công thức chưa được xác nhận.
 
-## 14. Kiến trúc dữ liệu
+## 12. Kiến trúc dữ liệu chính
 
-Các module chính:
-
-- `src/data/character.js`: trạng thái và thuộc tính nhân vật.
-- `src/data/rebirth.js`: điều kiện và logic Trùng Sinh.
-- `src/data/equipment.js`: roll phẩm cấp và thuộc tính trang bị.
+- `src/data/character.js`: nhân vật và thuộc tính.
+- `src/data/rebirth.js`: Trùng Sinh.
+- `src/data/equipment.js`: trang bị, phẩm cấp, thuộc tính.
 - `src/data/equipmentSlots.js`: vị trí trang bị.
-- `src/data/items/itemSchema.js`: schema item và bảng cấp.
+- `src/data/items/itemSchema.js`: schema item/cấp.
 - `src/data/items/consumables.js`: đan dược.
 - `src/data/items/alchemy.js`: linh dược.
 - `src/data/items/forging.js`: khoáng thạch/quặng/hợp kim.
-- `src/data/items/manuals.js`: Tẩy Tủy Kinh, Võ Lâm Mật Tịch và bí kíp.
+- `src/data/items/manuals.js`: Tẩy Tủy Kinh, Võ Lâm Mật Tịch, bí kíp.
 - `src/data/items/index.js`: registry item.
-- `src/data/skills/skillSchema.js`: schema môn phái/skill.
+- `src/data/skills/skillSchema.js`: schema skill.
 - `src/data/skills/index.js`: registry skill.
-- `src/systems/skillSystem.js`: học và luyện võ kỹ.
+- `src/systems/skillSystem.js`: học/luyện võ kỹ.
 - `src/systems/itemSystem.js`: sử dụng item.
 - `src/ui/screens/CharacterScreen.js`: giao diện nhân vật.
-- `src/ui/screens/InventoryScreen.js`: giao diện túi đồ.
-- `src/ui/screens/SkillsScreen.js`: giao diện võ học.
-- `src/ui/controllers/*`: xử lý tương tác từng màn hình.
+- `src/ui/screens/InventoryScreen.js`: túi đồ.
+- `src/ui/screens/SkillsScreen.js`: võ học.
+- `src/ui/controllers/*`: controller giao diện.
 
-## 15. Nguồn tham khảo VLTK
+## 13. Nguồn VLTK
 
-- Game lấy VLTK 1 làm nền cho môn phái, võ học, sát thương và các thuộc tính chiến đấu khác.
-- Repo tham khảo do người phát triển cung cấp: `https://github.com/jxoffline/jx1linux`.
-- Dữ liệu trong project hiện tại có thể chỉ là dữ liệu khởi tạo để kiểm tra logic; không coi đó là danh sách skill/trang bị VLTK hoàn chỉnh cho đến khi được nhập và kiểm tra.
+- VLTK 1 là nền tham khảo cho môn phái, võ học, sát thương và các thuộc tính chiến đấu khác.
+- Repo tham khảo: `https://github.com/jxoffline/jx1linux`.
 
-## 16. Quy tắc phát triển UI
+## 14. Quy tắc phát triển UI
 
 - Chỉ tạo hình ảnh/mockup khi người phát triển **yêu cầu thiết kế**.
-- Khi yêu cầu là sửa/làm/chỉnh tính năng trong game thì **không tự tạo hình ảnh**, mà triển khai trực tiếp trong game.
-- Mọi giao diện được thiết kế phải có khả năng triển khai bằng code thực tế; không tạo mockup chứa chức năng không thể thực hiện.
+- Nếu yêu cầu là sửa/làm/chỉnh tính năng thì **không tự tạo hình ảnh**, mà triển khai trực tiếp trong game.
+- Mockup phải có khả năng triển khai thực tế bằng code.
