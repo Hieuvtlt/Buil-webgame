@@ -59,23 +59,6 @@ export function InventoryScreen() {
       </div>
 
       <div class="inventory-layout-v2">
-        <aside class="inventory-categories">
-          <div class="inventory-category-title">PHÂN LOẠI</div>
-          <div class="inventory-category-list">
-            ${FILTERS.map(([key, label, icon], index) => `
-              <button type="button" class="inventory-filter${index === 0 ? ' active' : ''}" data-filter="${key}">
-                <span class="inventory-filter-icon">${icon}</span>
-                <span>${label}</span>
-              </button>
-            `).join('')}
-          </div>
-          <div class="inventory-storage-box">
-            <div>Kho đồ</div>
-            <strong>0 / 100</strong>
-            <button type="button" class="inventory-small-action" data-inventory-action="storage">Mở kho</button>
-          </div>
-        </aside>
-
         <section class="inventory-main-panel">
           <div class="inventory-filter-tabs" role="tablist" aria-label="Loại vật phẩm">
             ${FILTERS.map(([key, label], index) => `
@@ -100,7 +83,6 @@ export function InventoryScreen() {
           <div class="inventory-bottom-actions">
             <button type="button" class="inventory-action-btn secondary" data-inventory-action="sort">Sắp xếp</button>
             <button type="button" class="inventory-action-btn" data-inventory-action="quick-sell">Bán nhanh</button>
-            <button type="button" class="inventory-action-btn" data-inventory-action="storage">Kho đồ</button>
             <button type="button" class="inventory-action-btn" data-inventory-action="split">Tách vật phẩm</button>
           </div>
 
