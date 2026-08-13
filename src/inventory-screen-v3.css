@@ -1,0 +1,24 @@
+/* Inventory V3: loại bỏ các vùng điều khiển trùng lặp, giữ giao diện gọn trong khung game hiện tại. */
+.inventory-screen-v2 .inventory-layout-v2{
+  grid-template-columns:minmax(0,1fr) minmax(310px,30%);
+}
+
+.inventory-screen-v2 .inventory-categories{
+  display:none;
+}
+
+.inventory-screen-v2 .inventory-main-panel{
+  min-width:0;
+}
+
+.inventory-screen-v2 .inventory-filter-tabs{
+  width:100%;
+}
+
+.inventory-screen-v2 .inventory-bottom-actions{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
+.inventory-screen-v2 .inventory-filter-tab{
+  min-width:0;
+}
