@@ -13,8 +13,6 @@ function rerenderCharacter() {
 }
 
 export function mountCharacterScreen() {
-  const equipGrid = document.getElementById('equip-grid')
-
   document.querySelectorAll('.attr-add-btn').forEach((button) => {
     button.addEventListener('click', () => {
       const attribute = button.dataset.attribute
@@ -23,13 +21,12 @@ export function mountCharacterScreen() {
     })
   })
 
-  if (!equipGrid) return
-
   let selectedEquipSlot = null
+  const equipSlots = document.querySelectorAll('.character-equip-slot-v2')
 
-  equipGrid.querySelectorAll('.equip-slot').forEach((btn) => {
+  equipSlots.forEach((btn) => {
     btn.addEventListener('click', () => {
-      equipGrid.querySelectorAll('.equip-slot').forEach((b) => b.classList.remove('is-selected'))
+      equipSlots.forEach((b) => b.classList.remove('is-selected'))
       btn.classList.add('is-selected')
       selectedEquipSlot = btn.dataset.slotId
     })
