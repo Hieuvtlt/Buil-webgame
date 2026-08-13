@@ -11,9 +11,9 @@ const RESISTANCE_LABELS = [
 
 const ATTRIBUTE_LABELS = [
   ['strength', 'Sức mạnh'],
-  ['agility', 'Thân pháp'],
+  ['dexterity', 'Thân pháp'],
   ['vitality', 'Sinh khí'],
-  ['internalForce', 'Nội lực'],
+  ['energy', 'Nội lực'],
 ]
 
 function renderResource(label, value, max, type) {
@@ -31,7 +31,7 @@ function renderResource(label, value, max, type) {
 }
 
 function renderAttribute(key, label) {
-  const value = Number(player.attributes?.[key] ?? player[key] ?? 0)
+  const value = Number(player.attributes?.[key] ?? 0)
   return `
     <div class="character-attr-row">
       <span>${label}</span>
@@ -57,7 +57,6 @@ export function CharacterScreen() {
   const stats = getPlayerStats()
   const leftEquip = EQUIPMENT_SLOTS.filter((slot) => ['weapon', 'armor', 'gloves', 'belt', 'boots'].includes(slot.id))
   const rightEquip = EQUIPMENT_SLOTS.filter((slot) => ['helmet', 'necklace', 'amulet', 'ring1', 'ring2'].includes(slot.id))
-  const freePoints = Number(player.freeAttributePoints ?? player.attributePoints ?? 0)
 
   return `
     <div class="character-screen-v2">
@@ -89,7 +88,7 @@ export function CharacterScreen() {
             <div class="character-attributes-v2">
               ${ATTRIBUTE_LABELS.map(([key, label]) => renderAttribute(key, label)).join('')}
             </div>
-            <div class="character-free-points">Điểm tự do: <b>${freePoints}</b></div>
+            <div class="character-free-points">Điểm tự do: <b>${Number(player.freePoints ?? 0)}</b></div>
           </div>
         </section>
 
