@@ -2,6 +2,16 @@ import characterImg from '../../assets/character.png'
 import { player, getPlayerStats, getMaxSkillLevel, getEquippedItem } from '../../data/character.js'
 import { EQUIPMENT_SLOTS } from '../../data/equipmentSlots.js'
 
+const CHARACTER_IMAGE_KEY = 'game-character-image'
+
+export function getCharacterImageSrc() {
+  try {
+    return localStorage.getItem(CHARACTER_IMAGE_KEY) || characterImg
+  } catch {
+    return characterImg
+  }
+}
+
 const RESISTANCE_LABELS = [
   ['poisonResistance', 'Kháng độc'],
   ['fireResistance', 'Kháng hỏa'],
@@ -57,6 +67,7 @@ export function CharacterScreen() {
   const stats = getPlayerStats()
   const leftEquip = EQUIPMENT_SLOTS.filter((slot) => ['weapon', 'armor', 'gloves', 'belt', 'boots'].includes(slot.id))
   const rightEquip = EQUIPMENT_SLOTS.filter((slot) => ['helmet', 'necklace', 'amulet', 'ring1', 'ring2'].includes(slot.id))
+  const currentCharacterImage = getCharacterImageSrc()
 
   return `
     <div class="character-screen-v2">
@@ -99,16 +110,22 @@ export function CharacterScreen() {
               ${leftEquip.map(renderEquipSlot).join('')}
             </div>
             <div class="character-figure-v2">
-              <img src="${characterImg}" alt="Nhân vật" class="character-avatar-v2" />
+              <img src="${currentCharacterImage}" alt="Nhân vật" class="character-avatar-v2" id="character-main-image" />
+              <span class="character-image-badge">ẢNH NHÂN VẬT</span>
             </div>
             <div class="character-equip-column" id="equip-column-right">
               ${rightEquip.map(renderEquipSlot).join('')}
             </div>
           </div>
+          <div class="character-image-actions">
+            <button class="action-btn image-change-btn" type="button" id="btn-change-character-image">🖼 Thay hình</button>
+            <button class="action-btn image-reset-btn" type="button" id="btn-reset-character-image">↺ Mặc định</button>
+          </div>
+          <input id="character-image-input" class="character-image-input" type="file" accept="image/png,image/jpeg,image/webp" />
           <div class="character-equip-actions-v2">
             <button class="action-btn danger" type="button" id="btn-unequip">Gỡ</button>
           </div>
-          <div class="character-equip-hint-v2">Chọn ô trang bị để xem hoặc gỡ. Muốn trang bị/thay thế, chọn item trong Túi đồ.</div>
+          <div class="character-equip-hint-v2">Bấm <b>Thay hình</b> để chọn ảnh từ máy. Ảnh sẽ đổi ngay trong game và được lưu trên trình duyệt.</div>
         </section>
       </div>
 
