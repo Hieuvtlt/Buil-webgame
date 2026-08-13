@@ -1,48 +1,132 @@
 import { player } from '../../data/character.js'
 import { getItemById } from '../../data/items/index.js'
 
+const FILTERS = [
+  ['all', 'Tất cả', '◈'],
+  ['equipment', 'Trang bị', '⚔'],
+  ['consumable', 'Đan dược', '⚗'],
+  ['material', 'Nguyên liệu', '◈'],
+  ['manual', 'Bí kíp', '▤'],
+  ['other', 'Khác', '▪'],
+]
+
 function getItemColor(item) {
   return item?.qualityColor ?? item?.tierMeta?.color ?? '#d7d7d7'
 }
 
+function getCategory(item) {
+  if (!item) return 'other'
+  if (['equipment', 'weapon', 'armor', 'accessory'].includes(item.type)) return 'equipment'
+  if (item.type === 'consumable') return 'consumable'
+  if (item.type === 'material') return 'material'
+  if (item.type === 'manual') return 'manual'
+  return 'other'
+}
+
+function renderItem(item, index) {
+  const color = getItemColor(item)
+  const icon = item?.icon
+  const quantity = item?.stackable ? 1 : null
+  return `
+    <button class="inv-slot2 inventory-item-slot${item?.stackable ? ' is-stackable' : ''}" type="button"
+      data-inv-slot-index="${index}"
+      data-item-id="${item?.id ?? ''}"
+      style="${item ? `--item-color:${color}` : ''}"
+      aria-label="${item?.name ?? `Ô trống ${index + 1}`}" ${item ? '' : 'disabled'}>
+      ${item ? `
+        <span class="inventory-item-rarity"></span>
+        ${icon ? `<img class="item-icon inventory-item-icon" src="${icon}" alt="" loading="lazy" />` : '<span class="inventory-item-icon-placeholder">?</span>'}
+        ${quantity ? `<span class="stack-badge">${quantity}</span>` : ''}
+        <span class="inventory-item-name" style="color:${color}">${item.name}</span>
+      ` : `<span class="inventory-empty-slot">${index + 1}</span>`}
+    </button>
+  `
+}
+
 export function InventoryScreen() {
-  const slotsPerPage = 50
   const inventoryItems = player.inventory
     .map((id) => getItemById(id))
     .filter(Boolean)
-    .slice(0, slotsPerPage)
+
+  const capacity = 50
+  const used = inventoryItems.length
 
   return `
-    <div class="inventory-screen game-screen">
-      <h3 class="panel-title-sm">Túi đồ</h3>
-      <div class="inventory-layout-single">
-        <div class="inventory-grid-wrap">
-          <div class="inventory-grid" id="inventory-screen-grid">
-            ${Array.from({ length: slotsPerPage }, (_, i) => {
-              const item = inventoryItems[i]
-              const color = getItemColor(item)
-              const quantityText = item ? (item.stackable ? `x1/${item.maxStack}` : 'x1') : ''
-              return `
-                <button class="inv-slot2${item?.stackable ? ' is-stackable' : ''}" type="button"
-                  data-inv-slot-index="${i}"
-                  data-item-id="${item?.id ?? ''}"
-                  style="${item ? `color:${color}` : ''}">
-                  ${item ? `
-                    <span class="item-icon-wrap">
-                      <img class="item-icon" src="${item.icon}" alt="${item.name}" loading="lazy" />
-                      ${item.stackable ? `<span class="stack-badge">${quantityText}</span>` : ''}
-                    </span>
-                    <span class="item-name">${item.name}</span>
-                  ` : `Slot ${i + 1}`}
-                </button>
-              `
-            }).join('')}
-          </div>
-        </div>
+    <div class="inventory-screen inventory-screen-v2 game-screen">
+      <div class="inventory-topbar">
+        <div class="inventory-topbar-title">TÚI ĐỒ</div>
+        <div class="inventory-capacity">${used}/${capacity} ô sử dụng</div>
       </div>
-      <div class="inventory-currency">
-        <div class="currency-box">Ngân lượng: ${player.gold}</div>
-        <div class="currency-box">Linh thạch: ${player.spiritStone}</div>
+
+      <div class="inventory-layout-v2">
+        <aside class="inventory-categories">
+          <div class="inventory-category-title">PHÂN LOẠI</div>
+          <div class="inventory-category-list">
+            ${FILTERS.map(([key, label, icon], index) => `
+              <button type="button" class="inventory-filter${index === 0 ? ' active' : ''}" data-filter="${key}">
+                <span class="inventory-filter-icon">${icon}</span>
+                <span>${label}</span>
+              </button>
+            `).join('')}
+          </div>
+          <div class="inventory-storage-box">
+            <div>Kho đồ</div>
+            <strong>0 / 100</strong>
+            <button type="button" class="inventory-small-action" data-inventory-action="storage">Mở kho</button>
+          </div>
+        </aside>
+
+        <section class="inventory-main-panel">
+          <div class="inventory-filter-tabs" role="tablist" aria-label="Loại vật phẩm">
+            ${FILTERS.map(([key, label], index) => `
+              <button type="button" class="inventory-filter-tab${index === 0 ? ' active' : ''}" data-filter="${key}">${label}</button>
+            `).join('')}
+          </div>
+
+          <div class="inventory-grid-header">
+            <span id="inventory-filter-label">Tất cả vật phẩm</span>
+            <div class="inventory-grid-tools">
+              <span>${used}/${capacity}</span>
+              <button type="button" class="inventory-tool-btn" data-inventory-action="sort">Sắp xếp</button>
+            </div>
+          </div>
+
+          <div class="inventory-grid-wrap-v2">
+            <div class="inventory-grid inventory-grid-v2" id="inventory-screen-grid">
+              ${Array.from({ length: capacity }, (_, i) => renderItem(inventoryItems[i], i)).join('')}
+            </div>
+          </div>
+
+          <div class="inventory-bottom-actions">
+            <button type="button" class="inventory-action-btn secondary" data-inventory-action="sort">Sắp xếp</button>
+            <button type="button" class="inventory-action-btn" data-inventory-action="quick-sell">Bán nhanh</button>
+            <button type="button" class="inventory-action-btn" data-inventory-action="storage">Kho đồ</button>
+            <button type="button" class="inventory-action-btn" data-inventory-action="split">Tách vật phẩm</button>
+          </div>
+
+          <div class="inventory-page-row">
+            <button type="button" class="inventory-page-btn" data-page-action="prev">‹</button>
+            <button type="button" class="inventory-page-number active">1</button>
+            <button type="button" class="inventory-page-number">2</button>
+            <button type="button" class="inventory-page-number">3</button>
+            <button type="button" class="inventory-page-number">4</button>
+            <button type="button" class="inventory-page-number">5</button>
+            <button type="button" class="inventory-page-btn" data-page-action="next">›</button>
+          </div>
+        </section>
+
+        <aside class="inventory-detail-panel" id="inventory-item-detail">
+          <div class="inventory-detail-empty">
+            <div class="inventory-detail-empty-icon">◈</div>
+            <strong>CHƯA CHỌN VẬT PHẨM</strong>
+            <span>Chọn một vật phẩm trong túi để xem thông tin chi tiết.</span>
+          </div>
+        </aside>
+      </div>
+
+      <div class="inventory-footer-stats">
+        <span>Ngân lượng <strong>${Number(player.gold ?? 0).toLocaleString('vi-VN')}</strong></span>
+        <span>Linh thạch <strong>${Number(player.spiritStone ?? 0).toLocaleString('vi-VN')}</strong></span>
       </div>
     </div>
   `
