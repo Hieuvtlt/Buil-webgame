@@ -1,4 +1,4 @@
-const PAGE_SIZE = 10
+const PAGE_SIZE = 30
 const PAGE_COUNT = 5
 let currentPage = 1
 let wiredGrid = null
