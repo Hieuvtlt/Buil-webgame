@@ -1,7 +1,7 @@
 // Chỉ sử dụng icon do game tạo trong public/assets/vltk.
-// Không dùng icon VLTK hash cũ hoặc icon fallback cho TRANG BỊ.
+// Dùng BASE_URL để icon hoạt động đúng cả khi chạy local và trên GitHub Pages.
 
-const root = '/assets/vltk'
+const root = `${import.meta.env.BASE_URL}assets/vltk`.replace(/\/$/, '')
 
 const TIER_FOLDERS = {
   hoang: 'hoangcap',
@@ -70,6 +70,5 @@ export function getVltkIcon(data = {}) {
   return getEquipmentIcon(data)
 }
 
-// Chỉ dành cho các hệ thống mới có asset riêng; không còn catalog icon hash cũ.
 export const VLTK_ICONS = Object.freeze({})
 export const VLTK_TIER_FOLDERS = Object.freeze({ ...TIER_FOLDERS })
