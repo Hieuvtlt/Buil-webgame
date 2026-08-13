@@ -52,37 +52,16 @@ function getStats(item) {
   return item?.displayedStats ?? item?.stats ?? {}
 }
 
-function statLines(item, compareTo = null) {
-  const source = getStats(item)
-  const compare = getStats(compareTo)
-  const color = item.qualityColor ?? item.tierMeta?.color ?? '#ffffff'
-
-  return Object.entries(source)
-    .filter(([, value]) => Number(value) > 0)
-    .map(([key, value]) => {
-      const text = formatStat(key, value)
-      const oldValue = Number(compare[key] ?? 0)
-      const delta = Number(value) - oldValue
-      let suffix = ''
-      if (compareTo && delta !== 0) {
-        const sign = delta > 0 ? '+' : ''
-        const cls = delta > 0 ? 'compare-up' : 'compare-down'
-        suffix = ` <span class="${cls}">${delta > 0 ? '▲' : '▼'} ${sign}${delta}</span>`
-      }
-      return `<div class="item-stat-line" style="color:${color}">${text}${suffix}</div>`
-    }).join('') || '<div class="item-stat-line">-</div>'
-}
-
 function getMeta(item) {
   if (item.potionLevel) {
     const range = item.usableLevelRange
-    return `Đẳng cấp yêu cầu: ${range.min}-${range.max}`
+    return `Đan dược cấp ${item.potionLevel} • Dùng Lv.${range.min}-${range.max}`
   }
   if (item.tierMeta) {
-    const quality = item.quality ? ` - ${QUALITY_LABELS[item.quality] ?? item.quality}` : ''
-    return `${item.tierMeta.label}${quality} | Đẳng cấp yêu cầu: ${item.requirements.level}`
+    const quality = item.quality ? ` • ${QUALITY_LABELS[item.quality] ?? item.quality}` : ''
+    return `${item.tierMeta.label}${quality} • Yêu cầu Lv.${item.requirements.level}`
   }
-  return `Loại: ${item.type} | Đẳng cấp yêu cầu: ${item.requirements?.level ?? item.level ?? '-'}`
+  return `Loại: ${item.type} • Yêu cầu Lv.${item.requirements?.level ?? item.level ?? '-'}`
 }
 
 function getSlot(item) {
@@ -93,129 +72,176 @@ function getAction(item) {
   if (!item) return null
   const slot = getSlot(item)
   const equipped = slot ? getEquippedItem(slot) : null
-  if (item.type === 'equipment' || item.type === 'weapon' || item.type === 'armor' || item.type === 'accessory') {
+  if (['equipment', 'weapon', 'armor', 'accessory'].includes(item.type)) {
     return { label: equipped ? 'Thay thế' : 'Trang bị', slot, equipped }
   }
   if (item.type === 'consumable') return { label: 'Sử dụng', slot: null, equipped: null }
   return null
 }
 
-function ensureTooltip() {
-  let tooltip = document.getElementById('item-context-tooltip')
-  if (tooltip) return tooltip
-  tooltip = document.createElement('div')
-  tooltip.id = 'item-context-tooltip'
-  tooltip.className = 'item-context-tooltip'
-  document.body.appendChild(tooltip)
-  return tooltip
+function getFilteredItems(filter) {
+  const items = player.inventory.map((id) => getItemById(id)).filter(Boolean)
+  if (filter === 'all') return items
+  if (filter === 'equipment') return items.filter((item) => ['equipment', 'weapon', 'armor', 'accessory'].includes(item.type))
+  if (filter === 'consumable') return items.filter((item) => item.type === 'consumable')
+  if (filter === 'material') return items.filter((item) => item.type === 'material')
+  if (filter === 'manual') return items.filter((item) => item.type === 'manual')
+  return items.filter((item) => !['equipment', 'weapon', 'armor', 'accessory', 'consumable', 'material', 'manual'].includes(item.type))
 }
 
-function positionTooltip(tooltip, x, y) {
-  tooltip.style.left = '0px'
-  tooltip.style.top = '0px'
-  const rect = tooltip.getBoundingClientRect()
-  const gap = 12
-  const left = x + rect.width + gap <= window.innerWidth ? x + gap : Math.max(gap, x - rect.width - gap)
-  const top = y + rect.height + gap <= window.innerHeight ? y + gap : Math.max(gap, window.innerHeight - rect.height - gap)
-  tooltip.style.left = `${left}px`
-  tooltip.style.top = `${top}px`
+function renderStats(item) {
+  const stats = getStats(item)
+  const entries = Object.entries(stats).filter(([, value]) => Number(value) > 0)
+  return entries.length
+    ? entries.map(([key, value]) => `<div class="inventory-detail-stat"><span>${STAT_LABELS[key] ?? key}</span><strong>${Number(value)}${RESIST_KEYS.has(key) ? '%' : ''}</strong></div>`).join('')
+    : '<div class="inventory-detail-description">Không có thuộc tính chiến đấu.</div>'
 }
 
-function renderItemCard(item, title, compareTo = null) {
-  const color = item.qualityColor ?? item.tierMeta?.color ?? '#ffffff'
+function renderDetail(item) {
+  if (!item) {
+    return `<div class="inventory-detail-empty"><div class="inventory-detail-empty-icon">◈</div><strong>CHƯA CHỌN VẬT PHẨM</strong><span>Chọn một vật phẩm trong túi để xem thông tin chi tiết.</span></div>`
+  }
+  const color = item.qualityColor ?? item.tierMeta?.color ?? '#d7d7d7'
+  const action = getAction(item)
+  const effect = getEffectText(item)
   return `
-    <div class="item-context-card">
-      <div class="item-context-heading">${title}</div>
-      <img class="item-context-icon" src="${item.icon || '/assets/icons/material.svg'}" alt="${item.name}" />
-      <div class="item-context-name" style="color:${color}">${item.name}</div>
-      <div class="item-context-meta">${getMeta(item)}</div>
-      <div class="item-context-stats">${statLines(item, compareTo)}</div>
-      ${getEffectText(item) ? `<div class="item-context-effect">${getEffectText(item)}</div>` : ''}
+    <div class="inventory-detail-head" style="--item-color:${color}">
+      <div class="inventory-detail-icon-wrap"><img class="inventory-detail-icon" src="${item.icon ?? ''}" alt="" /></div>
+      <div>
+        <div class="inventory-detail-title" style="--item-color:${color};color:${color}">${item.name}</div>
+        <div class="inventory-detail-meta">${getMeta(item)}</div>
+        <div class="inventory-detail-meta">Giá bán: ${Number(item.price?.sell ?? 0).toLocaleString('vi-VN')}</div>
+      </div>
+    </div>
+    <div class="inventory-detail-section">
+      <div class="inventory-detail-section-title">THUỘC TÍNH</div>
+      ${renderStats(item)}
+    </div>
+    ${effect ? `<div class="inventory-detail-section"><div class="inventory-detail-section-title">HIỆU ỨNG</div><div class="inventory-detail-description">${effect}</div></div>` : ''}
+    ${item.description ? `<div class="inventory-detail-section"><div class="inventory-detail-section-title">MÔ TẢ</div><div class="inventory-detail-description">${item.description}</div></div>` : ''}
+    <div class="inventory-detail-actions">
+      ${action ? `<button type="button" class="inventory-detail-action primary" data-detail-action="main">${action.label}</button>` : '<span></span>'}
+      <button type="button" class="inventory-detail-action" data-detail-action="quick-sell">Bán</button>
+      <button type="button" class="inventory-detail-action danger" data-detail-action="delete">Xóa</button>
     </div>
   `
 }
 
 export function mountInventoryScreen() {
   const grid = document.getElementById('inventory-screen-grid')
-  if (!grid) return
+  const detail = document.getElementById('inventory-item-detail')
+  if (!grid || !detail) return
 
-  const slots = Array.from(grid.querySelectorAll('.inv-slot2'))
-  const tooltip = ensureTooltip()
-  let selectedItem = null
+  let currentFilter = 'all'
+  let selectedId = null
+  let sortAsc = true
 
-  const hide = () => {
-    tooltip.classList.remove('is-open')
-    selectedItem = null
+  function paintGrid() {
+    const items = getFilteredItems(currentFilter)
+    const slots = Array.from(grid.querySelectorAll('.inv-slot2'))
+    slots.forEach((slot, index) => {
+      const item = items[index]
+      slot.dataset.itemId = item?.id ?? ''
+      slot.disabled = !item
+      slot.setAttribute('aria-label', item?.name ?? `Ô trống ${index + 1}`)
+      slot.innerHTML = item
+        ? `${item.icon ? `<img class="item-icon inventory-item-icon" src="${item.icon}" alt="" loading="lazy" />` : '<span class="inventory-item-icon-placeholder">?</span>'}${item.stackable ? '<span class="stack-badge">1</span>' : ''}<span class="inventory-item-name" style="color:${item.qualityColor ?? item.tierMeta?.color ?? '#d7d7d7'}">${item.name}</span><span class="inventory-item-rarity"></span>`
+        : `<span class="inventory-empty-slot">${index + 1}</span>`
+      slot.classList.toggle('is-selected', Number(slot.dataset.itemId) === Number(selectedId))
+    })
+    const label = document.getElementById('inventory-filter-label')
+    if (label) label.textContent = currentFilter === 'all' ? 'Tất cả vật phẩm' : currentFilter === 'equipment' ? 'Trang bị' : currentFilter === 'consumable' ? 'Đan dược' : currentFilter === 'material' ? 'Nguyên liệu' : currentFilter === 'manual' ? 'Bí kíp' : 'Khác'
   }
 
-  const show = (slot, item) => {
-    const action = getAction(item)
-    const equipped = action?.equipped ?? null
-    const hasCompare = Boolean(equipped && equipped.id !== item.id)
+  function selectItem(item) {
+    selectedId = item?.id ?? null
+    Array.from(grid.querySelectorAll('.inv-slot2')).forEach((slot) => slot.classList.toggle('is-selected', Number(slot.dataset.itemId) === Number(selectedId)))
+    detail.innerHTML = renderDetail(item)
+    bindDetailActions()
+  }
 
-    tooltip.innerHTML = `
-      <div class="item-context-grid ${hasCompare ? 'has-compare' : ''}">
-        ${hasCompare ? renderItemCard(equipped, 'ĐANG TRANG BỊ') : ''}
-        ${renderItemCard(item, hasCompare ? 'TRANG BỊ MỚI' : '')}
-      </div>
-      <div class="item-context-actions">
-        ${action ? `<button type="button" class="context-action primary" data-action="main">${action.label}</button>` : ''}
-        <button type="button" class="context-action sell" data-action="sell">Bán shop</button>
-      </div>
-    `
-    tooltip.classList.add('is-open')
-    positionTooltip(tooltip, slot.getBoundingClientRect().right, slot.getBoundingClientRect().top)
-    selectedItem = item
-
-    tooltip.querySelector('[data-action="main"]')?.addEventListener('click', () => {
-      if (!selectedItem) return
-      const currentAction = getAction(selectedItem)
-      if (!currentAction?.slot) return
-
-      const reason = getEquipFailureReason(selectedItem.id, currentAction.slot)
+  function bindDetailActions() {
+    detail.querySelector('[data-detail-action="main"]')?.addEventListener('click', () => {
+      const item = getItemById(selectedId)
+      const action = getAction(item)
+      if (!item || !action?.slot) return
+      const reason = getEquipFailureReason(item.id, action.slot)
       if (reason) {
-        window.dispatchEvent(new CustomEvent('game:log', {
-          detail: { message: `Không thể trang bị ${selectedItem.name}: ${reason}`, type: 'danger' },
-        }))
+        window.dispatchEvent(new CustomEvent('game:log', { detail: { message: `Không thể trang bị ${item.name}: ${reason}`, type: 'danger' } }))
         return
       }
-
-      if (equipItem(currentAction.slot, selectedItem.id)) {
-        hide()
-        window.dispatchEvent(new CustomEvent('game:item-equipped', { detail: { itemId: selectedItem.id } }))
-      }
+      if (equipItem(action.slot, item.id)) window.dispatchEvent(new CustomEvent('game:item-equipped', { detail: { itemId: item.id } }))
     })
-
-    tooltip.querySelector('[data-action="sell"]')?.addEventListener('click', () => {
-      if (!selectedItem) return
-      const index = player.inventory.findIndex((id) => Number(id) === Number(selectedItem.id))
-      if (index < 0) return
-      const equipped = Object.values(player.equipment).some((id) => Number(id) === Number(selectedItem.id))
-      if (equipped) return
-      const price = Number(selectedItem.price?.sell ?? 0)
-      player.inventory.splice(index, 1)
-      player.gold += price
-      hide()
-      window.dispatchEvent(new CustomEvent('game:inventory-changed'))
-    })
+    detail.querySelector('[data-detail-action="quick-sell"]')?.addEventListener('click', () => sellSelected())
+    detail.querySelector('[data-detail-action="delete"]')?.addEventListener('click', () => deleteSelected())
   }
 
-  slots.forEach((slot) => {
-    slot.addEventListener('click', (event) => {
-      const id = Number(slot.dataset.itemId)
-      if (!slot.dataset.itemId || Number.isNaN(id)) return
-      const item = getItemById(id)
-      if (!item) return
-      slots.forEach((s) => s.classList.remove('is-selected'))
-      slot.classList.add('is-selected')
-      show(slot, item)
-      event.stopPropagation()
+  function sellSelected() {
+    const item = getItemById(selectedId)
+    if (!item) return
+    const index = player.inventory.findIndex((id) => Number(id) === Number(item.id))
+    if (index < 0) return
+    const equipped = Object.values(player.equipment).some((id) => Number(id) === Number(item.id))
+    if (equipped) {
+      window.dispatchEvent(new CustomEvent('game:log', { detail: { message: `Không thể bán ${item.name} khi đang trang bị.`, type: 'warning' } }))
+      return
+    }
+    player.inventory.splice(index, 1)
+    player.gold += Number(item.price?.sell ?? 0)
+    selectedId = null
+    window.dispatchEvent(new CustomEvent('game:inventory-changed'))
+  }
+
+  function deleteSelected() {
+    const item = getItemById(selectedId)
+    if (!item) return
+    const index = player.inventory.findIndex((id) => Number(id) === Number(item.id))
+    if (index < 0) return
+    const equipped = Object.values(player.equipment).some((id) => Number(id) === Number(item.id))
+    if (equipped) return
+    player.inventory.splice(index, 1)
+    selectedId = null
+    window.dispatchEvent(new CustomEvent('game:inventory-changed'))
+  }
+
+  function sortInventory() {
+    player.inventory.sort((a, b) => {
+      const ia = getItemById(a)
+      const ib = getItemById(b)
+      const nameA = ia?.name ?? ''
+      const nameB = ib?.name ?? ''
+      return sortAsc ? nameA.localeCompare(nameB, 'vi') : nameB.localeCompare(nameA, 'vi')
+    })
+    sortAsc = !sortAsc
+    paintGrid()
+    if (selectedId) selectItem(getItemById(selectedId))
+  }
+
+  grid.addEventListener('click', (event) => {
+    const slot = event.target.closest('.inv-slot2')
+    if (!slot || !slot.dataset.itemId) return
+    const item = getItemById(Number(slot.dataset.itemId))
+    if (item) selectItem(item)
+  })
+
+  document.querySelectorAll('[data-filter]').forEach((button) => {
+    button.addEventListener('click', () => {
+      currentFilter = button.dataset.filter
+      document.querySelectorAll('[data-filter]').forEach((el) => el.classList.toggle('active', el.dataset.filter === currentFilter))
+      paintGrid()
+      if (selectedId && !getFilteredItems(currentFilter).some((item) => Number(item.id) === Number(selectedId))) {
+        selectedId = null
+        detail.innerHTML = renderDetail(null)
+      }
     })
   })
 
-  document.addEventListener('click', (event) => {
-    if (!tooltip.contains(event.target) && !grid.contains(event.target)) hide()
-  })
+  document.querySelectorAll('[data-inventory-action="sort"]').forEach((button) => button.addEventListener('click', sortInventory))
+  document.querySelectorAll('[data-inventory-action="storage"]').forEach((button) => button.addEventListener('click', () => window.dispatchEvent(new CustomEvent('game:log', { detail: 'Kho đồ đang được phát triển.' }))))
+  document.querySelectorAll('[data-inventory-action="split"]').forEach((button) => button.addEventListener('click', () => window.dispatchEvent(new CustomEvent('game:log', { detail: 'Chọn vật phẩm có thể xếp chồng để tách.' }))))
+  document.querySelectorAll('[data-inventory-action="quick-sell"]').forEach((button) => button.addEventListener('click', sellSelected))
+  document.querySelectorAll('[data-page-action]').forEach((button) => button.addEventListener('click', () => window.dispatchEvent(new CustomEvent('game:log', { detail: 'Túi đồ hiện hiển thị trang 1.' }))))
 
-  window.addEventListener('resize', hide)
+  paintGrid()
+  if (player.inventory.length) selectItem(getItemById(player.inventory[0]))
 }
