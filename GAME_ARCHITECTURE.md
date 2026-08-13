@@ -144,12 +144,19 @@ Các menu/hệ thống **Luyện Đan, Luyện Khí và Hợp Thành** đã có 
 
 ### Hợp Thành đan dược và linh dược
 
-- Các vật phẩm **cùng loại và cùng Level** có thể dùng để hợp thành vật phẩm **cùng loại ở Level cao hơn**.
-- Hợp thành theo nguyên tắc tăng cấp tuần tự; ví dụ vật phẩm Level 1 hợp thành thành vật phẩm Level 2, Level 2 thành Level 3, v.v.
-- Khi hợp thành có **xác suất vượt cấp khoảng 1–5%**.
-- Vượt cấp nghĩa là kết quả có thể cao hơn Level kế tiếp theo cơ chế hợp thành; số cấp vượt cụ thể và cách chọn xác suất sẽ được chốt khi triển khai chi tiết.
-- Không áp dụng xác suất vượt cấp để phá vỡ giới hạn Level 10 của đan dược/linh dược, trừ khi có quy tắc mới được chốt.
-- Khoáng thạch tiếp tục thuộc hệ thống Luyện Khí; quy tắc hợp thành khoáng thạch sẽ được xác định riêng nếu cần.
+- Công thức cơ bản luôn dùng **2 vật phẩm**, không phải 3, 4 hay nhiều hơn.
+- Hai vật phẩm phải **cùng loại và cùng Level**.
+- **2 vật phẩm Level N → 1 vật phẩm Level N+1 cùng loại**.
+- Ví dụ: **2 Khí Huyết Đan Lv1 → 1 Khí Huyết Đan Lv2**.
+- Có **xác suất 1–5%** để kết quả **vượt thêm 1 Level**.
+- Ví dụ: **2 Khí Huyết Đan Lv1** thông thường tạo Lv2; nếu kích hoạt xác suất vượt cấp thì tạo **Lv3**.
+- Xác suất vượt cấp không làm mất 2 vật phẩm đầu vào; hai vật phẩm được tiêu hao để tạo ra một kết quả duy nhất.
+- Không vượt quá **Level 10** của đan dược/linh dược, trừ khi sau này có quy tắc mới được chốt.
+
+### Khoáng thạch
+
+- Khoáng thạch thuộc hệ thống **Luyện Khí**.
+- Quy tắc hợp thành khoáng thạch sẽ được xác định riêng nếu cần.
 
 ## 11. Công thức chiến đấu
 
