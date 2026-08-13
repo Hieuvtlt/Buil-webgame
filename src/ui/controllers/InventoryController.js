@@ -21,10 +21,17 @@ const STAT_LABELS = {
 }
 
 const QUALITY_LABELS = {
-  haPham: 'Hạ phẩm',
-  trungPham: 'Trung phẩm',
-  thuongPham: 'Thượng phẩm',
-  cucPham: 'Cực phẩm',
+  haPham: 'Trắng - Hạ phẩm',
+  trungPham: 'Xanh - Trung phẩm',
+  thuongPham: 'Vàng - Thượng phẩm',
+  cucPham: 'Đỏ - Cực phẩm',
+}
+
+const QUALITY_COLORS = {
+  haPham: '#ffffff',
+  trungPham: '#4da6ff',
+  thuongPham: '#ffd54a',
+  cucPham: '#ff4d4d',
 }
 
 const RESIST_KEYS = new Set(['poisonResist', 'fireResist', 'iceResist', 'lightningResist'])
@@ -127,6 +134,147 @@ function renderDetail(item) {
   `
 }
 
+function getSellableInventoryItems() {
+  return player.inventory.map((id, inventoryIndex) => ({
+    id: Number(id),
+    inventoryIndex,
+    item: getItemById(id),
+  })).filter(({ item }) => item)
+}
+
+function getQuickSellMatches(criteria) {
+  const equipmentTypes = new Set(['equipment', 'weapon', 'armor', 'accessory'])
+  const potionLevels = new Set(criteria.potionLevels)
+  const herbLevels = new Set(criteria.herbLevels)
+
+  return getSellableInventoryItems().filter(({ item }) => {
+    const equipped = Object.values(player.equipment).some((id) => Number(id) === Number(item.id))
+    if (equipped) return false
+
+    if (criteria.qualities.length && equipmentTypes.has(item.type) && criteria.qualities.includes(item.quality)) return true
+    if (criteria.potionLevels.length && item.type === 'consumable' && potionLevels.has(Number(item.potionLevel))) return true
+    if (criteria.herbLevels.length && item.type === 'material' && item.category === 'alchemy_herb' && herbLevels.has(Number(item.level))) return true
+    return false
+  })
+}
+
+function quickSellLabel(criteria) {
+  const chunks = []
+  if (criteria.qualities.length) chunks.push(`Trang bị: ${criteria.qualities.map((q) => QUALITY_LABELS[q].split(' - ')[0]).join(', ')}`)
+  if (criteria.potionLevels.length) chunks.push(`Đan dược: ${criteria.potionLevels.map((n) => `Lv.${n}`).join(', ')}`)
+  if (criteria.herbLevels.length) chunks.push(`Linh dược: ${criteria.herbLevels.map((n) => `Lv.${n}`).join(', ')}`)
+  return chunks.length ? chunks.join(' • ') : 'Chưa chọn tiêu chí'
+}
+
+function openQuickSellModal() {
+  const existing = document.getElementById('quick-sell-modal')
+  if (existing) existing.remove()
+
+  const qualityOptions = Object.entries(QUALITY_LABELS).map(([key, label]) => `
+    <label class="quick-sell-option quick-sell-quality" style="--option-color:${QUALITY_COLORS[key]}">
+      <input type="checkbox" data-quick-sell-quality="${key}">
+      <span class="quick-sell-check"></span>
+      <span>${label}</span>
+    </label>
+  `).join('')
+  const potionOptions = Array.from({ length: 10 }, (_, index) => `
+    <label class="quick-sell-option">
+      <input type="checkbox" data-quick-sell-potion="${index + 1}">
+      <span class="quick-sell-check"></span>
+      <span>Lv.${index + 1}</span>
+    </label>
+  `).join('')
+  const herbOptions = Array.from({ length: 10 }, (_, index) => `
+    <label class="quick-sell-option">
+      <input type="checkbox" data-quick-sell-herb="${index + 1}">
+      <span class="quick-sell-check"></span>
+      <span>Lv.${index + 1}</span>
+    </label>
+  `).join('')
+
+  const modal = document.createElement('div')
+  modal.id = 'quick-sell-modal'
+  modal.className = 'quick-sell-modal'
+  modal.innerHTML = `
+    <div class="quick-sell-backdrop" data-quick-sell-close></div>
+    <section class="quick-sell-dialog" role="dialog" aria-modal="true" aria-labelledby="quick-sell-title">
+      <header class="quick-sell-header">
+        <div>
+          <div class="quick-sell-title" id="quick-sell-title">BÁN NHANH</div>
+          <div class="quick-sell-subtitle">Chọn những nhóm vật phẩm muốn bán tự động.</div>
+        </div>
+        <button type="button" class="quick-sell-close" data-quick-sell-close aria-label="Đóng">×</button>
+      </header>
+
+      <div class="quick-sell-body">
+        <section class="quick-sell-group">
+          <div class="quick-sell-group-title">TRANG BỊ</div>
+          <div class="quick-sell-options quick-sell-options-4">${qualityOptions}</div>
+        </section>
+
+        <section class="quick-sell-group">
+          <div class="quick-sell-group-title">ĐAN DƯỢC</div>
+          <div class="quick-sell-options">${potionOptions}</div>
+        </section>
+
+        <section class="quick-sell-group">
+          <div class="quick-sell-group-title">LINH DƯỢC</div>
+          <div class="quick-sell-options">${herbOptions}</div>
+        </section>
+      </div>
+
+      <div class="quick-sell-summary">
+        <div class="quick-sell-summary-text" id="quick-sell-summary-text">Chưa chọn tiêu chí</div>
+        <div class="quick-sell-summary-count" id="quick-sell-summary-count">0 vật phẩm</div>
+      </div>
+      <footer class="quick-sell-footer">
+        <button type="button" class="quick-sell-btn ghost" data-quick-sell-close>Hủy</button>
+        <button type="button" class="quick-sell-btn confirm" id="quick-sell-confirm">BÁN NGAY</button>
+      </footer>
+    </section>
+  `
+
+  document.body.appendChild(modal)
+
+  const getCriteria = () => ({
+    qualities: Array.from(modal.querySelectorAll('[data-quick-sell-quality]:checked')).map((input) => input.dataset.quickSellQuality),
+    potionLevels: Array.from(modal.querySelectorAll('[data-quick-sell-potion]:checked')).map((input) => Number(input.dataset.quickSellPotion)),
+    herbLevels: Array.from(modal.querySelectorAll('[data-quick-sell-herb]:checked')).map((input) => Number(input.dataset.quickSellHerb)),
+  })
+
+  const refreshSummary = () => {
+    const criteria = getCriteria()
+    const matches = getQuickSellMatches(criteria)
+    modal.querySelector('#quick-sell-summary-text').textContent = quickSellLabel(criteria)
+    modal.querySelector('#quick-sell-summary-count').textContent = `${matches.length} vật phẩm • ${matches.reduce((sum, entry) => sum + Number(entry.item.price?.sell ?? 0), 0).toLocaleString('vi-VN')} ngân lượng`
+    modal.querySelector('#quick-sell-confirm').disabled = matches.length === 0
+  }
+
+  modal.querySelectorAll('input[type="checkbox"]').forEach((input) => input.addEventListener('change', refreshSummary))
+  modal.querySelectorAll('[data-quick-sell-close]').forEach((button) => button.addEventListener('click', () => modal.remove()))
+
+  modal.querySelector('#quick-sell-confirm').addEventListener('click', () => {
+    const criteria = getCriteria()
+    const matches = getQuickSellMatches(criteria)
+    if (!matches.length) return
+
+    const idsToRemove = new Set(matches.map((entry) => entry.id))
+    const totalGold = matches.reduce((sum, entry) => sum + Number(entry.item.price?.sell ?? 0), 0)
+    player.inventory = player.inventory.filter((id) => !idsToRemove.has(Number(id)))
+    player.gold += totalGold
+    modal.remove()
+    window.dispatchEvent(new CustomEvent('game:inventory-changed'))
+    window.dispatchEvent(new CustomEvent('game:log', {
+      detail: {
+        message: `Bán nhanh ${matches.length} vật phẩm, nhận ${totalGold.toLocaleString('vi-VN')} ngân lượng.`,
+        type: 'item',
+      },
+    }))
+  })
+
+  refreshSummary()
+}
+
 export function mountInventoryScreen() {
   const grid = document.getElementById('inventory-screen-grid')
   const detail = document.getElementById('inventory-item-detail')
@@ -172,7 +320,7 @@ export function mountInventoryScreen() {
       }
       if (equipItem(action.slot, item.id)) window.dispatchEvent(new CustomEvent('game:item-equipped', { detail: { itemId: item.id } }))
     })
-    detail.querySelector('[data-detail-action="quick-sell"]')?.addEventListener('click', () => sellSelected())
+    detail.querySelector('[data-detail-action="quick-sell"]')?.addEventListener('click', openQuickSellModal)
     detail.querySelector('[data-detail-action="delete"]')?.addEventListener('click', () => deleteSelected())
   }
 
@@ -239,7 +387,7 @@ export function mountInventoryScreen() {
   document.querySelectorAll('[data-inventory-action="sort"]').forEach((button) => button.addEventListener('click', sortInventory))
   document.querySelectorAll('[data-inventory-action="storage"]').forEach((button) => button.addEventListener('click', () => window.dispatchEvent(new CustomEvent('game:log', { detail: 'Kho đồ đang được phát triển.' }))))
   document.querySelectorAll('[data-inventory-action="split"]').forEach((button) => button.addEventListener('click', () => window.dispatchEvent(new CustomEvent('game:log', { detail: 'Chọn vật phẩm có thể xếp chồng để tách.' }))))
-  document.querySelectorAll('[data-inventory-action="quick-sell"]').forEach((button) => button.addEventListener('click', sellSelected))
+  document.querySelectorAll('[data-inventory-action="quick-sell"]').forEach((button) => button.addEventListener('click', openQuickSellModal))
   document.querySelectorAll('[data-page-action]').forEach((button) => button.addEventListener('click', () => window.dispatchEvent(new CustomEvent('game:log', { detail: 'Túi đồ hiện hiển thị trang 1.' }))))
 
   paintGrid()
