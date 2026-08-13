@@ -142,21 +142,18 @@ Có đúng **6 loại**:
 
 Các menu/hệ thống **Luyện Đan, Luyện Khí và Hợp Thành** đã có trong project và tiếp tục phát triển trên kiến trúc hiện tại.
 
-### Hợp Thành đan dược và linh dược
+### Hợp Thành đan dược, linh dược và khoáng thạch
 
 - Công thức cơ bản luôn dùng **2 vật phẩm**, không phải 3, 4 hay nhiều hơn.
 - Hai vật phẩm phải **cùng loại và cùng Level**.
 - **2 vật phẩm Level N → 1 vật phẩm Level N+1 cùng loại**.
-- Ví dụ: **2 Khí Huyết Đan Lv1 → 1 Khí Huyết Đan Lv2**.
+- Ví dụ đan dược: **2 Khí Huyết Đan Lv1 → 1 Khí Huyết Đan Lv2**.
+- Ví dụ linh dược: **2 Linh dược Lv1 → 1 Linh dược Lv2 cùng loại**.
+- Ví dụ khoáng thạch: **2 Khoáng thạch Lv1 → 1 Khoáng thạch Lv2 cùng loại**.
 - Có **xác suất 1–5%** để kết quả **vượt thêm 1 Level**.
-- Ví dụ: **2 Khí Huyết Đan Lv1** thông thường tạo Lv2; nếu kích hoạt xác suất vượt cấp thì tạo **Lv3**.
-- Xác suất vượt cấp không làm mất 2 vật phẩm đầu vào; hai vật phẩm được tiêu hao để tạo ra một kết quả duy nhất.
-- Không vượt quá **Level 10** của đan dược/linh dược, trừ khi sau này có quy tắc mới được chốt.
-
-### Khoáng thạch
-
-- Khoáng thạch thuộc hệ thống **Luyện Khí**.
-- Quy tắc hợp thành khoáng thạch sẽ được xác định riêng nếu cần.
+- Ví dụ: **2 Khí Huyết Đan Lv1** thông thường tạo Lv2; nếu kích hoạt xác suất vượt cấp thì tạo **Lv3**. Quy tắc tương tự áp dụng cho linh dược và khoáng thạch.
+- Hai vật phẩm đầu vào được tiêu hao để tạo ra **1 vật phẩm kết quả duy nhất**.
+- Không vượt quá **Level 10** của đan dược, linh dược và khoáng thạch, trừ khi sau này có quy tắc mới được chốt.
 
 ## 11. Công thức chiến đấu
 
