@@ -66,3 +66,34 @@
 .inventory-grid-wrap-v2::-webkit-scrollbar-thumb,.inventory-detail-panel::-webkit-scrollbar-thumb{background:#26382b;border-radius:8px}
 @media (max-width:1200px){.inventory-layout-v2{grid-template-columns:145px minmax(290px,1fr) 235px}.inventory-grid-v2{grid-template-columns:repeat(4,minmax(64px,1fr))}}
 @media (max-width:1000px){.inventory-layout-v2{grid-template-columns:125px minmax(280px,1fr)}.inventory-detail-panel{display:none}.inventory-grid-v2{grid-template-columns:repeat(5,minmax(58px,1fr))}}
+
+/* ===== QUICK SELL ===== */
+.quick-sell-modal{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:18px}
+.quick-sell-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(2px)}
+.quick-sell-dialog{position:relative;z-index:1;width:min(720px,calc(100vw - 36px));max-height:min(760px,calc(100vh - 36px));display:flex;flex-direction:column;border:1px solid #7b651c;border-radius:10px;background:linear-gradient(180deg,#08130c,#030805);box-shadow:0 24px 70px rgba(0,0,0,.8),inset 0 0 0 1px rgba(240,196,61,.08);overflow:hidden}
+.quick-sell-header{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:14px 16px;border-bottom:1px solid #3e381b;background:linear-gradient(180deg,#0c1710,#07100b)}
+.quick-sell-title{color:#f1c84a;font-size:18px;font-weight:900;letter-spacing:1.5px}
+.quick-sell-subtitle{margin-top:3px;color:#8f9e95;font-size:11px}
+.quick-sell-close{width:32px;height:32px;border:1px solid #65541a;border-radius:6px;background:#090e0a;color:#e9c84f;font-size:22px;cursor:pointer}
+.quick-sell-body{padding:14px;display:grid;gap:10px;overflow:auto}
+.quick-sell-group{border:1px solid #243a29;border-radius:8px;background:rgba(7,17,11,.82);padding:10px}
+.quick-sell-group-title{margin-bottom:8px;color:#dabe61;font-weight:800;font-size:12px;letter-spacing:1px}
+.quick-sell-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.quick-sell-options-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.quick-sell-option{position:relative;min-height:36px;display:flex;align-items:center;gap:8px;padding:0 10px;border:1px solid #28402d;border-radius:6px;background:#08140d;color:#c4d0c8;font-size:12px;cursor:pointer;transition:.15s ease}
+.quick-sell-option:hover{border-color:#7f6a22;background:#0d1b12}
+.quick-sell-option input{position:absolute;opacity:0;pointer-events:none}
+.quick-sell-check{width:15px;height:15px;flex:0 0 15px;border:1px solid #526256;border-radius:3px;background:#050a06;display:block;box-shadow:inset 0 0 0 2px #050a06}
+.quick-sell-option:has(input:checked){border-color:#c5a03d;background:rgba(77,55,11,.42);color:#f2d06a}
+.quick-sell-option:has(input:checked) .quick-sell-check{background:#19d96d;border-color:#19d96d;box-shadow:inset 0 0 0 3px #08130c}
+.quick-sell-quality{color:var(--option-color)}
+.quick-sell-quality:has(input:checked){color:var(--option-color);border-color:var(--option-color)}
+.quick-sell-summary{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 14px;border-top:1px solid #1d3023;border-bottom:1px solid #1d3023;background:#050d08;font-size:11px}
+.quick-sell-summary-text{color:#b9c7bd;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quick-sell-summary-count{color:#e8c85b;font-weight:800;white-space:nowrap}
+.quick-sell-footer{display:flex;justify-content:flex-end;gap:8px;padding:12px 14px;background:#050a07}
+.quick-sell-btn{min-width:120px;height:38px;border-radius:6px;border:1px solid #4f5a50;background:#0a120c;color:#c3cec6;cursor:pointer;font-weight:800}
+.quick-sell-btn.confirm{border-color:#8e6e1e;background:linear-gradient(180deg,#6e4f0e,#372a0a);color:#f2cc58}
+.quick-sell-btn.confirm:disabled{opacity:.45;cursor:not-allowed}
+.quick-sell-btn.ghost:hover{border-color:#7e6b2a;color:#ecd06a}
+@media(max-width:640px){.quick-sell-options,.quick-sell-options-4{grid-template-columns:repeat(2,minmax(0,1fr))}.quick-sell-dialog{max-height:calc(100vh - 20px)}.quick-sell-summary{align-items:flex-start;flex-direction:column}.quick-sell-footer{padding-bottom:14px}.quick-sell-btn{flex:1}}
