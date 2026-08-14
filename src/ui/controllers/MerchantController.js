@@ -12,13 +12,26 @@ const formatCompact = (value) => {
   return formatAmount(number)
 }
 
+const qualityClass = (quality = '') => ({
+  'Hạ phẩm': 'rarity-ha',
+  'Trung phẩm': 'rarity-trung',
+  'Thượng phẩm': 'rarity-thuong',
+  'Cực phẩm': 'rarity-cuc',
+}[quality] || 'rarity-default')
+
 function renderPreviewInfo(data) {
   const stats = String(data.stats || '').split(';').filter(Boolean)
-  return `<section class="merchant-item-preview">
+  const rarity = qualityClass(data.quality)
+  const grade = data.grade ? ` · ${data.grade}` : ''
+  return `<section class="merchant-item-preview ${rarity}">
     <div class="merchant-preview-title">THÔNG TIN VẬT PHẨM</div>
     <div class="merchant-preview-head">
       <div class="merchant-preview-icon">${data.name?.charAt(0) ?? '?'}</div>
-      <div><div class="merchant-preview-name">${data.name}</div><div class="merchant-preview-meta">${data.category} · ${data.type} · Lv.${data.level}</div><div class="merchant-preview-quality">${data.quality}</div></div>
+      <div class="merchant-preview-main">
+        <div class="merchant-preview-name">${data.name}</div>
+        <div class="merchant-preview-meta">${data.category} · ${data.type} · Lv.${data.level}${grade}</div>
+        <div class="merchant-preview-quality">${data.quality}</div>
+      </div>
     </div>
     <div class="merchant-preview-section">THUỘC TÍNH</div>
     <div class="merchant-preview-stats">${stats.length ? stats.map((stat) => `<div>${stat}</div>`).join('') : '<div>Không có thuộc tính chiến đấu.</div>'}</div>
