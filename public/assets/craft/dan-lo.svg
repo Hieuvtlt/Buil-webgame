@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 420">
+<defs><radialGradient id="g"><stop stop-color="#ffd96a" stop-opacity=".5"/><stop offset="1" stop-color="#00d98b" stop-opacity="0"/></radialGradient><linearGradient id="m" x2="0" y2="1"><stop stop-color="#9b6b35"/><stop offset=".5" stop-color="#4b2d18"/><stop offset="1" stop-color="#17130f"/></linearGradient></defs>
+<ellipse cx="250" cy="210" rx="205" ry="180" fill="url(#g)"/>
+<path d="M120 175 Q125 115 180 95 Q250 70 320 95 Q375 115 380 175 L350 300 Q340 350 250 365 Q160 350 150 300Z" fill="url(#m)" stroke="#f0c84b" stroke-width="5"/>
+<path d="M155 170 Q250 205 345 170" fill="none" stroke="#d89b3d" stroke-width="5"/>
+<ellipse cx="250" cy="165" rx="75" ry="30" fill="#17130f" stroke="#f0c84b" stroke-width="5"/>
+<path d="M225 145 Q250 125 275 145 L270 180 Q250 195 230 180Z" fill="#f3c74e" opacity=".9"/>
+<path d="M210 100 Q250 55 290 100" fill="none" stroke="#f0c84b" stroke-width="6" stroke-linecap="round"/>
+<circle cx="250" cy="72" r="10" fill="#00f28a" stroke="#f0c84b" stroke-width="3"/>
+<path d="M175 245 Q250 275 325 245" fill="none" stroke="#00f28a" stroke-opacity=".65" stroke-width="4"/>
+</svg>
