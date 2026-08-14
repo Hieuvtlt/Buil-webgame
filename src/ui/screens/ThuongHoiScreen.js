@@ -1,33 +1,39 @@
+const CATEGORIES = ['Trang bị', 'Đan dược', 'Linh dược', 'Khoáng thạch', 'Đan phương', 'Bản vẽ']
+const BUY_ITEMS = Array.from({ length: 60 }, (_, i) => ({ name: `Hàng Thương Hội ${i + 1}`, level: (i % 10) + 1, quality: ['Hạ phẩm', 'Trung phẩm', 'Thượng phẩm', 'Cực phẩm'][i % 4], price: (i + 1) * 1000, category: CATEGORIES[i % CATEGORIES.length] }))
+const SELL_ITEMS = Array.from({ length: 60 }, (_, i) => ({ name: `Vật phẩm túi đồ ${i + 1}`, level: (i % 10) + 1, quality: ['Hạ phẩm', 'Trung phẩm', 'Thượng phẩm', 'Cực phẩm'][i % 4], price: (i + 1) * 500, category: CATEGORIES[i % CATEGORIES.length] }))
+
+function renderItems(mode, page = 1, category = CATEGORIES[0]) {
+  const source = (mode === 'mua' ? BUY_ITEMS : SELL_ITEMS).filter((item) => item.category === category)
+  const start = (page - 1) * 12
+  return source.slice(start, start + 12).map((item, i) => `
+    <button class="merchant-item-slot" type="button" data-merchant-index="${start + i}" data-name="${item.name}" data-level="${item.level}" data-quality="${item.quality}" data-price="${item.price}" data-category="${item.category}">
+      <span class="merchant-item-icon">${i + 1}</span>
+      <span class="merchant-item-name">${item.name}</span>
+    </button>`).join('')
+}
+
 export function ThuongHoiScreen() {
-  const totalPages = 5
-  const rowsPerPage = 11
   return `
-    <div class="merchant-screen">
+    <div class="merchant-screen game-screen">
       <div class="merchant-tabs">
-        <button class="merchant-tab active" type="button" data-tab="mua">Mua</button>
-        <button class="merchant-tab" type="button" data-tab="ban">Bán</button>
+        <button class="merchant-tab active" type="button" data-tab="mua">MUA</button>
+        <button class="merchant-tab" type="button" data-tab="ban">BÁN</button>
       </div>
       <div class="merchant-layout">
-        <div class="merchant-table-wrap">
-          <div class="merchant-table" role="table">
-            <div class="m-row m-header"><div class="m-cell">Tên sản phẩm</div><div class="m-cell">Cấp độ</div><div class="m-cell">Phẩm cấp</div><div class="m-cell">Giá</div></div>
-            ${Array.from({ length: rowsPerPage }, (_, i) => `
-              <div class="m-row m-data" data-row="${i + 1}">
-                <div class="m-cell">Item ${i + 1}</div><div class="m-cell">-</div><div class="m-cell">-</div><div class="m-cell">-</div>
-              </div>`).join('')}
+        <aside class="merchant-category-panel">
+          <div class="merchant-panel-title">DANH MỤC</div>
+          ${CATEGORIES.map((name, i) => `<button class="merchant-side-category${i === 0 ? ' active' : ''}" type="button" data-category="${name}">${name}</button>`).join('')}
+        </aside>
+        <section class="merchant-items-panel">
+          <div class="merchant-list-head"><span id="merchant-mode-label">Hàng của Thương Hội</span><span>Trang <b id="merchant-current-page">1</b>/5</span></div>
+          <div class="merchant-item-grid" id="merchant-item-grid">${renderItems('mua')}</div>
+          <div class="merchant-pagination" id="merchant-pagination">
+            ${[1,2,3,4,5].map(p => `<button class="merchant-page-btn${p === 1 ? ' active' : ''}" type="button" data-page="${p}">${p}</button>`).join('')}
           </div>
-        </div>
-        <div class="merchant-info">
-          <div class="merchant-info-title">Thông tin</div>
-          <div class="merchant-info-line"><b>Tên:</b> -</div>
-          <div class="merchant-info-line"><b>Loại:</b> -</div>
-          <div class="merchant-info-line"><b>Phẩm cấp:</b> -</div>
-          <div class="merchant-info-line"><b>Giá:</b> -</div>
-          <div class="merchant-info-desc">Placeholder mô tả sản phẩm</div>
-        </div>
+        </section>
       </div>
-      <div class="merchant-pagination" id="merchant-pagination">
-        ${Array.from({ length: totalPages }, (_, p) => `<button class="${p === 0 ? 'merchant-page-btn active' : 'merchant-page-btn'}" type="button" data-page="${p + 1}">${p === 0 ? 'Trang 1' : p + 1}</button>`).join('')}
-      </div>
+      <div class="merchant-tooltip" id="merchant-tooltip" role="dialog" aria-hidden="true"></div>
     </div>`
 }
+
+export { CATEGORIES, BUY_ITEMS, SELL_ITEMS, renderItems }
