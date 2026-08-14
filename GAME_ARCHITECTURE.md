@@ -38,11 +38,21 @@ Trần thuộc tính: Hoàng +30%; Huyền +50%; Địa +80%; Thiên +80–120%.
 Kháng tính: mỗi món tối đa +20% cho một loại; tổng mỗi loại tối đa 80%.
 
 ## 5. Đan dược
-Có đúng 6 loại: Khí Huyết Đan (HP), Hồi Khí Đan (MP), Tụ Linh Đan (EXP), Ngộ Đạo Đan (EXP skill), Trùng Sinh Đan, Thiên Cơ Đan.
+Có 8 loại đan dược:
+- Khí Huyết Đan: hồi HP.
+- Hồi Khí Đan: hồi MP.
+- Tụ Linh Đan: EXP nhân vật.
+- Ngộ Đạo Đan: EXP võ kỹ.
+- Trùng Sinh Đan: dùng cho Trùng Sinh.
+- Thiên Cơ Đan: tăng thuộc tính ngẫu nhiên.
+- Đan Tâm Đan: EXP Luyện Đan.
+- Khí Linh Đan: EXP Luyện Khí.
 
-Level 1–10: Lv1 = nhân vật 1–10; Lv2 = 11–20; ...; Lv9 = 81–90; Lv10 = 91–200.
+Các đan dược có Level 1–10 khi áp dụng hệ thống cấp: Lv1 = nhân vật 1–10; Lv2 = 11–20; ...; Lv9 = 81–90; Lv10 = 91–200.
 
 Thiên Cơ Đan: thuộc tính % +1–5% ngẫu nhiên; thuộc tính dạng điểm +1–100 điểm ngẫu nhiên; sử dụng không giới hạn; giá trị giữ qua Trùng Sinh.
+
+Đan Tâm Đan và Khí Linh Đan là vật phẩm tăng EXP riêng cho hai nghề; dữ liệu hiện có đủ Lv1–Lv10 và sử dụng icon từ thư mục `danduoc`.
 
 ## 6. Linh dược và khoáng thạch
 - Linh dược có 12 loại, mỗi loại Lv1–10.
@@ -72,22 +82,22 @@ Thiên Cơ Đan: thuộc tính % +1–5% ngẫu nhiên; thuộc tính dạng đi
 
 ## 10. Đan phương và Bản vẽ
 ### Đan phương
-- Đan phương có **Level 1–10**, tương ứng với Level đan dược.
-- Học một Đan phương **chỉ 1 lần**; sau khi học thành công, công thức được mở **vĩnh viễn** cho nhân vật.
-- Đan phương Lv1–Lv4: có thể học trực tiếp bằng **1 Đan phương cùng Level**.
-- Từ Lv5 trở lên, Đan phương cấp cao phải được tạo thông qua **Hợp Thành Đan phương** để tránh việc sở hữu quá dễ:
-  - **4 mảnh Đan phương Lv5 → 1 Đan phương Lv5 hoàn chỉnh**.
-  - **4 mảnh Đan phương Lv6 → 1 Đan phương Lv6 hoàn chỉnh**.
+- Đan phương có Level 1–10, tương ứng với Level đan dược.
+- Học một Đan phương chỉ 1 lần; sau khi học thành công, công thức được mở vĩnh viễn cho nhân vật.
+- Đan phương Lv1–Lv4: có thể học trực tiếp bằng 1 Đan phương cùng Level.
+- Từ Lv5 trở lên, Đan phương cấp cao phải được tạo thông qua Hợp Thành Đan phương:
+  - 4 mảnh Đan phương Lv5 → 1 Đan phương Lv5 hoàn chỉnh.
+  - 4 mảnh Đan phương Lv6 → 1 Đan phương Lv6 hoàn chỉnh.
   - Tiếp tục tương tự cho Lv7–Lv10.
 - Mảnh và tấm hoàn chỉnh phải cùng Level.
 - Việc dùng Đan phương hoàn chỉnh để học công thức là vĩnh viễn và không cần dùng lại.
 
 ### Bản vẽ
 - Bản vẽ cũng có hệ thống cấp độ tương ứng với đẳng cấp trang bị.
-- Bản vẽ phải phân loại theo **đẳng cấp + phẩm cấp + vị trí trang bị**, không dùng một Bản vẽ chung cho mọi trang bị.
-- Ví dụ: **Hoàng cấp Hạ phẩm – Áo**, **Huyền cấp Trung phẩm – Mũ**.
-- Mỗi loại Bản vẽ được học một lần và công thức đã học được mở **vĩnh viễn**.
-- Quy tắc tạo Bản vẽ cấp cao áp dụng tương tự Đan phương: Lv1–Lv4 dùng 1 tấm hoàn chỉnh; từ Lv5 trở lên dùng **4 mảnh cùng Level → 1 tấm hoàn chỉnh cùng Level**.
+- Bản vẽ phải phân loại theo đẳng cấp + phẩm cấp + vị trí trang bị, không dùng một Bản vẽ chung cho mọi trang bị.
+- Ví dụ: Hoàng cấp Hạ phẩm – Áo, Huyền cấp Trung phẩm – Mũ.
+- Mỗi loại Bản vẽ được học một lần và công thức đã học được mở vĩnh viễn.
+- Quy tắc tạo Bản vẽ cấp cao áp dụng tương tự Đan phương: Lv1–Lv4 dùng 1 tấm hoàn chỉnh; từ Lv5 trở lên dùng 4 mảnh cùng Level → 1 tấm hoàn chỉnh cùng Level.
 - Không gộp các loại Bản vẽ khác vị trí/đẳng cấp/phẩm cấp vào cùng một công thức.
 
 ## 11. Luyện Đan, Luyện Khí, Hợp Thành
@@ -99,6 +109,13 @@ Thiên Cơ Đan: thuộc tính % +1–5% ngẫu nhiên; thuộc tính dạng đi
 - Tiếp tục tăng 1 loại nguyên liệu mỗi Level.
 - Lv10 cần 12 loại linh dược Lv10.
 - Chỉ được luyện các công thức Đan dược đã học thông qua Đan phương.
+- Có hệ thống **Alchemy Training** riêng.
+- Chưa Trùng Sinh: giới hạn luyện tối đa **10**.
+- Mỗi Trùng Sinh mở thêm **10 cấp**: TS1 = 20, TS2 = 30,...
+- Hiển thị theo dạng `Luyện Đan hiện tại / giới hạn`, ví dụ `3/10`, TS1 có thể `10/20`.
+- EXP Luyện Đan **chỉ nhận khi luyện thành công**.
+- Cấp Luyện Đan tăng dần sẽ làm hiệu quả/thuộc tính của quá trình Luyện Đan tăng dần theo hệ thống cân bằng sau này.
+- Đan Tâm Đan dùng để tăng EXP Luyện Đan.
 
 ### Luyện Khí
 - Dùng 12 loại khoáng thạch.
@@ -106,6 +123,13 @@ Thiên Cơ Đan: thuộc tính % +1–5% ngẫu nhiên; thuộc tính dạng đi
 - Hoàng cấp Trung phẩm: 4 loại khoáng thạch Lv2.
 - Tiếp tục theo quy luật tăng 1 loại nguyên liệu.
 - Chỉ được luyện các công thức trang bị đã học thông qua Bản vẽ tương ứng.
+- Có hệ thống **Forging Training** riêng.
+- Chưa Trùng Sinh: giới hạn luyện tối đa **10**.
+- Mỗi Trùng Sinh mở thêm **10 cấp**: TS1 = 20, TS2 = 30,...
+- Hiển thị theo dạng `Luyện Khí hiện tại / giới hạn`, ví dụ `3/10`, TS1 có thể `10/20`.
+- EXP Luyện Khí **chỉ nhận khi luyện thành công**.
+- Cấp Luyện Khí tăng dần sẽ làm hiệu quả/thuộc tính của quá trình Luyện Khí tăng dần theo hệ thống cân bằng sau này.
+- Khí Linh Đan dùng để tăng EXP Luyện Khí.
 
 ### Hợp Thành
 - Luôn dùng 2 vật phẩm cùng loại và cùng Level đối với hệ thống Hợp Thành vật liệu/đan dược.
@@ -114,7 +138,7 @@ Thiên Cơ Đan: thuộc tính % +1–5% ngẫu nhiên; thuộc tính dạng đi
 - Ví dụ 2 Khí Huyết Đan Lv1 → Lv2; nếu vượt cấp → Lv3.
 - Quy tắc tương tự cho linh dược và khoáng thạch.
 - Không vượt Level 10 nếu chưa có quy tắc mới.
-- Hợp Thành Đan phương/Bản vẽ là hệ thống riêng: từ Level 5 trở lên dùng **4 mảnh cùng Level → 1 tấm hoàn chỉnh cùng Level**, không áp dụng quy tắc 2→1 của vật liệu/đan dược.
+- Hợp Thành Đan phương/Bản vẽ là hệ thống riêng: từ Level 5 trở lên dùng 4 mảnh cùng Level → 1 tấm hoàn chỉnh cùng Level, không áp dụng quy tắc 2→1 của vật liệu/đan dược.
 
 ## 12. Quy tắc phát triển UI
 - Chỉ tạo hình ảnh/mockup khi người phát triển yêu cầu thiết kế.
