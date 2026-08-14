@@ -58,6 +58,7 @@ export function mountNgoaiCanhScreen(){
       const action=btn.dataset.action
       window.dispatchEvent(new CustomEvent('game:world-changed',{detail:{name:area.name,level:`Lv.${area.min}-${area.max}`,monsters:area.monsters,wantedTarget:area.wantedTarget||null}}))
       window.dispatchEvent(new CustomEvent('game:log',{detail:{message:action==='train'?`Bắt đầu luyện công tại ${area.name}.`:`Đã di chuyển đến ${area.name}.`,type:'item'}}))
+      window.dispatchEvent(new CustomEvent('game:start-combat',{detail:{area,action}}))
       closeModal();render()
     }))
     backdrop.querySelector('.world-modal-close')?.focus()
