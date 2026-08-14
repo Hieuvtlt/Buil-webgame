@@ -45,7 +45,6 @@ export function InventoryScreen() {
   return `
     <div class="inventory-screen inventory-screen-v2 game-screen">
       <div class="inventory-topbar">
-        <div class="inventory-topbar-title">TÚI ĐỒ</div>
         <div class="inventory-capacity">${used}/${capacity} ô sử dụng</div>
       </div>
 
