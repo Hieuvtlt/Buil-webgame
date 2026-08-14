@@ -9,6 +9,7 @@ import './inventory-screen-redesign.css'
 import './inventory-tooltip.css'
 import './skills-screen-redesign.css'
 import './merchant-screen.css'
+import './ui/combat.css'
 
 import { player, getPlayerStats } from './data/character.js'
 import { getCharacterImageSrc, CharacterScreen } from './ui/screens/CharacterScreen.js'
@@ -22,6 +23,7 @@ import { NhiemVuScreen, mountNhiemVuScreen } from './ui/screens/NhiemVuScreen.js
 import { NgoaiCanhScreen, mountNgoaiCanhScreen } from './ui/screens/NgoaiCanhScreen.js'
 import { GMScreen } from './ui/screens/GMScreen.js'
 import { SettingsScreen } from './ui/screens/SettingsScreen.js'
+import { mountCombatOverlay } from './ui/CombatController.js'
 
 import { mountCharacterScreen } from './ui/controllers/CharacterController.js'
 import { mountInventoryScreen } from './ui/controllers/InventoryController.js'
@@ -51,4 +53,4 @@ function openScreen(name){const screen=screens[name];if(!screen)return;currentSc
 function addGameLog(message,type='system'){const log=document.querySelector('#game-log');if(!log)return;const line=document.createElement('div');line.className=`log-line log-${type}`;line.textContent=`[${new Date().toLocaleTimeString('vi-VN')}] ${message}`;log.appendChild(line);while(log.children.length>100)log.removeChild(log.firstElementChild);log.scrollTop=log.scrollHeight}
 function bindMenuButtons(){document.querySelectorAll('#left-menu .menu-item').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('#left-menu .menu-item').forEach(item=>item.classList.remove('active'));button.classList.add('active');openScreen(button.dataset.screen);addGameLog(`Mở menu ${button.dataset.screen}.`)}))}
 function refreshHud(){const oldLeft=document.querySelector('#col-left');if(!oldLeft)return;const wrapper=document.createElement('div');wrapper.innerHTML=hudMarkup();oldLeft.replaceWith(wrapper.firstElementChild);bindMenuButtons()}
-bindMenuButtons();document.querySelector('#auto-pause')?.addEventListener('click',()=>addGameLog('Auto đã tạm dừng.','warning'));document.querySelector('#auto-stop')?.addEventListener('click',()=>addGameLog('Auto đã dừng.','danger'));window.addEventListener('game:inventory-changed',()=>{if(currentScreenName==='Túi đồ')openScreen('Túi đồ');addGameLog('Túi đồ đã được cập nhật.','item')});window.addEventListener('game:item-equipped',()=>{if(currentScreenName==='Túi đồ')openScreen('Túi đồ');addGameLog('Trang bị đã được cập nhật.','item')});window.addEventListener('game:log',event=>{const detail=event.detail;if(typeof detail==='string')addGameLog(detail);else if(detail?.message)addGameLog(detail.message,detail.type??'system')});window.addEventListener('game:world-changed',event=>{const detail=event.detail;if(detail?.name){const el=document.querySelector('#world-status-name');if(el)el.textContent=`◉ Map: ${detail.name}`}});window.addEventListener('game:character-changed',refreshHud);window.addEventListener('game:character-image-changed',refreshHud);openScreen('Nhân vật')
+bindMenuButtons();mountCombatOverlay();document.querySelector('#auto-pause')?.addEventListener('click',()=>addGameLog('Auto đã tạm dừng.','warning'));document.querySelector('#auto-stop')?.addEventListener('click',()=>addGameLog('Auto đã dừng.','danger'));window.addEventListener('game:inventory-changed',()=>{if(currentScreenName==='Túi đồ')openScreen('Túi đồ');addGameLog('Túi đồ đã được cập nhật.','item')});window.addEventListener('game:item-equipped',()=>{if(currentScreenName==='Túi đồ')openScreen('Túi đồ');addGameLog('Trang bị đã được cập nhật.','item')});window.addEventListener('game:log',event=>{const detail=event.detail;if(typeof detail==='string')addGameLog(detail);else if(detail?.message)addGameLog(detail.message,detail.type??'system')});window.addEventListener('game:world-changed',event=>{const detail=event.detail;if(detail?.name){const el=document.querySelector('#world-status-name');if(el)el.textContent=`◉ Map: ${detail.name}`}});window.addEventListener('game:character-changed',refreshHud);window.addEventListener('game:character-image-changed',refreshHud);openScreen('Nhân vật')
