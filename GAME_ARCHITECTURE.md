@@ -1,35 +1,44 @@
-# Kiến trúc Game Web — Quy tắc hiện tại
+# GAME ARCHITECTURE — Sổ tay trung tâm của Game
 
-> Đây là tài liệu bàn giao trung tâm của dự án. Khi đổi tài khoản, đổi phiên ChatGPT, hoặc tiếp tục dự án ở nơi khác, hãy đọc file này trước để nắm nhanh quy tắc và hướng xây dựng đã chốt.
+> **Đây là tài liệu bàn giao chính thức.** Khi đổi tài khoản, đổi phiên ChatGPT hoặc tiếp tục dự án ở nơi khác, đọc file này trước. Tài liệu ghi: gameplay đã chốt, ý tưởng/hướng đi, nguyên tắc UI, asset và roadmap.
 
-## 0. Quy tắc bàn giao & phát triển
-- Đây là nguồn ghi chú trung tâm cho các quyết định thiết kế/gameplay đã chốt.
-- Khi người phát triển mới tiếp tục dự án, ưu tiên đọc `GAME_ARCHITECTURE.md`, sau đó kiểm tra code thực tế trước khi sửa.
-- Không tự ý thay đổi các quy tắc gameplay đã chốt. Nếu cần thay đổi, cập nhật lại tài liệu này cùng với code.
-- Khi người dùng nói “sửa game”, phải sửa trực tiếp code/repository; không chuyển sang tạo ảnh/mockup trừ khi được yêu cầu.
-- Khi thêm hình ảnh/icon mới, phải tuân thủ cấu trúc asset ở mục 13.
-- Khi thay đổi hệ thống lớn, cập nhật tài liệu này để phiên làm việc sau có thể tiếp tục ngay.
+## 0. Quy tắc làm việc
+- Đây là nguồn ghi chú trung tâm cho các quyết định của dự án.
+- **Ý tưởng mới** phải được ghi lại; chưa chốt thì không tự biến thành gameplay bắt buộc.
+- **Yêu cầu đã chốt** phải được ghi vào hệ thống tương ứng và nhật ký quyết định.
+- Khi người dùng nói **“sửa game”**: sửa trực tiếp code/repository, không chuyển sang tạo ảnh/mockup.
+- Khi thay đổi gameplay đã chốt: cập nhật file này cùng code.
+- Không tự ý đổi công thức, UI hoặc quy tắc đã chốt vì lý do “có cách hay hơn”. Nếu có đề xuất, ghi vào phần Ý tưởng và chờ chốt.
+- Khi tiếp tục dự án: đọc file này → kiểm tra code thực tế → mới sửa.
 
-## 1. Nhân vật
-- Max cấp cố định Lv1–200.
-- Mỗi lần lên cấp +5 điểm thuộc tính tự do.
-- 1 điểm tự do vào Sinh khí = +5 HP.
-- 1 điểm tự do vào Nội lực/Mana = +5 MP.
-- HP/MP theo giới hạn riêng của game; sát thương và thuộc tính chiến đấu khác lấy VLTK làm nền.
-- Bỏ Kháng tất cả, Tốc độ đánh và kỹ năng nội công.
+## 1. Tầm nhìn & hướng game
+- Game web tu tiên/võ hiệp, lấy **VLTK** làm nền tham chiếu cho thuộc tính/sát thương.
+- Đã bỏ **Đường Môn** và **Thúy Yên**.
+- Các môn phái còn lại có hệ thống skill sẵn; đủ cấp và bí kíp/điều kiện thì học.
+- **Tán Tu** là hướng riêng: không có võ công môn phái sẵn, phải tìm/học bí kíp.
+- Mục tiêu là progression dài hạn: nhân vật → môn phái/Tán Tu → võ kỹ → trang bị → nguyên liệu → Luyện Đan/Luyện Khí → Hợp Thành → Trùng Sinh → mở rộng giới hạn → tiếp tục phát triển.
+- Mỗi hệ thống phải có lý do tồn tại và liên kết với hệ thống khác.
 
-## 2. Trùng sinh
-- Trùng Sinh 1: Lv100 + Trùng Sinh Đan Lv1.
-- Trùng Sinh 2: Lv120 + Trùng Sinh Đan Lv2.
-- Sau Trùng Sinh: về Lv1; điểm do lên cấp reset; nhận +50 điểm thuộc tính vĩnh viễn.
-- Điểm từ Tẩy Tủy Kinh, Võ Lâm Mật Tịch và giá trị Thiên Cơ Đan giữ nguyên.
-- Võ kỹ và cấp luyện kỹ năng giữ nguyên.
-- Max Skill Training = 10 + cấp Trùng Sinh × 10.
-
-## 3. Thuộc tính
+## 2. Nhân vật & thuộc tính
+- Max cấp cố định **200**.
+- Mỗi lần lên cấp **+5 điểm thuộc tính tự do**.
+- 1 điểm tự do vào Sinh khí = **+5 HP**.
+- 1 điểm tự do vào Nội công/Mana = **+5 MP**.
+- HP/MP do game tự giới hạn; sát thương và thuộc tính khác lấy VLTK làm nền.
+- Bỏ: **Kháng tất cả, Tốc độ đánh, các kỹ năng nội công**.
 - HP/MP: 100% = 200 điểm; 120% = 250 điểm.
 - Sức mạnh, Thân pháp, Sinh khí, Nội công: 100% = 20 điểm; 120% = 25 điểm.
-- Công thức sát thương và thuộc tính khác theo VLTK.
+- Kháng tính: mỗi món tối đa +20% cho một loại; tổng mỗi loại tối đa **80%**, không cho 100% miễn sát thương.
+
+## 3. Trùng Sinh
+- Trùng Sinh 1: **Lv100 + Trùng Sinh Đan Lv1**.
+- Trùng Sinh 2: **Lv120 + Trùng Sinh Đan Lv2**; các lần sau theo hệ thống Trùng Sinh.
+- Trùng Sinh xong về **Lv1**.
+- Điểm do lên cấp reset.
+- Nhận **+50 điểm thuộc tính vĩnh viễn**, không phải 50 điểm tự do tạm thời.
+- Giữ điểm từ Tẩy Tủy Kinh, Võ Lâm Mật Tịch và giá trị đã dùng từ Thiên Cơ Đan.
+- Võ kỹ/skill và Training giữ nguyên.
+- Skill Training / Luyện Đan Training / Luyện Khí Training: giới hạn = **10 + Trùng Sinh × 10**.
 
 ## 4. Trang bị
 | Đẳng cấp | Cấp nhân vật | Dòng thuộc tính |
@@ -39,171 +48,238 @@
 | Địa cấp | 61–90 | 5–7 |
 | Thiên cấp | 91–200 | 8–10 |
 
-Phẩm cấp: Hạ phẩm = trắng; Trung phẩm = xanh dương; Thượng phẩm = vàng; Cực phẩm = đỏ.
+Phẩm cấp/màu:
+- Hạ phẩm = trắng.
+- Trung phẩm = xanh dương.
+- Thượng phẩm = vàng.
+- Cực phẩm = đỏ.
 
-Trần thuộc tính: Hoàng +30%; Huyền +50%; Địa +80%; Thiên +80–120%.
+Trần thuộc tính:
+- Hoàng +30%.
+- Huyền +50%.
+- Địa +80%.
+- Thiên đặc biệt +80–120%.
 
-Kháng tính: mỗi món tối đa +20% cho một loại; tổng mỗi loại tối đa 80%.
+Màu từng dòng thuộc tính phải thể hiện loại thuộc tính để dễ đọc. Skill có yêu cầu vũ khí.
 
 ## 5. Đan dược
-Có 8 loại đan dược:
-- Khí Huyết Đan: hồi HP.
-- Hồi Khí Đan: hồi MP.
-- Tụ Linh Đan: EXP nhân vật.
-- Ngộ Đạo Đan: EXP võ kỹ.
-- Trùng Sinh Đan: dùng cho Trùng Sinh.
-- Thiên Cơ Đan: tăng thuộc tính ngẫu nhiên.
-- Đan Tâm Đan: EXP Luyện Đan.
-- Khí Linh Đan: EXP Luyện Khí.
+Có **8 loại hiện tại**:
+1. Khí Huyết Đan — hồi HP.
+2. Hồi Khí Đan — hồi MP.
+3. Tụ Linh Đan — EXP nhân vật.
+4. Ngộ Đạo Đan — EXP võ kỹ.
+5. Trùng Sinh Đan — Trùng Sinh.
+6. Thiên Cơ Đan — tăng thuộc tính ngẫu nhiên.
+7. Đan Tâm Đan — EXP Luyện Đan.
+8. Khí Linh Đan — EXP Luyện Khí.
 
-Các đan dược có Level 1–10 khi áp dụng hệ thống cấp: Lv1 = nhân vật 1–10; Lv2 = 11–20; ...; Lv9 = 81–90; Lv10 = 91–200.
+Level 1–10: Lv1 = nhân vật 1–10; Lv2 = 11–20; ...; Lv9 = 81–90; Lv10 = 91–200.
 
-Thiên Cơ Đan: thuộc tính % +1–5% ngẫu nhiên; thuộc tính dạng điểm +1–100 điểm ngẫu nhiên; sử dụng không giới hạn; giá trị giữ qua Trùng Sinh.
+Thiên Cơ Đan:
+- Thuộc tính %: +1–5% ngẫu nhiên.
+- Thuộc tính dạng điểm: +1–100 điểm ngẫu nhiên.
+- Dùng không giới hạn.
+- Giá trị đã nhận giữ qua Trùng Sinh.
 
-Đan Tâm Đan và Khí Linh Đan là vật phẩm tăng EXP riêng cho hai nghề; dữ liệu hiện có đủ Lv1–Lv10 và sử dụng icon từ thư mục `danduoc`.
+## 6. Linh dược & Khoáng thạch
+- Linh dược: **12 loại**, Lv1–10.
+- Khoáng thạch: **12 loại**, Lv1–10.
+- Là nguyên liệu chính cho Luyện Đan/Luyện Khí.
 
-## 6. Linh dược và khoáng thạch
-- Linh dược có 12 loại, mỗi loại Lv1–10.
-- Khoáng thạch có 12 loại, mỗi loại Lv1–10.
-
-## 7. Tẩy Tủy Kinh và Võ Lâm Mật Tịch
-- Tẩy Tủy Kinh: +5 điểm tự do/lần, không giới hạn.
-- Võ Lâm Mật Tịch: +10 điểm tự do/lần, không giới hạn.
+## 7. Tẩy Tủy Kinh & Võ Lâm Mật Tịch
+- Tẩy Tủy Kinh: **+5 điểm tự do/lần**, không giới hạn.
+- Võ Lâm Mật Tịch: **+10 điểm tự do/lần**, không giới hạn.
 - Điểm đã nhận giữ vĩnh viễn qua Trùng Sinh.
 
 ## 8. Võ học / Skill
-- Các môn phái xây theo VLTK; Tán Tu không có võ công sẵn và phải học bằng bí kíp.
 - Không cộng điểm kỹ năng.
-- Skill Level là đẳng cấp/yêu cầu để học. Ví dụ Skill Level 60 yêu cầu nhân vật Lv60; học xong bắt đầu Training Level 1.
-- Skill Training Level tăng bằng EXP luyện skill và làm thuộc tính/hiệu quả skill tăng dần.
-- Chưa Trùng Sinh max Training 10; mỗi Trùng Sinh mở thêm 10 cấp: TS1 = 20, TS2 = 30,...
-- Cách hiển thị bắt buộc: `Skill Training hiện tại / giới hạn`, ví dụ `3/10`, Trùng Sinh 1 có thể `10/20`.
+- **Skill Level** = đẳng cấp/yêu cầu để học, khác Training Level.
+- Ví dụ Skill Level 60 → nhân vật cần Lv60; học xong bắt đầu Training Level 1.
+- Training tăng bằng EXP; thuộc tính/hiệu quả skill tăng dần theo Training.
+- Chưa Trùng Sinh max 10; TS1 max 20; TS2 max 30...
+- Hiển thị dạng **hiện tại/giới hạn**, ví dụ `3/10`, `10/20`.
 - Skill có yêu cầu vũ khí.
-- Không có kỹ năng nội công.
+- Bỏ toàn bộ kỹ năng nội công.
 - Ngộ Đạo Đan tăng EXP luyện skill.
 
 ## 9. Túi đồ
-- 5 trang × 30 ô = 150 ô; trang 1–5 hoạt động.
-- Thông tin vật phẩm hiện gần con trỏ khi click/chọn.
-- Nếu vật phẩm đang trang bị, hiện khung đang trang bị để so sánh và có nút Thay thế ngay tại popup.
+- **5 trang × 30 ô = 150 ô**; trang 1–5 hoạt động.
+- Click vật phẩm → thông tin xuất hiện gần con trỏ.
+- Nếu đang trang bị → hiện thêm khung **Đang trang bị** để so sánh.
+- Có nút **Thay thế** ngay tại khu vực so sánh.
 - Bán nhanh: trang bị Trắng/Xanh/Vàng/Đỏ; đan dược Lv1–10; linh dược Lv1–10.
 
-## 10. Đan phương và Bản vẽ
+## 10. Đan phương & Bản vẽ
 ### Đan phương
-- Đan phương có Level 1–10, tương ứng với Level đan dược.
-- Học một Đan phương chỉ 1 lần; sau khi học thành công, công thức được mở vĩnh viễn cho nhân vật.
-- Đan phương Lv1–Lv4: có thể học trực tiếp bằng 1 Đan phương cùng Level.
-- Từ Lv5 trở lên, Đan phương cấp cao phải được tạo thông qua Hợp Thành Đan phương:
-  - 4 mảnh Đan phương Lv5 → 1 Đan phương Lv5 hoàn chỉnh.
-  - 4 mảnh Đan phương Lv6 → 1 Đan phương Lv6 hoàn chỉnh.
-  - Tiếp tục tương tự cho Lv7–Lv10.
-- Mảnh và tấm hoàn chỉnh phải cùng Level.
-- Việc dùng Đan phương hoàn chỉnh để học công thức là vĩnh viễn và không cần dùng lại.
+- Level 1–10 tương ứng đan dược.
+- Học 1 lần → công thức vĩnh viễn.
+- Lv1–4: 1 tấm cùng Level để học.
+- Lv5 trở lên: **4 mảnh cùng Level → 1 tấm hoàn chỉnh cùng Level**.
 
 ### Bản vẽ
-- Bản vẽ cũng có hệ thống cấp độ tương ứng với đẳng cấp trang bị.
-- Bản vẽ phải phân loại theo đẳng cấp + phẩm cấp + vị trí trang bị, không dùng một Bản vẽ chung cho mọi trang bị.
-- Ví dụ: Hoàng cấp Hạ phẩm – Áo, Huyền cấp Trung phẩm – Mũ.
-- Mỗi loại Bản vẽ được học một lần và công thức đã học được mở vĩnh viễn.
-- Quy tắc tạo Bản vẽ cấp cao áp dụng tương tự Đan phương: Lv1–Lv4 dùng 1 tấm hoàn chỉnh; từ Lv5 trở lên dùng 4 mảnh cùng Level → 1 tấm hoàn chỉnh cùng Level.
-- Không gộp các loại Bản vẽ khác vị trí/đẳng cấp/phẩm cấp vào cùng một công thức.
+- Phân theo **đẳng cấp + phẩm cấp + vị trí trang bị**.
+- Ví dụ: Hoàng cấp Hạ phẩm – Áo; Huyền cấp Trung phẩm – Mũ.
+- Học 1 lần → công thức vĩnh viễn.
+- Quy tắc mảnh giống Đan phương: Lv1–4 dùng 1 tấm; từ Lv5 dùng 4 mảnh cùng Level → 1 tấm hoàn chỉnh.
 
-## 11. Luyện Đan, Luyện Khí, Hợp Thành
-### Luyện Đan
-- Hệ thống có 12 loại đan dược chế tạo.
-- Lv1 cần 2 loại linh dược Lv1.
-- Lv2 cần 3 loại linh dược Lv2.
-- Lv3 cần 4 loại linh dược Lv3.
-- Tiếp tục tăng 1 loại nguyên liệu mỗi Level.
-- Lv10 cần 12 loại linh dược Lv10.
-- Chỉ được luyện các công thức Đan dược đã học thông qua Đan phương.
-- Có hệ thống **Alchemy Training** riêng.
-- Chưa Trùng Sinh: giới hạn luyện tối đa **10**.
-- Mỗi Trùng Sinh mở thêm **10 cấp**: TS1 = 20, TS2 = 30,...
-- Hiển thị theo dạng `Luyện Đan hiện tại / giới hạn`, ví dụ `3/10`, TS1 có thể `10/20`.
-- EXP Luyện Đan **chỉ nhận khi luyện thành công**.
-- Cấp Luyện Đan tăng dần sẽ làm hiệu quả/thuộc tính của quá trình Luyện Đan tăng dần theo hệ thống cân bằng sau này.
-- Đan Tâm Đan dùng để tăng EXP Luyện Đan.
+## 11. Luyện Đan
+- Có **Alchemy Training** riêng.
+- Chưa Trùng Sinh max 10; mỗi Trùng Sinh +10.
+- Hiển thị `hiện tại/giới hạn`.
+- **Chỉ nhận EXP khi luyện thành công**.
+- Training tăng → hiệu quả/thuộc tính nghề tăng dần.
+- Công thức:
+  - Lv1: 2 loại linh dược Lv1.
+  - Lv2: 3 loại linh dược Lv2.
+  - Lv3: 4 loại linh dược Lv3.
+  - Mỗi Level +1 loại.
+  - Lv10: 12 loại linh dược Lv10.
+- Chỉ luyện công thức đã học bằng Đan phương.
+- Đan Tâm Đan tăng EXP nghề.
 
-### Luyện Khí
+## 12. Luyện Khí
+- Có **Forging Training** riêng.
+- Chưa Trùng Sinh max 10; mỗi Trùng Sinh +10.
+- Hiển thị `hiện tại/giới hạn`.
+- **Chỉ nhận EXP khi luyện thành công**.
 - Dùng 12 loại khoáng thạch.
-- Hoàng cấp Hạ phẩm: 3 loại khoáng thạch Lv1.
-- Hoàng cấp Trung phẩm: 4 loại khoáng thạch Lv2.
-- Tiếp tục theo quy luật tăng 1 loại nguyên liệu.
-- Chỉ được luyện các công thức trang bị đã học thông qua Bản vẽ tương ứng.
-- Có hệ thống **Forging Training** riêng.
-- Chưa Trùng Sinh: giới hạn luyện tối đa **10**.
-- Mỗi Trùng Sinh mở thêm **10 cấp**: TS1 = 20, TS2 = 30,...
-- Hiển thị theo dạng `Luyện Khí hiện tại / giới hạn`, ví dụ `3/10`, TS1 có thể `10/20`.
-- EXP Luyện Khí **chỉ nhận khi luyện thành công**.
-- Cấp Luyện Khí tăng dần sẽ làm hiệu quả/thuộc tính của quá trình Luyện Khí tăng dần theo hệ thống cân bằng sau này.
-- Khí Linh Đan dùng để tăng EXP Luyện Khí.
+- Công thức bắt đầu: Hoàng cấp Hạ phẩm = 3 loại khoáng thạch Lv1; Trung phẩm = 4 loại Lv2; tiếp tục tăng số loại theo thiết kế.
+- Bản vẽ quyết định loại trang bị, đẳng cấp, phẩm cấp, vị trí.
+- Khí Linh Đan tăng EXP nghề.
 
-### Hợp Thành
-- Luôn dùng 2 vật phẩm cùng loại và cùng Level đối với hệ thống Hợp Thành vật liệu/đan dược.
-- 2 vật phẩm Level N → 1 vật phẩm Level N+1 cùng loại.
-- Có xác suất 1–5% vượt thêm 1 Level.
-- Ví dụ 2 Khí Huyết Đan Lv1 → Lv2; nếu vượt cấp → Lv3.
-- Quy tắc tương tự cho linh dược và khoáng thạch.
-- Không vượt Level 10 nếu chưa có quy tắc mới.
-- Hợp Thành Đan phương/Bản vẽ là hệ thống riêng: từ Level 5 trở lên dùng 4 mảnh cùng Level → 1 tấm hoàn chỉnh cùng Level, không áp dụng quy tắc 2→1 của vật liệu/đan dược.
+## 13. Hợp Thành
+### Đan dược / Linh dược / Khoáng thạch
+- **2 vật phẩm cùng loại + cùng Level → 1 vật phẩm Level kế tiếp**.
+- Xác suất vượt thêm 1 Level: **1–5%**.
+- Ví dụ 2 Lv1 → Lv2; nếu vượt cấp → Lv3.
+- Không vượt Lv10 nếu chưa có quy tắc mới.
 
-## 12. Quy tắc phát triển UI
-- Chỉ tạo hình ảnh/mockup khi người phát triển yêu cầu thiết kế.
-- Nếu yêu cầu sửa/làm/chỉnh game thì không tự tạo hình; triển khai trực tiếp bằng code.
-- Mockup nếu có phải có khả năng triển khai thực tế bằng code.
+### Đan phương / Bản vẽ
+- Hệ thống riêng: từ Lv5 trở lên **4 mảnh cùng Level → 1 tấm hoàn chỉnh**.
+- Không áp dụng quy tắc 2→1 ở trên.
 
-## 13. Cấu trúc Asset — QUY TẮC CỐ ĐỊNH
-> Đây là cấu trúc chính thức để lưu hình ảnh/icon của game. Không tạo thêm các thư mục asset tùy tiện nếu không có lý do rõ ràng.
+## 14. UI hiện tại
+- Phong cách nền tối, viền vàng/xanh, võ hiệp/tu tiên.
+- Mỗi menu chỉ có **1 hàng tên chính**, không lặp tiêu đề.
+- Luyện Đan/Luyện Khí/Hợp Thành dùng chung bố cục game hiện tại.
+- Hình minh họa lớn bên trái; thao tác/thông tin bên phải.
+- Hình chỉ thay phần trình bày, không làm thay đổi logic.
+- Khi sửa từ ảnh chụp, chỉ sửa phần được yêu cầu và không phá phần đang chạy.
 
-### 13.1. Hình ảnh giao diện/minh họa
-Thư mục chuẩn:
-
-`src/assets/images/`
-
-Tất cả hình minh họa lớn, hình cố định trong menu/giao diện và hình trang trí chức năng mới phải lưu tại đây.
+## 15. Asset — QUY TẮC CỐ ĐỊNH
+### Hình ảnh
+Thư mục chính thức: `src/assets/images/`
 
 Ví dụ:
-- `hinhdanlo.svg` — hình Đan Lô của menu Luyện Đan.
-- `hinhbualuyenkhi.svg` — hình Búa + Đe của menu Luyện Khí.
-- `hinhhopthanh.svg` — hình minh họa menu Hợp Thành.
+- `hinhdanlo.svg` — Đan Lô menu Luyện Đan.
+- `hinhbualuyenkhi.svg` — Búa + Đe menu Luyện Khí.
+- `hinhhopthanh.svg` — hình minh họa Hợp Thành.
 
-Quy tắc đặt tên:
-- Tên mô tả đúng chức năng.
-- Ưu tiên tiếng Việt không dấu, viết liền, dễ tìm.
-- Không đặt tên kiểu `image1`, `new2`, `test`, `final-final`.
-- Khi thay hình nhưng giữ nguyên chức năng, ưu tiên giữ nguyên tên file để code không phải sửa.
+### Icon
+Thư mục chính thức: `src/assets/icons/`
 
-### 13.2. Icon
-Thư mục chuẩn:
+### Quy tắc
+- Tên file theo **chức năng**, tiếng Việt không dấu, dễ hiểu.
+- Ví dụ `hinhdanlo`, không dùng `image123`.
+- Icon tương tự: `iconluyendan`, `iconluyenkhi`, `iconhopthanh`.
+- Nếu thay hình cùng chức năng, giữ nguyên tên file để không phải sửa code.
+- `src/ui/assets.js` là nơi quản lý mapping asset cho UI khi phù hợp.
+- Không tạo thư mục asset mới tùy tiện.
+- Asset cũ đang được hệ thống sử dụng không tự ý di chuyển; phải kiểm tra reference trước.
+- **Từ nay mọi hình/icon mới được chèn vào game phải theo cấu trúc này.**
 
-`src/assets/icons/`
+## 16. Ý tưởng & hướng phát triển dài hạn
+> Phần này dùng để lưu **những ý tưởng, triết lý và hướng đi** để người phát triển ở phiên sau hiểu game muốn trở thành gì. Ý tưởng chưa chốt không tự động thành tính năng.
 
-Tất cả icon menu, icon chức năng, icon trạng thái và icon UI mới phải lưu tại đây.
+### 16.1. Progression tổng thể
+`Nhân vật → Môn phái/Tán Tu → Võ kỹ → Trang bị → Nguyên liệu → Luyện Đan/Luyện Khí → Hợp Thành → Trùng Sinh → mở rộng giới hạn → tiếp tục tu luyện`
 
-Quy tắc đặt tên tương tự hình ảnh: tên phải thể hiện chức năng, ví dụ `iconluyendan`, `iconluyenkhi`, `iconhopthanh`, `iconskill`.
+Mục tiêu: progression dài hạn nhưng không chỉ phụ thuộc Level.
 
-### 13.3. Quản lý đường dẫn asset
-- Các đường dẫn asset giao diện mới phải ưu tiên lấy từ hệ thống quản lý asset tập trung (ví dụ `src/ui/assets.js`) thay vì viết đường dẫn rải rác trong nhiều component.
-- Khi thêm một asset mới, cập nhật registry quản lý asset tương ứng.
-- Khi thay asset, chỉ cần thay file đúng tên trong `src/assets/images/` hoặc `src/assets/icons/` nếu không đổi chức năng.
-- Không tự ý di chuyển các thư mục dữ liệu icon/item cũ đang được code sử dụng nếu chưa kiểm tra toàn bộ import/reference. Việc gom asset cũ phải thực hiện có kiểm tra để tránh làm hỏng item hiện tại.
+### 16.2. Triết lý cân bằng
+- Lấy VLTK làm nền nhưng không sao chép máy móc.
+- HP/MP và thuộc tính điểm có trần riêng để tránh ảo chỉ số.
+- Kháng tối đa 80%, không cho miễn sát thương 100%.
+- Trang bị mạnh dần Hoàng → Huyền → Địa → Thiên, nhưng luôn có giới hạn dòng và %.
+- Thiên cấp là tầng đặc biệt 80–120%.
+- Trùng Sinh + Training + vật phẩm vĩnh viễn + công thức đã học tạo progression dài hạn.
 
-### 13.4. Quy trình thêm hình mới
-1. Xác định đây là **hình minh họa** hay **icon**.
-2. Đặt file vào `src/assets/images/` hoặc `src/assets/icons/`.
-3. Đặt tên theo chức năng.
-4. Đăng ký đường dẫn trong hệ thống asset tập trung nếu hệ thống đó đang dùng cho module.
-5. Sửa component/menu để dùng đường dẫn chuẩn mới.
-6. Kiểm tra cả môi trường local và GitHub Pages vì game được triển khai dưới sub-path `/Buil-webgame/`.
-7. Không để lại đường dẫn asset cũ chết trong code nếu asset đã được thay thế.
+### 16.3. Triết lý nghề Luyện Đan/Luyện Khí
+- Hai nghề phải giống **nghề tu luyện**, không chỉ là nút chế tạo.
+- Người chơi đầu tư nguyên liệu, công thức và thời gian để tăng Training.
+- Chỉ thành công mới nhận EXP giúp lựa chọn công thức có ý nghĩa.
+- Đan Tâm Đan/Khí Linh Đan hỗ trợ progression nhưng không được làm mất giá trị tự luyện.
+- Sau này có thể mở bonus theo Training Level nhưng không được phá trần thuộc tính/trang bị.
 
-## 14. Nguồn tham khảo
-- VLTK 1 là nền tham khảo cho môn phái, võ học, sát thương và thuộc tính chiến đấu.
-- Repo tham khảo: https://github.com/jxoffline/jx1linux
+### 16.4. Đan phương & Bản vẽ
+- Là hệ thống **mở khóa công thức vĩnh viễn**, không phải vật phẩm tiêu hao thông thường.
+- Cấp thấp dễ tiếp cận; cấp cao cần thu thập mảnh để tạo mục tiêu dài hạn.
+- Bản vẽ nhiều nhánh theo đẳng cấp/phẩm cấp/vị trí để tạo mục tiêu sưu tầm.
 
-## 15. Ghi chú trạng thái dự án
-- Game đang được phát triển trực tiếp trên GitHub repository `Hieuvtlt/Buil-webgame`.
-- GitHub Pages là môi trường kiểm tra giao diện/chức năng online.
-- Khi kiểm tra sau deploy, có thể cần `Ctrl + F5` để loại bỏ cache asset cũ.
-- Các quy tắc gameplay trong tài liệu này là những gì đã được chốt trong quá trình xây dựng; các chi tiết chưa chốt phải được coi là đang mở và không tự suy diễn thành quy tắc cố định.
+### 16.5. Tán Tu
+- Không biến Tán Tu thành “môn phái thứ N”.
+- Sức mạnh đến từ tìm/học bí kíp.
+- Tạo cảm giác khám phá và xây dựng nhân vật tự do.
+
+### 16.6. Trùng Sinh
+- Là reset có phần thưởng vĩnh viễn, không phải reset mất sạch.
+- Mỗi Trùng Sinh mở thêm không gian progression thông qua Training.
+- Giữ các giá trị vĩnh viễn và Võ kỹ để người chơi không phải làm lại toàn bộ.
+- Về sau có thể có nội dung riêng theo mốc Trùng Sinh, nhưng không phá vòng Lv1–200.
+
+### 16.7. UI/UX
+- Thống nhất bố cục giữa các menu.
+- Thông tin vật phẩm gần con trỏ.
+- So sánh trực tiếp trang bị đang mặc với vật phẩm đang xem và có nút Thay thế.
+- Màu phẩm cấp/thuộc tính nhất quán toàn game.
+- Hình minh họa tạo bản sắc nhưng không được làm chậm hoặc phá responsive.
+
+## 17. Roadmap
+### Giai đoạn 1 — Nền tảng
+- Ổn định GitHub Pages/build.
+- Ổn định cấu trúc asset.
+- Không phá inventory/item khi refactor.
+
+### Giai đoạn 2 — Gameplay lõi
+- Nhân vật + thuộc tính + Trùng Sinh.
+- Skill Training + yêu cầu vũ khí.
+- Trang bị 4 đẳng cấp × 4 phẩm cấp.
+
+### Giai đoạn 3 — Nghề
+- Luyện Đan Training.
+- Luyện Khí Training.
+- Đan phương/Bản vẽ kết nối công thức.
+- Hợp Thành.
+
+### Giai đoạn 4 — UX
+- Popup vật phẩm gần con trỏ.
+- So sánh trang bị.
+- Bán nhanh.
+- Túi 5 × 30.
+
+### Giai đoạn 5 — Nội dung
+- Tán Tu/bí kíp.
+- Môn phái/cây skill.
+- Công thức, nguyên liệu, bản vẽ, đan phương.
+- Sau khi gameplay ổn định mới đầu tư mạnh hơn vào hiệu ứng/hình ảnh.
+
+## 18. Nhật ký quyết định quan trọng
+- VLTK là nền tham chiếu; bỏ Kháng tất cả, Tốc độ đánh và kỹ năng nội công.
+- Max nhân vật 200.
+- Trùng Sinh: về Lv1 + **50 điểm vĩnh viễn**, giữ giá trị Tẩy Tủy Kinh/Võ Lâm Mật Tịch/Thiên Cơ Đan và giữ Võ kỹ.
+- Skill Level khác Training Level.
+- Skill/Luyện Đan/Luyện Khí Training đều +10 giới hạn mỗi Trùng Sinh.
+- Đan dược hiện tại có 8 loại, Lv1–10.
+- Linh dược và khoáng thạch: 12 loại, Lv1–10.
+- Hợp Thành vật liệu/đan dược: 2→1, vượt cấp 1–5%.
+- Đan phương/Bản vẽ cấp cao: 4 mảnh cùng Level → 1 tấm.
+- Asset mới: `src/assets/images/` và `src/assets/icons/`.
+- `GAME_ARCHITECTURE.md` là sổ tay trung tâm khi đổi tài khoản/phiên.
+
+## 19. Quy trình ghi chú từ nay
+- **Ý tưởng mới:** ghi vào mục 16.
+- **Ý tưởng được chốt:** chuyển thành quy tắc ở mục hệ thống tương ứng + nhật ký.
+- **Thay đổi đã code:** cập nhật tài liệu cùng commit.
+- **Asset mới quan trọng:** ghi tên/chức năng vào mục 15.
+- Nếu có mâu thuẫn, ưu tiên quyết định mới nhất mà người dùng đã chốt và xóa/sửa quy tắc cũ trong tài liệu.
+- Không để kiến trúc, ý tưởng và code đi lệch nhau quá lâu.
