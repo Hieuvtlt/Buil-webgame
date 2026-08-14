@@ -12,6 +12,20 @@ const formatCompact = (value) => {
   return formatAmount(number)
 }
 
+function renderPreviewInfo(data) {
+  const stats = String(data.stats || '').split(';').filter(Boolean)
+  return `<section class="merchant-item-preview">
+    <div class="merchant-preview-title">THÔNG TIN VẬT PHẨM</div>
+    <div class="merchant-preview-head">
+      <div class="merchant-preview-icon">${data.name?.charAt(0) ?? '?'}</div>
+      <div><div class="merchant-preview-name">${data.name}</div><div class="merchant-preview-meta">${data.category} · ${data.type} · Lv.${data.level}</div><div class="merchant-preview-quality">${data.quality}</div></div>
+    </div>
+    <div class="merchant-preview-section">THUỘC TÍNH</div>
+    <div class="merchant-preview-stats">${stats.length ? stats.map((stat) => `<div>${stat}</div>`).join('') : '<div>Không có thuộc tính chiến đấu.</div>'}</div>
+    <div class="merchant-preview-description">${data.description || ''}</div>
+  </section>`
+}
+
 export function mountMerchantScreen() {
   const root = document.getElementById('content-root')
   if (!root) return
@@ -46,9 +60,9 @@ export function mountMerchantScreen() {
     const data = button.dataset
     const basePrice = Number(data.price) || 0
     if (mode === 'mua') {
-      tooltip.innerHTML = `<div class="merchant-tooltip-title">${data.name}</div><div class="merchant-tooltip-meta">${data.category} · Lv${data.level} · ${data.quality}</div><div class="merchant-tooltip-price">Giá mua: <b>${formatCompact(basePrice)} Linh thạch</b></div><div class="merchant-tooltip-actions"><button type="button" class="merchant-tooltip-action" data-merchant-action="MUA">MUA</button></div>`
+      tooltip.innerHTML = `${renderPreviewInfo(data)}<div class="merchant-tooltip-price">Giá mua: <b>${formatCompact(basePrice)} Linh thạch</b></div><div class="merchant-tooltip-actions"><button type="button" class="merchant-tooltip-action" data-merchant-action="MUA">MUA</button></div>`
     } else {
-      tooltip.innerHTML = `<div class="merchant-tooltip-title">${data.name}</div><div class="merchant-tooltip-meta">${data.category} · Lv${data.level} · ${data.quality}</div><div class="merchant-tooltip-price"><div>Giá trị cơ sở: <b>${formatCompact(basePrice)} Linh thạch</b></div><div class="merchant-bot-range" id="merchant-bot-range">BOT có thể mua: <b>90%–110%</b></div></div><div class="merchant-sell-form"><label for="merchant-currency">Loại tiền</label><select id="merchant-currency" class="merchant-currency-select">${CURRENCIES.map((currency) => `<option value="${currency.id}">${currency.label}</option>`).join('')}</select><label for="merchant-price-input">Giá muốn bán</label><input id="merchant-price-input" class="merchant-price-input" type="text" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Nhập số..."/><div class="merchant-price-hint">Tự chọn loại tiền và tự nhập số lượng. BOT chỉ chấp nhận giá trong phạm vi ±10% giá trị cơ sở.</div><div class="merchant-price-status" id="merchant-price-status">Chưa nhập giá.</div></div><div class="merchant-tooltip-actions"><button type="button" class="merchant-tooltip-action" data-merchant-action="BÁN" disabled>ĐĂNG BÁN</button></div>`
+      tooltip.innerHTML = `${renderPreviewInfo(data)}<div class="merchant-tooltip-price"><div>Giá trị cơ sở: <b>${formatCompact(basePrice)} Linh thạch</b></div><div class="merchant-bot-range" id="merchant-bot-range">BOT có thể mua: <b>90%–110%</b></div></div><div class="merchant-sell-form"><label for="merchant-currency">Loại tiền</label><select id="merchant-currency" class="merchant-currency-select">${CURRENCIES.map((currency) => `<option value="${currency.id}">${currency.label}</option>`).join('')}</select><label for="merchant-price-input">Giá muốn bán</label><input id="merchant-price-input" class="merchant-price-input" type="text" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Nhập số..."/><div class="merchant-price-hint">Tự chọn loại tiền và tự nhập số lượng. BOT chỉ chấp nhận giá trong phạm vi ±10% giá trị cơ sở.</div><div class="merchant-price-status" id="merchant-price-status">Chưa nhập giá.</div></div><div class="merchant-tooltip-actions"><button type="button" class="merchant-tooltip-action" data-merchant-action="BÁN" disabled>ĐĂNG BÁN</button></div>`
       const input = tooltip.querySelector('#merchant-price-input')
       const select = tooltip.querySelector('#merchant-currency')
       const rangeLabel = tooltip.querySelector('#merchant-bot-range')
