@@ -21,6 +21,12 @@ export const player = {
   resistances: { poisonResistance: 0, fireResistance: 0, iceResistance: 0, lightningResistance: 0 },
   equipment: { weapon: null, helmet: null, armor: null, gloves: null, belt: null, boots: null, ring1: null, ring2: null, necklace: null, amulet: null },
   inventory: items.slice(0, 24).map((item) => item.id),
+  // Nghề cũng có Training Level riêng như võ kỹ. EXP chỉ tăng khi chế tạo thành công.
+  crafting: {
+    alchemy: { level: 1, exp: 0, expToNext: 100 },
+    forging: { level: 1, exp: 0, expToNext: 100 },
+    learnedRecipes: { alchemy: {}, forging: {} },
+  },
 }
 
 const EQUIPMENT_ATTRIBUTE_MAP = {
@@ -31,6 +37,58 @@ const EQUIPMENT_ATTRIBUTE_MAP = {
 const RESISTANCE_MAP = { poisonResist: 'poisonResistance', fireResist: 'fireResistance', iceResist: 'iceResistance', lightningResist: 'lightningResistance' }
 
 export function getMaxSkillLevel() { return 10 + player.rebirth * 10 }
+export function getMaxCraftingLevel() { return 10 + player.rebirth * 10 }
+
+export function getCraftingTraining(kind) {
+  const key = kind === 'forging' ? 'forging' : 'alchemy'
+  const data = player.crafting[key]
+  return { level: data.level, maxLevel: getMaxCraftingLevel(), exp: data.exp, expToNext: data.expToNext }
+}
+
+export function getCraftingTrainingText(kind) {
+  const data = getCraftingTraining(kind)
+  return `${data.level}/${data.maxLevel}`
+}
+
+export function gainCraftingExp(kind, amount) {
+  if (!Number.isFinite(amount) || amount <= 0) return false
+  const key = kind === 'forging' ? 'forging' : 'alchemy'
+  const data = player.crafting[key]
+  const maxLevel = getMaxCraftingLevel()
+  if (data.level >= maxLevel) return false
+  data.exp += Math.floor(amount)
+  let leveled = false
+  while (data.level < maxLevel && data.exp >= data.expToNext) {
+    data.exp -= data.expToNext
+    data.level += 1
+    data.expToNext = Math.round(100 * Math.pow(1.12, data.level - 1))
+    leveled = true
+  }
+  if (data.level >= maxLevel) data.exp = 0
+  window.dispatchEvent(new CustomEvent('game:character-changed'))
+  return leveled
+}
+
+export function getCraftRecipeKey(kind, data = {}) {
+  if (kind === 'alchemy') return `${data.type ?? ''}|lv${Number(data.level ?? 0)}`
+  return `${data.type ?? ''}|lv${Number(data.level ?? 0)}|${data.quality ?? ''}`
+}
+
+export function isRecipeLearned(kind, data) {
+  const key = getCraftRecipeKey(kind, data)
+  return Boolean(player.crafting.learnedRecipes[kind === 'forging' ? 'forging' : 'alchemy'][key])
+}
+
+export function learnCraftRecipe(kind, data) {
+  const key = getCraftRecipeKey(kind, data)
+  const bucket = player.crafting.learnedRecipes[kind === 'forging' ? 'forging' : 'alchemy']
+  if (!key || key.startsWith('|')) return false
+  if (bucket[key]) return true
+  bucket[key] = { learnedAtLevel: player.level, learned: true }
+  window.dispatchEvent(new CustomEvent('game:character-changed'))
+  return true
+}
+
 function getEquippedItems() { return Object.values(player.equipment).filter(Boolean).map((id) => items.find((item) => Number(item.id) === Number(id))).filter(Boolean) }
 
 export function getEquipmentStats() {
@@ -93,16 +151,11 @@ function findEquipmentSlot(item, requestedSlot = null) {
 
   if (!candidates.length) return null
 
-  // Với trang bị thường, nếu UI truyền slot hợp lệ thì dùng slot đó.
-  // Nếu UI truyền sai/không có slot, tự suy ra từ category.
   if (category !== 'ring') {
     if (requestedSlot && candidates.includes(requestedSlot)) return requestedSlot
     return candidates[0]
   }
 
-  // Nhẫn có hai ô. Ưu tiên ô mà UI yêu cầu nếu ô đó còn trống;
-  // nếu ô 1 đang có đồ thì tự chuyển sang ô 2. Khi cả hai đều đầy,
-  // giữ đúng ô được yêu cầu để thực hiện Thay thế.
   const requestedRing = requestedSlot === 'ring2' ? 'ring2' : 'ring1'
   const otherRing = requestedRing === 'ring1' ? 'ring2' : 'ring1'
   if (!player.equipment[requestedRing]) return requestedRing
@@ -113,25 +166,18 @@ function findEquipmentSlot(item, requestedSlot = null) {
 export function getEquipFailureReason(itemId, requestedSlot = null) {
   const numericId = Number(itemId)
   if (!Number.isFinite(numericId)) return 'Mã trang bị không hợp lệ.'
-
   const item = items.find((candidate) => Number(candidate.id) === numericId)
   if (!item) return 'Không tìm thấy trang bị.'
   if (!['weapon', 'armor', 'equipment', 'accessory'].includes(item.type)) return 'Vật phẩm này không phải trang bị.'
-
   const targetSlot = findEquipmentSlot(item, requestedSlot)
   if (!targetSlot) return 'Không xác định được ô trang bị.'
-
   const requiredLevel = Number(item.requirements?.level ?? item.level ?? 1)
   if (requiredLevel > player.level) return `Chưa đủ cấp. Yêu cầu Lv ${requiredLevel}, nhân vật hiện tại Lv ${player.level}.`
-
   const inventoryIndex = player.inventory.findIndex((id) => Number(id) === numericId)
   if (inventoryIndex < 0) return 'Trang bị không còn trong túi đồ.'
-
   return null
 }
 
-// Trang bị từ Túi đồ. Nhận cả id số và id dạng chuỗi.
-// Slot luôn được xác nhận lại từ category để không phụ thuộc tuyệt đối vào UI.
 export function equipItem(slot, itemId) {
   const numericId = Number(itemId)
   const reason = getEquipFailureReason(numericId, slot)
@@ -139,20 +185,15 @@ export function equipItem(slot, itemId) {
     window.dispatchEvent(new CustomEvent('game:log', { detail: { message: `Trang bị thất bại: ${reason}`, type: 'danger' } }))
     return false
   }
-
   const item = items.find((candidate) => Number(candidate.id) === numericId)
   const targetSlot = findEquipmentSlot(item, slot)
   const inventoryIndex = player.inventory.findIndex((id) => Number(id) === numericId)
   const currentlyEquippedId = player.equipment[targetSlot]
-
   if (Number(currentlyEquippedId) === numericId) return true
-
-  // Đưa món cũ về túi trước, nhưng không bao giờ nhân bản.
   if (currentlyEquippedId != null) {
     const oldInInventory = player.inventory.some((id) => Number(id) === Number(currentlyEquippedId))
     if (!oldInInventory) player.inventory.push(currentlyEquippedId)
   }
-
   player.inventory.splice(inventoryIndex, 1)
   player.equipment[targetSlot] = numericId
   syncDerivedStats()
