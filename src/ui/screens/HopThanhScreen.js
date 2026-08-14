@@ -1,17 +1,16 @@
 import '../../craft.css'
-import { GAME_IMAGES } from '../assets.js'
 
 const groups = {
   linhduoc: {
     label: 'Linh dược',
     options: ['Huyết Linh Chi', 'Nhân Sâm', 'Cam Thảo', 'Tử Linh Hoa', 'Bích Huyết Thảo', 'Thanh Tâm Thảo', 'Hỏa Linh Thảo', 'Băng Tâm Liên', 'Ngọc Linh Quả', 'Tử Vân Thảo', 'Long Huyết Thảo', 'Thiên Linh Chi'],
-    icon: (index) => `${GAME_IMAGES.base}assets/vltk/linhduoc/${index + 1}.png`,
+    icon: (index) => `${import.meta.env.BASE_URL}assets/vltk/linhduoc/${index + 1}.png`,
   },
   danduoc: {
     label: 'Đan dược',
     options: ['Hồi Khí Đan', 'Hồi Mana Đan', 'Tụ Linh Đan', 'Ngộ Đạo Đan'],
     icons: ['hoimau.png', 'hoimana.png', 'exp.png', 'expskill.png'],
-    icon: (index) => `${GAME_IMAGES.base}assets/vltk/danduoc/${groups.danduoc.icons[index]}`,
+    icon: (index) => `${import.meta.env.BASE_URL}assets/vltk/danduoc/${groups.danduoc.icons[index]}`,
   },
 }
 
@@ -20,7 +19,10 @@ export function HopThanhScreen() {
     <div class="craft-screen game-screen">
       <div class="craft-layout">
         <section class="craft-main-panel">
-          <div class="craft-machine-frame"><img class="craft-machine-art craft-machine-art-fusion" src="${GAME_IMAGES.hinhhopthanh}" alt="Khung hợp thành"></div>
+          <div class="craft-machine-frame craft-image-slot" data-image-slot="hinhhopthanh" title="Click để thay hình">
+            <input class="craft-image-input" type="file" accept="image/*" data-image-input hidden>
+            <div class="craft-machine-placeholder">THAY HÌNH</div>
+          </div>
           <div class="craft-fields">
             <label class="craft-field"><span>Loại</span><select id="fusion-group"><option value="linhduoc">Linh dược</option><option value="danduoc">Đan dược</option></select></label>
             <label class="craft-field"><span>Vật phẩm</span><select id="fusion-item"></select></label>
@@ -32,7 +34,7 @@ export function HopThanhScreen() {
         </section>
         <aside class="craft-side-panel">
           <section class="craft-info-box craft-info-unified"><h3>Thông tin hợp thành</h3><div id="fusion-info" class="craft-result-placeholder">Chọn vật phẩm và level để xem kết quả.</div><div class="craft-material-title">Nguyên liệu cần:</div><div id="fusion-material" class="craft-material-list"></div></section>
-        </aside>
+        </section>
       </div>
     </div>`
 }
@@ -42,9 +44,7 @@ function getCurrentCount(itemName, level) {
   if (!inventory) return 0
   if (Array.isArray(inventory)) {
     return inventory.reduce((sum, entry) => {
-      if (entry?.name === `${itemName} Lv${level}` || (entry?.name === itemName && Number(entry?.level) === level)) {
-        return sum + Number(entry.quantity ?? entry.count ?? entry.amount ?? 0)
-      }
+      if (entry?.name === `${itemName} Lv${level}` || (entry?.name === itemName && Number(entry?.level) === level)) return sum + Number(entry.quantity ?? entry.count ?? entry.amount ?? 0)
       return sum
     }, 0)
   }
@@ -52,17 +52,18 @@ function getCurrentCount(itemName, level) {
 }
 
 export function mountHopThanhScreen() {
+  const root = document.querySelector('.craft-screen')
   const group = document.querySelector('#fusion-group')
   const item = document.querySelector('#fusion-item')
   const level = document.querySelector('#fusion-level')
   const info = document.querySelector('#fusion-info')
   const material = document.querySelector('#fusion-material')
+  setupImageSlot(root)
 
   const updateItems = () => {
     const data = groups[group.value]
     item.innerHTML = data.options.map((name, index) => `<option value="${index}">${name}</option>`).join('')
   }
-
   const update = () => {
     const data = groups[group.value]
     const itemIndex = Number(item.value || 0)
@@ -73,15 +74,28 @@ export function mountHopThanhScreen() {
     const name = data.options[itemIndex]
     const current = getCurrentCount(name, lv)
     const icon = data.icon(itemIndex)
-    info.innerHTML = `
-      <div class="craft-selected-head"><img class="craft-selected-icon" src="${icon}" alt=""><div><div class="craft-selected-name">${name} Lv${lv}</div><div class="craft-subtitle">2 Lv${lv} → 1 Lv${next}</div></div></div>
-      <div class="craft-effect">Vượt cấp lên Lv${over}: ${chance}</div>`
+    info.innerHTML = `<div class="craft-selected-head"><img class="craft-selected-icon" src="${icon}" alt=""><div><div class="craft-selected-name">${name} Lv${lv}</div><div class="craft-subtitle">2 Lv${lv} → 1 Lv${next}</div></div></div><div class="craft-effect">Vượt cấp lên Lv${over}: ${chance}</div>`
     material.innerHTML = `<div class="craft-material-row ${current >= 2 ? 'is-enough' : 'is-short'}"><span>${name} Lv${lv}</span><b>${current}/2</b></div>`
   }
-
   group.addEventListener('change', () => { updateItems(); update() })
   item.addEventListener('change', update)
   level.addEventListener('change', update)
   updateItems()
   update()
+}
+
+function setupImageSlot(root) {
+  const slot = root?.querySelector('[data-image-slot]')
+  const input = root?.querySelector('[data-image-input]')
+  if (!slot || !input) return
+  slot.addEventListener('click', () => input.click())
+  input.addEventListener('change', () => {
+    const file = input.files?.[0]
+    if (!file) return
+    slot.innerHTML = `<input class="craft-image-input" type="file" accept="image/*" data-image-input hidden><img class="craft-machine-art craft-machine-art-fusion" src="${URL.createObjectURL(file)}" alt="Hình Dung Hợp">`
+    slot.querySelector('[data-image-input]').addEventListener('change', (event) => {
+      const next = event.target.files?.[0]
+      if (next) slot.querySelector('img').src = URL.createObjectURL(next)
+    })
+  })
 }
