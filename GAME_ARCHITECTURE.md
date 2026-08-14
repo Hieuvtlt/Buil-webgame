@@ -234,6 +234,52 @@ Mục tiêu: progression dài hạn nhưng không chỉ phụ thuộc Level.
 - Màu phẩm cấp/thuộc tính nhất quán toàn game.
 - Hình minh họa tạo bản sắc nhưng không được làm chậm hoặc phá responsive.
 
+### 16.8. Menu Nhiệm Vụ — hệ thống nhiệm vụ dự kiến
+> Đây là thiết kế đã được người dùng đưa ra để làm khung gameplay cho menu **Nhiệm vụ**. Khi bắt đầu code menu này, phải bám các quy tắc dưới đây; không tự ý đổi số lượng, giới hạn hoặc cơ chế nếu chưa được chốt lại.
+
+#### A. Nhiệm vụ tiêu diệt quái vật
+- Nhiệm vụ yêu cầu người chơi đi tới **các map phù hợp với Level nhân vật** để tiêu diệt quái vật.
+- Phạm vi Level của quái/map có thể **chênh lệch ±5 Level** so với Level nhân vật.
+- Số lượng quái cần tiêu diệt theo mốc Level:
+  - Nhân vật **dưới Lv50**: khoảng **30–60 quái**.
+  - Nhân vật **trên Lv50**: khoảng **60–100 quái**.
+  - Nhân vật **Lv90–200**: khoảng **200–300 quái**.
+- Nhiệm vụ mang tính **nhiệm vụ trong ngày**.
+- Mỗi lần nhận có thể nhận **tối đa 2 nhiệm vụ**.
+- Khi hoàn thành, phần thưởng gồm **tiền + linh dược**.
+- Nhiệm vụ phải ưu tiên tạo cảm giác đi săn quái theo map/Level, không chỉ là một nút nhận thưởng.
+
+#### B. Nhiệm vụ truy nã
+- Đối tượng là các nhân vật/quái **giống boss nhỏ**, được phân bổ **ngẫu nhiên ở các map**.
+- Mục tiêu: tới đúng map và tìm/tiêu diệt người bị truy nã.
+- **Xác suất gặp thấp**, cố ý tạo cảm giác phải đi tìm mới gặp; không được thiết kế kiểu chắc chắn vừa vào map là thấy ngay.
+- Mỗi lần chỉ được nhận **tối đa 1 nhiệm vụ truy nã đang hoạt động**.
+- Menu truy nã có **5 nhân vật bị truy nã** để người chơi lựa chọn.
+- Danh sách 5 mục truy nã **làm mới mỗi 1 giờ**.
+- Giới hạn mỗi ngày: người chơi chỉ được **hoàn thành tối đa 10 nhiệm vụ truy nã/ngày**.
+- Phần thưởng khi hoàn thành gồm:
+  - **EXP**.
+  - **Tiền thưởng**.
+  - **Đan dược**.
+  - **Linh dược**.
+- Truy nã phải tạo cảm giác phiêu lưu/tìm kiếm và có tính ngẫu nhiên cao hơn nhiệm vụ quái vật.
+
+#### C. Hướng UI cho menu Nhiệm Vụ
+- Menu Nhiệm Vụ nên có **2 khu vực/tab chính**:
+  1. **Nhiệm vụ quái vật**.
+  2. **Truy nã**.
+- Khu nhiệm vụ quái vật cần thể hiện rõ: map mục tiêu, Level phù hợp, loại quái, số lượng cần giết, tiến độ `đã giết/tổng`, phần thưởng và trạng thái nhiệm vụ.
+- Khu truy nã cần thể hiện 5 thẻ nhân vật bị truy nã; mỗi thẻ nên có hình, tên, map, thông tin mục tiêu, phần thưởng và trạng thái đã nhận/chưa nhận.
+- Nên có đồng hồ đếm thời gian tới lần làm mới danh sách truy nã tiếp theo.
+- Cả hai loại nhiệm vụ đều cần thể hiện giới hạn nhận/làm trong ngày để người chơi dễ hiểu.
+- Hình ảnh nhân vật/quái/truy nã phải đi theo quy tắc asset chung: lưu trong thư mục asset chính thức, tên file theo chức năng, không dùng tên ngẫu nhiên.
+
+#### D. Hướng gameplay dài hạn
+- Nhiệm vụ quái vật là hoạt động ổn định hằng ngày, giúp người chơi kiếm **tiền + linh dược** và kết nối trực tiếp với hệ thống map/quái.
+- Truy nã là hoạt động hiếm và khó đoán hơn, tạo động lực di chuyển giữa các map và săn mục tiêu đặc biệt.
+- Hai loại nhiệm vụ phải bổ trợ progression: quái vật → nguyên liệu/kinh tế; truy nã → EXP + vật phẩm/tiền thưởng đa dạng.
+- Về sau có thể mở rộng map, loại quái, mục tiêu truy nã và phần thưởng nhưng phải giữ nguyên triết lý: **nhiệm vụ quái vật = săn theo Level/map; truy nã = tìm mục tiêu ngẫu nhiên với xác suất gặp thấp**.
+
 ## 17. Roadmap
 ### Giai đoạn 1 — Nền tảng
 - Ổn định GitHub Pages/build.
@@ -261,6 +307,7 @@ Mục tiêu: progression dài hạn nhưng không chỉ phụ thuộc Level.
 - Tán Tu/bí kíp.
 - Môn phái/cây skill.
 - Công thức, nguyên liệu, bản vẽ, đan phương.
+- **Menu Nhiệm Vụ:** nhiệm vụ quái vật + truy nã theo thiết kế mục 16.8.
 - Sau khi gameplay ổn định mới đầu tư mạnh hơn vào hiệu ứng/hình ảnh.
 
 ## 18. Nhật ký quyết định quan trọng
@@ -275,6 +322,7 @@ Mục tiêu: progression dài hạn nhưng không chỉ phụ thuộc Level.
 - Đan phương/Bản vẽ cấp cao: 4 mảnh cùng Level → 1 tấm.
 - Asset mới: `src/assets/images/` và `src/assets/icons/`.
 - `GAME_ARCHITECTURE.md` là sổ tay trung tâm khi đổi tài khoản/phiên.
+- **Menu Nhiệm Vụ:** 2 loại nhiệm vụ — tiêu diệt quái vật và truy nã; truy nã có 5 mục làm mới mỗi giờ, tối đa 1 nhiệm vụ đang nhận và tối đa 10 nhiệm vụ/ngày.
 
 ## 19. Quy trình ghi chú từ nay
 - **Ý tưởng mới:** ghi vào mục 16.
