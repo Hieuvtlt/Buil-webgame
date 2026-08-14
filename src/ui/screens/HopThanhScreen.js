@@ -1,16 +1,18 @@
 import '../../craft.css'
 
+const assetBase = import.meta.env.BASE_URL
+
 const groups = {
   linhduoc: {
     label: 'Linh dược',
     options: ['Huyết Linh Chi', 'Nhân Sâm', 'Cam Thảo', 'Tử Linh Hoa', 'Bích Huyết Thảo', 'Thanh Tâm Thảo', 'Hỏa Linh Thảo', 'Băng Tâm Liên', 'Ngọc Linh Quả', 'Tử Vân Thảo', 'Long Huyết Thảo', 'Thiên Linh Chi'],
-    icon: (index) => `/assets/vltk/linhduoc/${index + 1}.png`,
+    icon: (index) => `${assetBase}assets/vltk/linhduoc/${index + 1}.png`,
   },
   danduoc: {
     label: 'Đan dược',
     options: ['Hồi Khí Đan', 'Hồi Mana Đan', 'Tụ Linh Đan', 'Ngộ Đạo Đan'],
     icons: ['hoimau.png', 'hoimana.png', 'exp.png', 'expskill.png'],
-    icon: (index) => `/assets/vltk/danduoc/${groups.danduoc.icons[index]}`,
+    icon: (index) => `${assetBase}assets/vltk/danduoc/${groups.danduoc.icons[index]}`,
   },
 }
 
@@ -19,7 +21,7 @@ export function HopThanhScreen() {
     <div class="craft-screen game-screen">
       <div class="craft-layout">
         <section class="craft-main-panel">
-          <div class="craft-machine-frame"><img class="craft-machine-art craft-machine-art-fusion" src="/assets/craft/fusion-orb.svg" alt="Khung hợp thành"></div>
+          <div class="craft-machine-frame"><img class="craft-machine-art craft-machine-art-fusion" src="${assetBase}assets/craft/fusion-orb.svg" alt="Khung hợp thành"></div>
           <div class="craft-fields">
             <label class="craft-field"><span>Loại</span><select id="fusion-group"><option value="linhduoc">Linh dược</option><option value="danduoc">Đan dược</option></select></label>
             <label class="craft-field"><span>Vật phẩm</span><select id="fusion-item"></select></label>
