@@ -21,7 +21,7 @@ export function HopThanhScreen() {
     <div class="craft-screen game-screen">
       <div class="craft-layout">
         <section class="craft-main-panel">
-          <div class="craft-machine-frame"><img class="craft-machine-art craft-machine-art-fusion" src="${assetBase}assets/craft/fusion-user.svg" alt="Khung hợp thành"></div>
+          <div class="craft-machine-frame"><img class="craft-machine-art craft-machine-art-fusion" src="${assetBase}assets/craft/hop-thanh-user.jpg" alt="Khung hợp thành"></div>
           <div class="craft-fields">
             <label class="craft-field"><span>Loại</span><select id="fusion-group"><option value="linhduoc">Linh dược</option><option value="danduoc">Đan dược</option></select></label>
             <label class="craft-field"><span>Vật phẩm</span><select id="fusion-item"></select></label>
