@@ -12,11 +12,13 @@ import {
   gainCraftingExp,
 } from '../../data/character.js'
 
+const ASSET_BASE = `${import.meta.env.BASE_URL}assets/`
+
 const ALCHEMY_TYPES = {
-  hoimau: { name: 'Hồi Khí Đan', effect: (level) => `Phục hồi ${500 * level} HP`, icon: '/assets/vltk/danduoc/hoimau.png' },
-  hoimana: { name: 'Hồi Nguyên Đan', effect: (level) => `Phục hồi ${300 * level} MP`, icon: '/assets/vltk/danduoc/hoimana.png' },
-  exp: { name: 'Tụ Linh Đan', effect: (level) => `Nhận ${1000 * level} EXP`, icon: '/assets/vltk/danduoc/exp.png' },
-  expskill: { name: 'Ngộ Đạo Đan', effect: (level) => `Nhận ${100 * level} EXP võ kỹ`, icon: '/assets/vltk/danduoc/expskill.png' },
+  hoimau: { name: 'Hồi Khí Đan', effect: (level) => `Phục hồi ${500 * level} HP`, icon: `${ASSET_BASE}vltk/danduoc/hoimau.png` },
+  hoimana: { name: 'Hồi Nguyên Đan', effect: (level) => `Phục hồi ${300 * level} MP`, icon: `${ASSET_BASE}vltk/danduoc/hoimana.png` },
+  exp: { name: 'Tụ Linh Đan', effect: (level) => `Nhận ${1000 * level} EXP`, icon: `${ASSET_BASE}vltk/danduoc/exp.png` },
+  expskill: { name: 'Ngộ Đạo Đan', effect: (level) => `Nhận ${100 * level} EXP võ kỹ`, icon: `${ASSET_BASE}vltk/danduoc/expskill.png` },
 }
 
 const FORGING_TYPES = {
@@ -60,7 +62,11 @@ function renderMaterials(recipe, kind) {
   return recipe.map((material) => {
     const current = getOwnedCount(material.id, material.name)
     const enough = current >= material.amount
-    const icon = kind === 'alchemy' ? `/assets/vltk/linhduoc/${material.id.split('_')[1] ?? 1}.png` : `/assets/vltk/khoangthach/${material.id.split('_')[1] ?? 1}.png`
+    // craftData already resolves the correct icon for each material type.
+    // Use that path directly and keep BASE_URL support for GitHub Pages.
+    const icon = material.icon?.startsWith('/')
+      ? `${import.meta.env.BASE_URL}${material.icon.replace(/^\/+/, '')}`
+      : material.icon || ''
     return `<div class="craft-material-row ${enough ? 'is-enough' : 'is-short'}"><span class="craft-material-main"><img src="${icon}" alt="" class="craft-material-icon" /><span>${material.name}</span></span><b>${current}/${material.amount}</b></div>`
   }).join('')
 }
