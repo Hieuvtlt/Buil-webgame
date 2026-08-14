@@ -1,13 +1,15 @@
 import '../../craft.css'
 import { mountLuyenKhi } from '../controllers/CraftController.js'
-import { GAME_IMAGES } from '../assets.js'
 
 export function LuyenKhiScreen() {
   const html = `
     <div class="craft-screen game-screen craft-forging">
       <div class="craft-layout">
         <section class="craft-main-panel">
-          <div class="craft-machine-frame"><img class="craft-machine-art craft-machine-art-forge" src="${GAME_IMAGES.hinhbualuyenkhi}" alt="Búa và đe luyện khí"></div>
+          <div class="craft-machine-frame craft-image-slot" data-image-slot="hinhbualuyenkhi" title="Click để thay hình">
+            <input class="craft-image-input" type="file" accept="image/*" data-image-input hidden>
+            <div class="craft-machine-placeholder">THAY HÌNH</div>
+          </div>
           <div class="craft-fields">
             <label class="craft-field"><span>Loại trang bị</span><select data-craft-type><option value="">-- Chọn loại trang bị --</option><option value="vu_khi">Vũ khí</option><option value="mu">Mũ</option><option value="ao">Áo</option><option value="baotay">Bao tay</option><option value="dailung">Đai lưng</option><option value="giay">Giày</option><option value="daychuyen">Dây chuyền</option><option value="ngocboi">Ngọc bội</option><option value="nhan">Nhẫn</option></select></label>
             <label class="craft-field"><span>Level</span><select data-craft-level><option value="">-- Chọn level --</option>${Array.from({ length: 120 }, (_, i) => `<option value="${i + 1}">Trang bị Lv${i + 1}</option>`).join('')}</select></label>
@@ -21,8 +23,29 @@ export function LuyenKhiScreen() {
         </aside>
       </div>
     </div>`
-  setTimeout(() => mountLuyenKhi(document.querySelector('.craft-screen')), 0)
+  setTimeout(() => {
+    const root = document.querySelector('.craft-screen')
+    mountLuyenKhi(root)
+    setupImageSlot(root)
+  }, 0)
   return html
+}
+
+function setupImageSlot(root) {
+  const slot = root?.querySelector('[data-image-slot]')
+  const input = root?.querySelector('[data-image-input]')
+  if (!slot || !input) return
+  slot.addEventListener('click', () => input.click())
+  input.addEventListener('change', () => {
+    const file = input.files?.[0]
+    if (!file) return
+    const url = URL.createObjectURL(file)
+    slot.innerHTML = `<input class="craft-image-input" type="file" accept="image/*" data-image-input hidden><img class="craft-machine-art" src="${url}" alt="Hình Luyện Khí">`
+    slot.querySelector('[data-image-input]').addEventListener('change', (event) => {
+      const next = event.target.files?.[0]
+      if (next) slot.querySelector('img').src = URL.createObjectURL(next)
+    })
+  })
 }
 
 export function mountLuyenKhiScreen(root) {
