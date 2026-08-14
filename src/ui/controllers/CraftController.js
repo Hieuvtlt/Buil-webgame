@@ -3,6 +3,14 @@ import {
   getAlchemyRecipe,
   getForgingRecipe,
 } from '../../data/craftData.js'
+import {
+  player,
+  getCraftingTraining,
+  getCraftingTrainingText,
+  isRecipeLearned,
+  learnCraftRecipe,
+} from '../../data/character.js'
+import { getItemById } from '../../data/items/index.js'
 
 const ALCHEMY_TYPES = {
   hoimau: { name: 'Hồi Khí Đan', effect: (level) => `Phục hồi ${500 * level} HP`, icon: '/assets/vltk/danduoc/hoimau.png' },
@@ -24,7 +32,7 @@ const FORGING_TYPES = {
 }
 
 function getInventoryRoot() {
-  return globalThis.gameState?.inventory ?? globalThis.player?.inventory ?? globalThis.inventory ?? null
+  return globalThis.gameState?.inventory ?? player.inventory ?? globalThis.inventory ?? null
 }
 
 function getOwnedCount(itemId, itemName) {
@@ -32,8 +40,8 @@ function getOwnedCount(itemId, itemName) {
   if (!inventory) return 0
   if (Array.isArray(inventory)) {
     return inventory.reduce((sum, entry) => {
-      if (entry?.id === itemId || entry?.itemId === itemId || entry?.name === itemName) {
-        return sum + Number(entry.quantity ?? entry.count ?? entry.amount ?? 1)
+      if (entry?.id === itemId || entry?.itemId === itemId || entry?.name === itemName || entry === itemId) {
+        return sum + Number(entry?.quantity ?? entry?.count ?? entry?.amount ?? 1)
       }
       return sum
     }, 0)
@@ -44,6 +52,22 @@ function getOwnedCount(itemId, itemName) {
     if (entry) return Number(entry.quantity ?? entry.count ?? entry.amount ?? 0)
   }
   return 0
+}
+
+function removeInventoryItem(itemId, amount = 1) {
+  if (!Array.isArray(player.inventory) || amount < 1) return false
+  let remaining = amount
+  for (let i = player.inventory.length - 1; i >= 0 && remaining > 0; i -= 1) {
+    if (player.inventory[i] === itemId) {
+      player.inventory.splice(i, 1)
+      remaining -= 1
+    }
+  }
+  return remaining === 0
+}
+
+function addInventoryItem(itemId, amount = 1) {
+  for (let i = 0; i < amount; i += 1) player.inventory.push(itemId)
 }
 
 function qualityColor(quality) {
@@ -59,13 +83,19 @@ function renderMaterials(recipe, kind) {
       : `/assets/vltk/khoangthach/${material.id.split('_')[1] ?? 1}.png`
     return `
       <div class="craft-material-row ${enough ? 'is-enough' : 'is-short'}">
-        <span class="craft-material-main">
-          <img src="${icon}" alt="" class="craft-material-icon" />
-          <span>${material.name}</span>
-        </span>
+        <span class="craft-material-main"><img src="${icon}" alt="" class="craft-material-icon" /><span>${material.name}</span></span>
         <b>${current}/${material.amount}</b>
       </div>`
   }).join('')
+}
+
+function renderLearnButton(kind, data) {
+  const learned = isRecipeLearned(kind, data)
+  const itemId = kind === 'alchemy' ? 'dan_phuong' : 'ban_ve'
+  const itemName = kind === 'alchemy' ? 'Đan phương' : 'Bản vẽ'
+  const owned = getOwnedCount(itemId, itemName)
+  if (learned) return '<div class="craft-recipe-learned">✓ Công thức đã học vĩnh viễn</div>'
+  return `<button class="craft-button craft-learn-button" type="button" data-learn-recipe="${kind}">${itemName} • Học công thức (${owned}/1)</button>`
 }
 
 function renderAlchemy(root) {
@@ -75,22 +105,19 @@ function renderAlchemy(root) {
   const info = root.querySelector('[data-craft-info]')
   if (!info) return
   if (!type || !level || !quality) {
-    info.innerHTML = '<div class="craft-result-placeholder">Chọn loại đan, level và phẩm cấp để xem thông tin và nguyên liệu.</div>'
+    info.innerHTML = `<div class="craft-result-placeholder">Chọn loại đan, level và phẩm cấp để xem thông tin và nguyên liệu.<br><br><strong>Luyện Đan Training:</strong> ${getCraftingTrainingText('alchemy')} • EXP chỉ tăng khi luyện thành công.</div>`
     return
   }
   const data = ALCHEMY_TYPES[type]
   const recipe = getAlchemyRecipe(level)
+  const learned = isRecipeLearned('alchemy', { type, level })
   info.innerHTML = `
-    <div class="craft-selected-head">
-      <img class="craft-selected-icon" src="${data.icon}" alt="" />
-      <div>
-        <div class="craft-selected-name" style="color:${qualityColor(quality)}">${data.name} Lv${level}</div>
-        <div class="craft-subtitle" style="color:${qualityColor(quality)}">${quality} • Đẳng cấp yêu cầu ${level * 10 - 9}-${level * 10}</div>
-      </div>
-    </div>
+    <div class="craft-selected-head"><img class="craft-selected-icon" src="${data.icon}" alt="" /><div><div class="craft-selected-name" style="color:${qualityColor(quality)}">${data.name} Lv${level}</div><div class="craft-subtitle" style="color:${qualityColor(quality)}">${quality} • Đẳng cấp yêu cầu ${level * 10 - 9}-${level === 10 ? 200 : level * 10}</div></div></div>
     <div class="craft-effect">${data.effect(level)}</div>
-    <div class="craft-material-title">Nguyên liệu cần:</div>
-    <div class="craft-material-list">${renderMaterials(recipe, 'alchemy')}</div>`
+    <div class="craft-training">Luyện Đan Training: <strong>${getCraftingTrainingText('alchemy')}</strong></div>
+    <div class="craft-recipe-box"><div class="craft-material-title">Công thức</div>${renderLearnButton('alchemy', { type, level })}</div>
+    <div class="craft-material-title">Nguyên liệu cần:</div><div class="craft-material-list">${renderMaterials(recipe, 'alchemy')}</div>
+    <button class="craft-button" type="button" data-craft-action="alchemy" ${learned ? '' : 'disabled'}>${learned ? 'LUYỆN ĐAN' : 'CẦN HỌC ĐAN PHƯƠNG'}</button>`
 }
 
 function renderForging(root) {
@@ -100,28 +127,79 @@ function renderForging(root) {
   const info = root.querySelector('[data-craft-info]')
   if (!info) return
   if (!type || !level || !quality) {
-    info.innerHTML = '<div class="craft-result-placeholder">Chọn loại trang bị, level và phẩm cấp để xem thông tin và nguyên liệu.</div>'
+    info.innerHTML = `<div class="craft-result-placeholder">Chọn loại trang bị, level và phẩm cấp để xem thông tin và nguyên liệu.<br><br><strong>Luyện Khí Training:</strong> ${getCraftingTrainingText('forging')} • EXP chỉ tăng khi luyện thành công.</div>`
     return
   }
   const data = FORGING_TYPES[type]
   const recipe = getForgingRecipe(level)
   const materialLevel = Math.min(10, Math.ceil(level / 12))
+  const learned = isRecipeLearned('forging', { type, level, quality })
   info.innerHTML = `
-    <div class="craft-selected-head">
-      <div class="craft-selected-name" style="color:${qualityColor(quality)}">${data.name} Lv${level}</div>
-      <div class="craft-subtitle" style="color:${qualityColor(quality)}">${quality}</div>
-    </div>
+    <div class="craft-selected-head"><div class="craft-selected-name" style="color:${qualityColor(quality)}">${data.name} Lv${level}</div><div class="craft-subtitle" style="color:${qualityColor(quality)}">${quality}</div></div>
     <div class="craft-effect">${data.effect} • Nguyên liệu cấp ${materialLevel}</div>
-    <div class="craft-material-title">Nguyên liệu cần:</div>
-    <div class="craft-material-list">${renderMaterials(recipe, 'forging')}</div>`
+    <div class="craft-training">Luyện Khí Training: <strong>${getCraftingTrainingText('forging')}</strong></div>
+    <div class="craft-recipe-box"><div class="craft-material-title">Bản vẽ</div>${renderLearnButton('forging', { type, level, quality })}</div>
+    <div class="craft-material-title">Nguyên liệu cần:</div><div class="craft-material-list">${renderMaterials(recipe, 'forging')}</div>
+    <button class="craft-button" type="button" data-craft-action="forging" ${learned ? '' : 'disabled'}>${learned ? 'LUYỆN KHÍ' : 'CẦN HỌC BẢN VẼ'}</button>`
+}
+
+function getSelectedData(root) {
+  return {
+    type: root.querySelector('[data-craft-type]')?.value,
+    level: Number(root.querySelector('[data-craft-level]')?.value || 0),
+    quality: root.querySelector('[data-craft-quality]')?.value || '',
+  }
+}
+
+function bindCraftActions(root, kind, render) {
+  root.querySelectorAll('[data-learn-recipe]').forEach((button) => button.addEventListener('click', () => {
+    const data = getSelectedData(root)
+    const itemId = kind === 'alchemy' ? 'dan_phuong' : 'ban_ve'
+    const itemName = kind === 'alchemy' ? 'Đan phương' : 'Bản vẽ'
+    if (getOwnedCount(itemId, itemName) < 1) {
+      window.dispatchEvent(new CustomEvent('game:log', { detail: { message: `Không có ${itemName}.`, type: 'warning' } }))
+      return
+    }
+    if (!learnCraftRecipe(kind, data)) return
+    if (!removeInventoryItem(itemId, 1)) return
+    window.dispatchEvent(new CustomEvent('game:inventory-changed'))
+    window.dispatchEvent(new CustomEvent('game:log', { detail: { message: `Đã học công thức ${kind === 'alchemy' ? 'Luyện Đan' : 'Luyện Khí'} vĩnh viễn.`, type: 'item' } }))
+    render()
+  }))
+
+  root.querySelectorAll('[data-craft-action]').forEach((button) => button.addEventListener('click', () => {
+    const data = getSelectedData(root)
+    if (!isRecipeLearned(kind, data)) return
+    const recipe = kind === 'alchemy' ? getAlchemyRecipe(data.level) : getForgingRecipe(data.level)
+    const missing = recipe.find((material) => getOwnedCount(material.id, material.name) < material.amount)
+    if (missing) {
+      window.dispatchEvent(new CustomEvent('game:log', { detail: { message: `Thiếu ${missing.name}.`, type: 'warning' } }))
+      return
+    }
+    recipe.forEach((material) => removeInventoryItem(material.id, material.amount))
+    // Công thức hiện tại đã có; phần thưởng vật phẩm sẽ tiếp tục dùng registry item của từng công thức.
+    // Ở bước này chỉ ghi nhận thành công và EXP nghề, không tự tạo item giả.
+    const expGain = Math.max(10, data.level * 10)
+    const training = getCraftingTraining(kind)
+    const maxed = training.level >= training.maxLevel
+    if (!maxed) {
+      const { gainCraftingExp } = await import('../../data/character.js')
+      gainCraftingExp(kind, expGain)
+    }
+    window.dispatchEvent(new CustomEvent('game:inventory-changed'))
+    window.dispatchEvent(new CustomEvent('game:log', { detail: { message: `${kind === 'alchemy' ? 'Luyện Đan' : 'Luyện Khí'} thành công. +${expGain} EXP nghề.`, type: 'item' } }))
+    render()
+  }))
 }
 
 export function mountLuyenDan(root) {
-  const update = () => renderAlchemy(root)
+  const update = () => { renderAlchemy(root); bindCraftActions(root, 'alchemy', update) }
   root.querySelectorAll('[data-craft-type],[data-craft-level],[data-craft-quality]').forEach((el) => el.addEventListener('change', update))
+  update()
 }
 
 export function mountLuyenKhi(root) {
-  const update = () => renderForging(root)
+  const update = () => { renderForging(root); bindCraftActions(root, 'forging', update) }
   root.querySelectorAll('[data-craft-type],[data-craft-level],[data-craft-quality]').forEach((el) => el.addEventListener('change', update))
+  update()
 }
