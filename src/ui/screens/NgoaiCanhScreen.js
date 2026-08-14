@@ -1,41 +1,66 @@
 import './NgoaiCanhScreen.css'
 import { player } from '../../data/character.js'
 
-// Mỗi khu vực có đúng 3 loại quái. Phân tầng theo cấp khu vực:
-// Lv.1–50: thú hoang / yêu thú sơ cấp
-// Lv.51–100: thổ phỉ / sơn tặc / ác tặc / đạo tặc
-// Lv.101–150: thủy quái / yêu quái / Rolin và các dị thú trung-cao cấp
-// Lv.151–200: cao nhân sa đọa / ma tu / thần thú
-// wantedTarget là mục tiêu truy nã xuất hiện thực tế tại chính khu vực đó.
 const areas = [
-  {name:'Rừng Rậm Ven Hồ',min:1,max:10,icon:'🌲',terrain:'Rừng hồ',monsters:[['Huyết Lang',5,7],['Linh Hầu',6,8],['Thanh Mao Hùng',8,10]]},
-  {name:'Bạch Thủy Động',min:6,max:15,icon:'💧',terrain:'Hang động',monsters:[['Động Quật Xà',8,10],['Hắc Nha Lang',10,13],['Thạch Giáp Thú',12,15]]},
-  {name:'Hắc Hổ Lâm',min:11,max:20,icon:'🐯',terrain:'Rừng sâu',monsters:[['Hắc Hổ',12,15],['Sơn Viên',14,18],['Cuồng Nộ Dã Trư',17,20]]},
-  {name:'Thanh Xà Cốc',min:16,max:25,icon:'🐍',terrain:'Thung lũng',monsters:[['Thanh Xà',17,20],['Xích Luyện Xà',19,23],['Xà Vương Thủ Vệ',22,25]]},
-  {name:'Vũ Lăng Sơn',min:21,max:30,icon:'⛰️',terrain:'Núi rừng',monsters:[['Hắc Hùng',22,25],['Thiết Bối Sơn Miêu',24,28],['Vũ Lăng Hổ Yêu',27,30]]},
-  {name:'Thiên Nhẫn Cốc',min:31,max:40,icon:'🦂',terrain:'Cốc địa',monsters:[['Độc Hạt',32,35],['Huyết Nhãn Lang',35,38],['Thiên Nhẫn Yêu Thú',37,40]]},
-  {name:'Võ Đang Sơn',min:41,max:50,icon:'☯️',terrain:'Đạo sơn',monsters:[['Thanh Phong Linh Lộc',42,45],['Huyền Vũ Thú',45,48],['Kim Sí Điêu',48,50]]},
-
-  {name:'Đường Môn Cổ Địa',min:51,max:60,icon:'🎯',terrain:'Cổ địa',monsters:[['Đường Môn Thổ Phỉ',52,55],['Hắc Y Sơn Tặc',55,58],['Độc Tiễn Ác Tặc',58,60]],wantedTarget:{name:'Hắc Phong Đao Khách',level:55}},
-  {name:'Dược Vương Cốc',min:61,max:70,icon:'🌿',terrain:'Linh cốc',monsters:[['Sơn Tặc Đầu Mục',62,65],['Huyết Đao Thổ Phỉ',65,68],['Ác Tặc Dược Cốc',68,70]],wantedTarget:{name:'Huyết Ảnh Ma Nhân',level:68}},
-  {name:'Lão Hổ Động',min:71,max:80,icon:'🐯',terrain:'Sơn động',monsters:[['Hắc Phong Đạo Tặc',72,75],['Cuồng Đao Ác Tặc',75,78],['Sơn Trại Đại Đầu Mục',78,80]],wantedTarget:{name:'Thiết Diện Quỷ',level:78}},
-  {name:'Tần Lăng',min:81,max:90,icon:'🏛️',terrain:'Cổ lăng',monsters:[['Tần Lăng Thổ Phỉ',82,85],['Đoạt Mệnh Sơn Tặc',85,88],['Huyết Sát Ác Tặc',88,90]]},
-  {name:'Phù Dung Động',min:91,max:100,icon:'🔥',terrain:'Địa huyệt',monsters:[['Phù Dung Đạo Tặc',92,95],['Xích Viêm Ác Tặc',95,98],['Ma Đao Sơn Tặc',98,100]],wantedTarget:{name:'Bạch Cốt Khách',level:96}},
-
-  {name:'Phong Lăng Độ',min:101,max:115,icon:'⛵',terrain:'Bến nước',monsters:[['Phong Lăng Thủy Quái',103,107],['Hắc Phong Yêu',107,111],['Rolin Thủy Vệ',111,115]],wantedTarget:{name:'Thiết Diện Thủy Quỷ',level:110}},
-  {name:'Huyết Sa Mạc',min:116,max:130,icon:'🏜️',terrain:'Sa mạc',monsters:[['Huyết Sa Thủy Yêu',118,122],['Xích Viêm Yêu Quái',122,126],['Rolin Huyết Giáp',126,130]],wantedTarget:{name:'Xích Viêm Cuồng Đồ',level:125}},
-  {name:'Thiên Sơn Tuyết Cốc',min:131,max:150,icon:'❄️',terrain:'Tuyết vực',monsters:[['Băng Hải Thủy Quái',133,138],['Thiên Sơn Tuyết Yêu',138,144],['Rolin Huyền Băng',144,150]]},
-
-  {name:'Côn Lôn Sơn',min:151,max:175,icon:'🏔️',terrain:'Côn Lôn',monsters:[['Côn Lôn Ma Tu',153,160],['Huyết Kiếm Cao Nhân',160,168],['Thanh Lân Thần Thú',168,175]],wantedTarget:{name:'Côn Lôn Ma Kiếm',level:165}},
-  {name:'Vạn Độc Cốc',min:176,max:200,icon:'☠️',terrain:'Độc cốc',monsters:[['Vạn Độc Ma Tu',178,185],['Thiên Diện Ác Nhân',185,192],['Cửu Thiên Thần Thú',192,200]],wantedTarget:{name:'Vạn Độc Ma Quân',level:188}},
+  {name:'Rừng Rậm Ven Hồ',min:1,max:10,icon:'forest.svg',terrain:'Rừng hồ',monsters:[['Huyết Lang',5,7],['Linh Hầu',6,8],['Thanh Mao Hùng',8,10]]},
+  {name:'Bạch Thủy Động',min:6,max:15,icon:'cave.svg',terrain:'Hang động',monsters:[['Động Quật Xà',8,10],['Hắc Nha Lang',10,13],['Thạch Giáp Thú',12,15]]},
+  {name:'Hắc Hổ Lâm',min:11,max:20,icon:'forest.svg',terrain:'Rừng sâu',monsters:[['Hắc Hổ',12,15],['Sơn Viên',14,18],['Cuồng Nộ Dã Trư',17,20]]},
+  {name:'Thanh Xà Cốc',min:16,max:25,icon:'cave.svg',terrain:'Thung lũng',monsters:[['Thanh Xà',17,20],['Xích Luyện Xà',19,23],['Xà Vương Thủ Vệ',22,25]]},
+  {name:'Vũ Lăng Sơn',min:21,max:30,icon:'mountain.svg',terrain:'Núi rừng',monsters:[['Hắc Hùng',22,25],['Thiết Bối Sơn Miêu',24,28],['Vũ Lăng Hổ Yêu',27,30]]},
+  {name:'Thiên Nhẫn Cốc',min:31,max:40,icon:'forest.svg',terrain:'Cốc địa',monsters:[['Độc Hạt',32,35],['Huyết Nhãn Lang',35,38],['Thiên Nhẫn Yêu Thú',37,40]]},
+  {name:'Võ Đang Sơn',min:41,max:50,icon:'mountain.svg',terrain:'Đạo sơn',monsters:[['Thanh Phong Linh Lộc',42,45],['Huyền Vũ Thú',45,48],['Kim Sí Điêu',48,50]]},
+  {name:'Đường Môn Cổ Địa',min:51,max:60,icon:'bandit.svg',terrain:'Cổ địa',monsters:[['Đường Môn Thổ Phỉ',52,55],['Hắc Y Sơn Tặc',55,58],['Độc Tiễn Ác Tặc',58,60]],wantedTarget:{name:'Hắc Phong Đao Khách',level:55}},
+  {name:'Dược Vương Cốc',min:61,max:70,icon:'forest.svg',terrain:'Linh cốc',monsters:[['Sơn Tặc Đầu Mục',62,65],['Huyết Đao Thổ Phỉ',65,68],['Ác Tặc Dược Cốc',68,70]],wantedTarget:{name:'Huyết Ảnh Ma Nhân',level:68}},
+  {name:'Lão Hổ Động',min:71,max:80,icon:'cave.svg',terrain:'Sơn động',monsters:[['Hắc Phong Đạo Tặc',72,75],['Cuồng Đao Ác Tặc',75,78],['Sơn Trại Đại Đầu Mục',78,80]],wantedTarget:{name:'Thiết Diện Quỷ',level:78}},
+  {name:'Tần Lăng',min:81,max:90,icon:'cave.svg',terrain:'Cổ lăng',monsters:[['Tần Lăng Thổ Phỉ',82,85],['Đoạt Mệnh Sơn Tặc',85,88],['Huyết Sát Ác Tặc',88,90]]},
+  {name:'Phù Dung Động',min:91,max:100,icon:'cave.svg',terrain:'Địa huyệt',monsters:[['Phù Dung Đạo Tặc',92,95],['Xích Viêm Ác Tặc',95,98],['Ma Đao Sơn Tặc',98,100]],wantedTarget:{name:'Bạch Cốt Khách',level:96}},
+  {name:'Phong Lăng Độ',min:101,max:115,icon:'water.svg',terrain:'Bến nước',monsters:[['Phong Lăng Thủy Quái',103,107],['Hắc Phong Yêu',107,111],['Rolin Thủy Vệ',111,115]],wantedTarget:{name:'Thiết Diện Thủy Quỷ',level:110}},
+  {name:'Huyết Sa Mạc',min:116,max:130,icon:'desert.svg',terrain:'Sa mạc',monsters:[['Huyết Sa Thủy Yêu',118,122],['Xích Viêm Yêu Quái',122,126],['Rolin Huyết Giáp',126,130]],wantedTarget:{name:'Xích Viêm Cuồng Đồ',level:125}},
+  {name:'Thiên Sơn Tuyết Cốc',min:131,max:150,icon:'snow.svg',terrain:'Tuyết vực',monsters:[['Băng Hải Thủy Quái',133,138],['Thiên Sơn Tuyết Yêu',138,144],['Rolin Huyền Băng',144,150]]},
+  {name:'Côn Lôn Sơn',min:151,max:175,icon:'mountain.svg',terrain:'Côn Lôn',monsters:[['Côn Lôn Ma Tu',153,160],['Huyết Kiếm Cao Nhân',160,168],['Thanh Lân Thần Thú',168,175]],wantedTarget:{name:'Côn Lôn Ma Kiếm',level:165}},
+  {name:'Vạn Độc Cốc',min:176,max:200,icon:'demon.svg',terrain:'Độc cốc',monsters:[['Vạn Độc Ma Tu',178,185],['Thiên Diện Ác Nhân',185,192],['Cửu Thiên Thần Thú',192,200]],wantedTarget:{name:'Vạn Độc Ma Quân',level:188}},
 ]
 
 const WORLD_STATE_KEY='game.world.state.v1'
+const iconSrc=(area)=>`/Buil-webgame/assets/world/${area.icon}`
 function loadState(){try{return JSON.parse(localStorage.getItem(WORLD_STATE_KEY))||{area:0}}catch{return{area:0}}}
 function saveState(state){localStorage.setItem(WORLD_STATE_KEY,JSON.stringify(state))}
 function canEnter(area){const level=Number(player.level)||1;return level>=area.min-5&&level<=area.max+5}
 function recommended(area){const level=Number(player.level)||1;if(level<area.min-5)return `Cần khoảng Lv.${area.min-5} trở lên`;if(level>area.max+5)return `Khu vực thấp hơn Lv.${level}`;if(level<area.min)return `Hơi cao hơn cấp đề nghị · Lv.${area.min}–${area.max}`;if(level>area.max)return `Hơi thấp hơn cấp đề nghị · Lv.${area.min}–${area.max}`;return `Phù hợp Lv.${level}`}
-function mapMarkup(selected){return `<div class="world-map"><div class="world-map-title">BẢN ĐỒ NGOẠI CẢNH</div><div class="world-map-subtitle">Các khu vực luyện công phân bố theo cấp độ nhân vật</div><div class="world-route"></div>${areas.map((area,i)=>{const x=10+(i%5)*20,y=25+Math.floor(i/5)*22,ok=canEnter(area);return `<button class="world-node${i===selected?' active':''}${ok?'':' locked'}" style="left:${x}%;top:${y}%" type="button" data-area="${i}" ${ok?'':'disabled'}><span class="world-node-icon">${area.icon}</span><span class="world-node-name">${area.name}</span><span class="world-node-level">Lv.${area.min}–${area.max}</span></button>`}).join('')}<div class="world-legend">🟢 Có thể vào · 🔒 Chưa đủ cấp · Chênh lệch tối đa ±5 Lv.</div></div>`}
-function detailMarkup(area,state){const ok=canEnter(area),index=areas.indexOf(area);return `<aside class="world-detail"><div class="world-detail-head"><div class="world-detail-name">${area.icon} ${area.name}</div><div class="world-detail-level">Cấp khu vực Lv.${area.min}–${area.max} · ${area.terrain}</div></div><div class="world-detail-body"><section class="world-section"><div class="world-section-title">THÔNG TIN KHU VỰC</div><div class="world-current">Cấp nhân vật: <b>Lv.${player.level}</b></div><div class="world-current" style="margin-top:5px">Trạng thái: <b>${recommended(area)}</b></div><div class="world-current" style="margin-top:5px">Khu vực dùng để <b>luyện công</b> và là điểm đến cho các <b>nhiệm vụ</b>.</div></section><section class="world-section"><div class="world-section-title">QUÁI VẬT KHU VỰC · 3 LOẠI</div>${area.monsters.map((m,i)=>`<div class="world-monster"><span class="world-monster-name">${i+1}. ${m[0]}</span><span class="world-monster-level">Lv.${m[1]}–${m[2]}</span></div>`).join('')}</section>${area.wantedTarget?`<section class="world-section world-wanted"><div class="world-section-title">MỤC TIÊU TRUY NÃ</div><div class="world-current">☠ <b>${area.wantedTarget.name}</b> · Boss nhỏ · Lv.${area.wantedTarget.level}</div><div class="world-current" style="margin-top:5px">🔎 Có thể xuất hiện ngẫu nhiên, tỷ lệ gặp thấp.</div></section>`:''}<section class="world-section"><div class="world-section-title">HOẠT ĐỘNG</div><div class="world-current">• Luyện công và săn quái</div><div class="world-current" style="margin-top:5px">• Nhiệm vụ quái vật yêu cầu đúng quái đang có tại khu vực</div><div class="world-current" style="margin-top:5px">• Truy nã yêu cầu tìm đúng mục tiêu đang ẩn tại khu vực</div></section><div class="world-detail-actions"><button class="world-action" type="button" data-action="enter" ${ok?'':'disabled'}>${state.area===index?'ĐANG Ở ĐÂY':'ĐI TỚI KHU VỰC'}</button><button class="world-action secondary" type="button" data-action="train" ${ok?'':'disabled'}>LUYỆN CÔNG</button></div></div></aside>`}
+
+function mapMarkup(selected){
+  return `<section class="world-map"><div class="world-map-heading"><div><div class="world-map-title">BẢN ĐỒ NGOẠI CẢNH</div><div class="world-map-subtitle">Click vào khu vực để xem thông tin và lựa chọn tiến vào</div></div><div class="world-map-status">Lv.${player.level} · ${areas.length} khu vực</div></div><div class="world-area-grid">${areas.map((area,i)=>{const ok=canEnter(area);return `<button class="world-area-card${i===selected?' active':''}${ok?'':' locked'}" type="button" data-area="${i}"><img class="world-area-icon" src="${iconSrc(area)}" alt="${area.name}"/><span class="world-area-name">${area.name}</span><span class="world-area-level">Lv.${area.min}–${area.max}</span><span class="world-area-terrain">${area.terrain}${ok?'':' · 🔒'}</span></button>`}).join('')}</div><div class="world-legend">● Có thể vào · 🔒 Chưa đủ cấp · Cho phép chênh lệch tối đa ±5 Lv.</div></section>`
+}
+
+function modalMarkup(area,state){
+  const ok=canEnter(area),index=areas.indexOf(area),here=state.area===index
+  const monsters=area.monsters.map((m,i)=>`<div class="world-monster"><span>${i+1}. ${m[0]}</span><span class="world-monster-level">Lv.${m[1]}–${m[2]}</span></div>`).join('')
+  const wanted=area.wantedTarget?`<section class="world-section world-wanted"><div class="world-section-title">MỤC TIÊU TRUY NÃ</div><div class="world-current">☠ <b>${area.wantedTarget.name}</b> · Boss nhỏ · Lv.${area.wantedTarget.level}</div><div class="world-current world-muted">Có thể xuất hiện ngẫu nhiên tại khu vực, tỷ lệ gặp thấp.</div></section>`:''
+  return `<div class="world-modal-backdrop" data-world-close="1"><section class="world-modal" role="dialog" aria-modal="true"><button class="world-modal-close" type="button" data-world-close="1">×</button><div class="world-modal-head"><img class="world-modal-icon" src="${iconSrc(area)}" alt=""/><div><div class="world-modal-name">${area.name}</div><div class="world-modal-meta">Cấp khu vực Lv.${area.min}–${area.max} · ${area.terrain}</div></div></div><div class="world-modal-scroll"><section class="world-section"><div class="world-section-title">THÔNG TIN KHU VỰC</div><div class="world-current">Cấp nhân vật: <b>Lv.${player.level}</b></div><div class="world-current world-status-text">Trạng thái: <b>${recommended(area)}</b></div><div class="world-current">Khu vực dùng để <b>luyện công</b>, săn quái và làm nhiệm vụ.</div></section><section class="world-section"><div class="world-section-title">QUÁI VẬT KHU VỰC · 3 LOẠI</div>${monsters}</section>${wanted}<section class="world-section"><div class="world-section-title">HOẠT ĐỘNG</div><div class="world-current">• Luyện công và săn 3 loại quái của khu vực</div><div class="world-current">• Nhiệm vụ quái vật chỉ tính đúng quái đang có tại khu vực</div>${area.wantedTarget?'<div class="world-current">• Truy nã yêu cầu tìm đúng mục tiêu đang ẩn tại khu vực</div>':''}</section></div><div class="world-modal-actions"><button class="world-action" type="button" data-action="enter" ${ok?'':'disabled'}>${here?'ĐANG Ở ĐÂY':'TIẾN VÀO KHU VỰC'}</button><button class="world-action secondary" type="button" data-action="train" ${ok?'':'disabled'}>LUYỆN CÔNG</button></div></section></div>`
+}
+
 export function NgoaiCanhScreen(){return `<div class="world-screen"><div class="world-toolbar"><span class="world-toolbar-title">◆ NGOẠI CẢNH</span><span class="world-toolbar-info">Chọn khu vực phù hợp để luyện công, làm nhiệm vụ và săn quái</span></div><div id="world-content" class="world-layout"></div></div>`}
-export function mountNgoaiCanhScreen(){const root=document.querySelector('.world-screen');if(!root)return;const content=root.querySelector('#world-content'),state=loadState();let selected=Math.min(Math.max(Number(state.area)||0,0),areas.length-1);function render(){content.innerHTML=mapMarkup(selected)+detailMarkup(areas[selected],state);bind()}function bind(){root.querySelectorAll('.world-node:not(:disabled)').forEach(btn=>btn.addEventListener('click',()=>{selected=Number(btn.dataset.area);render()}));root.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>{const area=areas[selected];if(!canEnter(area))return;state.area=selected;saveState(state);const action=btn.dataset.action;window.dispatchEvent(new CustomEvent('game:world-changed',{detail:{name:area.name,level:`Lv.${area.min}-${area.max}`,monsters:area.monsters,wantedTarget:area.wantedTarget||null}}));window.dispatchEvent(new CustomEvent('game:log',{detail:{message:action==='train'?`Bắt đầu luyện công tại ${area.name}.`:`Đã di chuyển đến ${area.name}.`,type:'item'}}));render()}))}render()}
+
+export function mountNgoaiCanhScreen(){
+  const root=document.querySelector('.world-screen');if(!root)return
+  const content=root.querySelector('#world-content'),state=loadState();let selected=Math.min(Math.max(Number(state.area)||0,0),areas.length-1)
+  const closeModal=()=>root.querySelector('.world-modal-backdrop')?.remove()
+  const render=()=>{content.innerHTML=mapMarkup(selected);content.querySelectorAll('.world-area-card').forEach(btn=>btn.addEventListener('click',()=>openModal(Number(btn.dataset.area))))}
+  function openModal(index){
+    selected=index
+    content.insertAdjacentHTML('beforeend',modalMarkup(areas[index],state))
+    const backdrop=root.querySelector('.world-modal-backdrop');if(!backdrop)return
+    backdrop.addEventListener('click',(event)=>{if(event.target===backdrop)closeModal()})
+    backdrop.querySelector('.world-modal-close')?.addEventListener('click',closeModal)
+    backdrop.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>{
+      const area=areas[selected];if(!canEnter(area))return
+      state.area=selected;saveState(state)
+      const action=btn.dataset.action
+      window.dispatchEvent(new CustomEvent('game:world-changed',{detail:{name:area.name,level:`Lv.${area.min}-${area.max}`,monsters:area.monsters,wantedTarget:area.wantedTarget||null}}))
+      window.dispatchEvent(new CustomEvent('game:log',{detail:{message:action==='train'?`Bắt đầu luyện công tại ${area.name}.`:`Đã di chuyển đến ${area.name}.`,type:'item'}}))
+      closeModal();render()
+    }))
+    backdrop.querySelector('.world-modal-close')?.focus()
+  }
+  render()
+}
