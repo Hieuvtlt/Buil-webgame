@@ -211,5 +211,6 @@ export function unequipItem(slot) {
 
 export function syncDerivedStats() { const stats = getPlayerStats(); player.maxHp = stats.maxHp; player.maxMp = stats.maxMp; player.hp = Math.min(player.hp, player.maxHp); player.mp = Math.min(player.mp, player.maxMp) }
 export function gainLevel() { if (player.level >= MAX_CHARACTER_LEVEL) return false; player.level += 1; player.freePoints += POINTS_PER_LEVEL; player.exp = 0; player.expToNextLevel = Math.round(100 * Math.pow(1.08, player.level - 1)); return true }
+export function gainExperience(amount) { if (!Number.isFinite(amount) || amount <= 0 || player.level >= MAX_CHARACTER_LEVEL) return false; let remaining=Math.floor(amount),leveled=false; while(remaining>0&&player.level<MAX_CHARACTER_LEVEL){const needed=Math.max(1,player.expToNextLevel-player.exp);const add=Math.min(remaining,needed);player.exp+=add;remaining-=add;if(player.exp>=player.expToNextLevel&&player.level<MAX_CHARACTER_LEVEL){gainLevel();leveled=true}}if(player.level>=MAX_CHARACTER_LEVEL)player.exp=0;window.dispatchEvent(new CustomEvent('game:character-changed'));return leveled }
 export function gainAttributePoints(amount) { if (!Number.isFinite(amount) || amount <= 0) return false; player.freePoints += Math.floor(amount); return true }
 export function useAttributeBook(points) { return gainAttributePoints(points) }
