@@ -18,7 +18,7 @@ import { LuyenDanScreen } from './ui/screens/LuyenDanScreen.js'
 import { LuyenKhiScreen } from './ui/screens/LuyenKhiScreen.js'
 import { HopThanhScreen, mountHopThanhScreen } from './ui/screens/HopThanhScreen.js'
 import { ThuongHoiScreen } from './ui/screens/ThuongHoiScreen.js'
-import { NhiemVuScreen } from './ui/screens/NhiemVuScreen.js'
+import { NhiemVuScreen, mountNhiemVuScreen } from './ui/screens/NhiemVuScreen.js'
 import { NgoaiCanhScreen } from './ui/screens/NgoaiCanhScreen.js'
 import { GMScreen } from './ui/screens/GMScreen.js'
 import { SettingsScreen } from './ui/screens/SettingsScreen.js'
@@ -36,7 +36,7 @@ const screens = {
   'Luyện khí': { render: LuyenKhiScreen },
   'Hợp thành': { render: HopThanhScreen, mount: mountHopThanhScreen },
   'Thương hội': { render: ThuongHoiScreen, mount: mountMerchantScreen },
-  'Nhiệm vụ': { render: NhiemVuScreen },
+  'Nhiệm vụ': { render: NhiemVuScreen, mount: mountNhiemVuScreen },
   'Ngoại cảnh': { render: NgoaiCanhScreen },
   'GM': { render: GMScreen },
   'Cài đặt': { render: SettingsScreen },
