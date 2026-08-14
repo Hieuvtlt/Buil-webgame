@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 420">
+<defs><radialGradient id="g"><stop stop-color="#fff1a3" stop-opacity=".7"/><stop offset=".35" stop-color="#f0c84b" stop-opacity=".35"/><stop offset="1" stop-color="#00f28a" stop-opacity="0"/></radialGradient></defs>
+<circle cx="250" cy="210" r="170" fill="url(#g)"/>
+<circle cx="250" cy="210" r="62" fill="#07130e" stroke="#f0c84b" stroke-width="5"/>
+<circle cx="250" cy="210" r="42" fill="#f0c84b" opacity=".18" stroke="#00f28a" stroke-width="3"/>
+<path d="M250 110 C250 145 250 170 250 185 M250 235 C250 265 250 290 250 310 M150 160 C180 175 205 190 220 200 M350 160 C320 175 295 190 280 200 M150 260 C180 245 205 230 220 220 M350 260 C320 245 295 230 280 220" fill="none" stroke="#f0c84b" stroke-width="5" stroke-linecap="round"/>
+<circle cx="145" cy="155" r="30" fill="#0b2117" stroke="#00f28a" stroke-width="4"/><circle cx="355" cy="155" r="30" fill="#0b2117" stroke="#00f28a" stroke-width="4"/><circle cx="145" cy="265" r="30" fill="#0b2117" stroke="#f0c84b" stroke-width="4"/><circle cx="355" cy="265" r="30" fill="#0b2117" stroke="#f0c84b" stroke-width="4"/>
+<path d="M250 178 L260 203 L287 205 L266 222 L272 249 L250 234 L228 249 L234 222 L213 205 L240 203Z" fill="#ffe889"/>
+</svg>
