@@ -1,4 +1,5 @@
 import '../../craft.css'
+import { setupPersistentCraftImage } from '../craftImageStorage.js'
 
 const groups = {
   linhduoc: {
@@ -58,7 +59,7 @@ export function mountHopThanhScreen() {
   const level = document.querySelector('#fusion-level')
   const info = document.querySelector('#fusion-info')
   const material = document.querySelector('#fusion-material')
-  setupImageSlot(root)
+  setupPersistentCraftImage(root)
 
   const updateItems = () => {
     const data = groups[group.value]
@@ -82,20 +83,4 @@ export function mountHopThanhScreen() {
   level.addEventListener('change', update)
   updateItems()
   update()
-}
-
-function setupImageSlot(root) {
-  const slot = root?.querySelector('[data-image-slot]')
-  const input = root?.querySelector('[data-image-input]')
-  if (!slot || !input) return
-  slot.addEventListener('click', () => input.click())
-  input.addEventListener('change', () => {
-    const file = input.files?.[0]
-    if (!file) return
-    slot.innerHTML = `<input class="craft-image-input" type="file" accept="image/*" data-image-input hidden><img class="craft-machine-art craft-machine-art-fusion" src="${URL.createObjectURL(file)}" alt="Hình Dung Hợp">`
-    slot.querySelector('[data-image-input]').addEventListener('change', (event) => {
-      const next = event.target.files?.[0]
-      if (next) slot.querySelector('img').src = URL.createObjectURL(next)
-    })
-  })
 }
