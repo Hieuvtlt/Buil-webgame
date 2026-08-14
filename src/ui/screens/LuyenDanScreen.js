@@ -1,12 +1,13 @@
 import '../../craft.css'
 import { mountLuyenDan } from '../controllers/CraftController.js'
+import { craftMachineArt } from '../components/CraftMachineArt.js'
 
 export function LuyenDanScreen() {
   const html = `
     <div class="craft-screen game-screen craft-alchemy">
       <div class="craft-layout">
         <section class="craft-main-panel">
-          <div class="craft-machine-frame"><div class="craft-machine-placeholder">ĐAN LÔ</div></div>
+          <div class="craft-machine-frame">${craftMachineArt('alchemy')}</div>
           <div class="craft-fields">
             <label class="craft-field"><span>Loại đan</span><select data-craft-type><option value="">-- Chọn loại đan --</option><option value="hoimau">Hồi Khí Đan</option><option value="hoimana">Hồi Nguyên Đan</option><option value="exp">Tụ Linh Đan</option><option value="expskill">Ngộ Đạo Đan</option></select></label>
             <label class="craft-field"><span>Level</span><select data-craft-level><option value="">-- Chọn level --</option>${Array.from({ length: 10 }, (_, i) => `<option value="${i + 1}">Đan dược Lv${i + 1}</option>`).join('')}</select></label>
