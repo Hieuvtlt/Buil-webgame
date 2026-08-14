@@ -4,7 +4,6 @@ import { mountLuyenDan } from '../controllers/CraftController.js'
 export function LuyenDanScreen() {
   const html = `
     <div class="craft-screen game-screen">
-      <h1 class="craft-title">LUYỆN ĐAN</h1>
       <div class="craft-layout">
         <section class="craft-main-panel">
           <div class="craft-machine-frame"><div class="craft-machine-placeholder">ĐAN LÔ</div></div>
