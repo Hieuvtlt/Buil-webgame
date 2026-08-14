@@ -19,19 +19,19 @@ function buildItem(i, prefix, priceStep) {
   const hp = 10 + level * 5 + (i % 4) * 5
   const description = `${type} cấp ${level}, phù hợp với nhân vật đang phát triển.`
   const stats = `Ngoại công: ${attackMin}-${attackMax};Ngoại phòng: +${defense};HP: +${hp}`
-  return { name: `${prefix} ${type} ${i + 1}`, level, quality, price: (i + 1) * priceStep, category: 'Trang bị', type, description, stats }
+  return { name: `${prefix} ${type} ${i + 1}`, level, quality, grade: 'Hoàng cấp', price: (i + 1) * priceStep, category: 'Trang bị', type, description, stats }
 }
 
 const BUY_ITEMS = Array.from({ length: 60 }, (_, i) => {
   if (i < 10) return buildItem(i, 'Trang bị Thương Hội', 1000)
   const category = CATEGORIES[i % CATEGORIES.length]
-  return { name: `Hàng Thương Hội ${i + 1}`, level: (i % 10) + 1, quality: QUALITY[i % 4], price: (i + 1) * 1000, category, type: category, description: `Vật phẩm ${category.toLowerCase()} của Thương Hội.`, stats: 'Không có thuộc tính chiến đấu.' }
+  return { name: `Hàng Thương Hội ${i + 1}`, level: (i % 10) + 1, quality: QUALITY[i % 4], grade: '', price: (i + 1) * 1000, category, type: category, description: `Vật phẩm ${category.toLowerCase()} của Thương Hội.`, stats: 'Không có thuộc tính chiến đấu.' }
 })
 
 const SELL_ITEMS = Array.from({ length: 60 }, (_, i) => {
   if (i < 10) return buildItem(i, 'Vật phẩm túi đồ', 500)
   const category = CATEGORIES[i % CATEGORIES.length]
-  return { name: `Vật phẩm túi đồ ${i + 1}`, level: (i % 10) + 1, quality: QUALITY[i % 4], price: (i + 1) * 500, category, type: category, description: `Vật phẩm ${category.toLowerCase()} trong túi đồ.`, stats: 'Không có thuộc tính chiến đấu.' }
+  return { name: `Vật phẩm túi đồ ${i + 1}`, level: (i % 10) + 1, quality: QUALITY[i % 4], grade: '', price: (i + 1) * 500, category, type: category, description: `Vật phẩm ${category.toLowerCase()} trong túi đồ.`, stats: 'Không có thuộc tính chiến đấu.' }
 })
 
 function renderItems(mode, page = 1, category = CATEGORIES[0]) {
@@ -43,6 +43,7 @@ function renderItems(mode, page = 1, category = CATEGORIES[0]) {
       data-name="${item.name}"
       data-level="${item.level}"
       data-quality="${item.quality}"
+      data-grade="${item.grade || ''}"
       data-price="${item.price}"
       data-category="${item.category}"
       data-type="${item.type}"
