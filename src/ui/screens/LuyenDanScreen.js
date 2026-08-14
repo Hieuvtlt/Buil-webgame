@@ -1,5 +1,6 @@
 import '../../craft.css'
 import { mountLuyenDan } from '../controllers/CraftController.js'
+import { setupPersistentCraftImage } from '../craftImageStorage.js'
 
 export function LuyenDanScreen() {
   const html = `
@@ -26,29 +27,9 @@ export function LuyenDanScreen() {
   setTimeout(() => {
     const root = document.querySelector('.craft-screen')
     mountLuyenDan(root)
-    setupImageSlot(root)
+    setupPersistentCraftImage(root)
   }, 0)
   return html
-}
-
-function setupImageSlot(root) {
-  const slot = root?.querySelector('[data-image-slot]')
-  const input = root?.querySelector('[data-image-input]')
-  if (!slot || !input) return
-  slot.addEventListener('click', () => input.click())
-  input.addEventListener('change', () => {
-    const file = input.files?.[0]
-    if (!file) return
-    const url = URL.createObjectURL(file)
-    slot.innerHTML = `<input class="craft-image-input" type="file" accept="image/*" data-image-input hidden><img class="craft-machine-art" src="${url}" alt="Hình Đan Lô">`
-    slot.querySelector('[data-image-input]').addEventListener('change', (event) => {
-      const next = event.target.files?.[0]
-      if (next) {
-        const nextUrl = URL.createObjectURL(next)
-        slot.querySelector('img').src = nextUrl
-      }
-    })
-  })
 }
 
 export function mountLuyenDanScreen(root) {
