@@ -1,6 +1,14 @@
 # Kiến trúc Game Web — Quy tắc hiện tại
 
-> Bộ quy tắc đã chốt cho việc phát triển game.
+> Đây là tài liệu bàn giao trung tâm của dự án. Khi đổi tài khoản, đổi phiên ChatGPT, hoặc tiếp tục dự án ở nơi khác, hãy đọc file này trước để nắm nhanh quy tắc và hướng xây dựng đã chốt.
+
+## 0. Quy tắc bàn giao & phát triển
+- Đây là nguồn ghi chú trung tâm cho các quyết định thiết kế/gameplay đã chốt.
+- Khi người phát triển mới tiếp tục dự án, ưu tiên đọc `GAME_ARCHITECTURE.md`, sau đó kiểm tra code thực tế trước khi sửa.
+- Không tự ý thay đổi các quy tắc gameplay đã chốt. Nếu cần thay đổi, cập nhật lại tài liệu này cùng với code.
+- Khi người dùng nói “sửa game”, phải sửa trực tiếp code/repository; không chuyển sang tạo ảnh/mockup trừ khi được yêu cầu.
+- Khi thêm hình ảnh/icon mới, phải tuân thủ cấu trúc asset ở mục 13.
+- Khi thay đổi hệ thống lớn, cập nhật tài liệu này để phiên làm việc sau có thể tiếp tục ngay.
 
 ## 1. Nhân vật
 - Max cấp cố định Lv1–200.
@@ -145,6 +153,57 @@ Thiên Cơ Đan: thuộc tính % +1–5% ngẫu nhiên; thuộc tính dạng đi
 - Nếu yêu cầu sửa/làm/chỉnh game thì không tự tạo hình; triển khai trực tiếp bằng code.
 - Mockup nếu có phải có khả năng triển khai thực tế bằng code.
 
-## 13. Nguồn tham khảo
+## 13. Cấu trúc Asset — QUY TẮC CỐ ĐỊNH
+> Đây là cấu trúc chính thức để lưu hình ảnh/icon của game. Không tạo thêm các thư mục asset tùy tiện nếu không có lý do rõ ràng.
+
+### 13.1. Hình ảnh giao diện/minh họa
+Thư mục chuẩn:
+
+`src/assets/images/`
+
+Tất cả hình minh họa lớn, hình cố định trong menu/giao diện và hình trang trí chức năng mới phải lưu tại đây.
+
+Ví dụ:
+- `hinhdanlo.svg` — hình Đan Lô của menu Luyện Đan.
+- `hinhbualuyenkhi.svg` — hình Búa + Đe của menu Luyện Khí.
+- `hinhhopthanh.svg` — hình minh họa menu Hợp Thành.
+
+Quy tắc đặt tên:
+- Tên mô tả đúng chức năng.
+- Ưu tiên tiếng Việt không dấu, viết liền, dễ tìm.
+- Không đặt tên kiểu `image1`, `new2`, `test`, `final-final`.
+- Khi thay hình nhưng giữ nguyên chức năng, ưu tiên giữ nguyên tên file để code không phải sửa.
+
+### 13.2. Icon
+Thư mục chuẩn:
+
+`src/assets/icons/`
+
+Tất cả icon menu, icon chức năng, icon trạng thái và icon UI mới phải lưu tại đây.
+
+Quy tắc đặt tên tương tự hình ảnh: tên phải thể hiện chức năng, ví dụ `iconluyendan`, `iconluyenkhi`, `iconhopthanh`, `iconskill`.
+
+### 13.3. Quản lý đường dẫn asset
+- Các đường dẫn asset giao diện mới phải ưu tiên lấy từ hệ thống quản lý asset tập trung (ví dụ `src/ui/assets.js`) thay vì viết đường dẫn rải rác trong nhiều component.
+- Khi thêm một asset mới, cập nhật registry quản lý asset tương ứng.
+- Khi thay asset, chỉ cần thay file đúng tên trong `src/assets/images/` hoặc `src/assets/icons/` nếu không đổi chức năng.
+- Không tự ý di chuyển các thư mục dữ liệu icon/item cũ đang được code sử dụng nếu chưa kiểm tra toàn bộ import/reference. Việc gom asset cũ phải thực hiện có kiểm tra để tránh làm hỏng item hiện tại.
+
+### 13.4. Quy trình thêm hình mới
+1. Xác định đây là **hình minh họa** hay **icon**.
+2. Đặt file vào `src/assets/images/` hoặc `src/assets/icons/`.
+3. Đặt tên theo chức năng.
+4. Đăng ký đường dẫn trong hệ thống asset tập trung nếu hệ thống đó đang dùng cho module.
+5. Sửa component/menu để dùng đường dẫn chuẩn mới.
+6. Kiểm tra cả môi trường local và GitHub Pages vì game được triển khai dưới sub-path `/Buil-webgame/`.
+7. Không để lại đường dẫn asset cũ chết trong code nếu asset đã được thay thế.
+
+## 14. Nguồn tham khảo
 - VLTK 1 là nền tham khảo cho môn phái, võ học, sát thương và thuộc tính chiến đấu.
 - Repo tham khảo: https://github.com/jxoffline/jx1linux
+
+## 15. Ghi chú trạng thái dự án
+- Game đang được phát triển trực tiếp trên GitHub repository `Hieuvtlt/Buil-webgame`.
+- GitHub Pages là môi trường kiểm tra giao diện/chức năng online.
+- Khi kiểm tra sau deploy, có thể cần `Ctrl + F5` để loại bỏ cache asset cũ.
+- Các quy tắc gameplay trong tài liệu này là những gì đã được chốt trong quá trình xây dựng; các chi tiết chưa chốt phải được coi là đang mở và không tự suy diễn thành quy tắc cố định.
