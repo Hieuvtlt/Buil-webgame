@@ -1,4 +1,5 @@
 import '../../craft.css'
+import { craftMachineArt } from '../components/CraftMachineArt.js'
 
 const groups = {
   linhduoc: {
@@ -19,7 +20,7 @@ export function HopThanhScreen() {
     <div class="craft-screen game-screen">
       <div class="craft-layout">
         <section class="craft-main-panel">
-          <div class="craft-machine-frame"><div class="craft-machine-placeholder">KHUNG HỢP THÀNH</div></div>
+          <div class="craft-machine-frame">${craftMachineArt('fusion')}</div>
           <div class="craft-fields">
             <label class="craft-field"><span>Loại</span><select id="fusion-group"><option value="linhduoc">Linh dược</option><option value="danduoc">Đan dược</option></select></label>
             <label class="craft-field"><span>Vật phẩm</span><select id="fusion-item"></select></label>
