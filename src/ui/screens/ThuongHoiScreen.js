@@ -1,4 +1,10 @@
 const CATEGORIES = ['Trang bị', 'Đan dược', 'Linh dược', 'Khoáng thạch', 'Đan phương', 'Bản vẽ']
+const CURRENCIES = [
+  { id: 'linhthach', label: 'Linh thạch' },
+  { id: 'vang', label: 'Vàng' },
+  { id: 'bac', label: 'Bạc' },
+  { id: 'dong', label: 'Đồng' },
+]
 const BUY_ITEMS = Array.from({ length: 60 }, (_, i) => ({ name: `Hàng Thương Hội ${i + 1}`, level: (i % 10) + 1, quality: ['Hạ phẩm', 'Trung phẩm', 'Thượng phẩm', 'Cực phẩm'][i % 4], price: (i + 1) * 1000, category: CATEGORIES[i % CATEGORIES.length] }))
 const SELL_ITEMS = Array.from({ length: 60 }, (_, i) => ({ name: `Vật phẩm túi đồ ${i + 1}`, level: (i % 10) + 1, quality: ['Hạ phẩm', 'Trung phẩm', 'Thượng phẩm', 'Cực phẩm'][i % 4], price: (i + 1) * 500, category: CATEGORIES[i % CATEGORIES.length] }))
 
@@ -36,4 +42,4 @@ export function ThuongHoiScreen() {
     </div>`
 }
 
-export { CATEGORIES, BUY_ITEMS, SELL_ITEMS, renderItems }
+export { CATEGORIES, CURRENCIES, BUY_ITEMS, SELL_ITEMS, renderItems }
