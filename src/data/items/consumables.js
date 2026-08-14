@@ -5,6 +5,8 @@ const potionMeta = {
   mp: { name: 'Hồi Khí Đan', icon: '/assets/vltk/danduoc/hoimana.png', base: 300 },
   exp: { name: 'Tụ Linh Đan', icon: '/assets/vltk/danduoc/exp.png', base: 1000 },
   skillExp: { name: 'Ngộ Đạo Đan', icon: '/assets/vltk/danduoc/expskill.png', base: 100 },
+  alchemyExp: { name: 'Đan Tâm Đan', icon: '/assets/vltk/danduoc/exp.png', base: 100 },
+  forgingExp: { name: 'Khí Linh Đan', icon: '/assets/vltk/danduoc/expskill.png', base: 100 },
 }
 
 function getRangeText(level) {
@@ -23,7 +25,11 @@ function createLevelledPills(type) {
         ? { mp: value }
         : type === 'exp'
           ? { characterExp: value }
-          : { skillExp: value }
+          : type === 'skillExp'
+            ? { skillExp: value }
+            : type === 'alchemyExp'
+              ? { alchemyExp: value }
+              : { forgingExp: value }
 
     const effectText = type === 'hp'
       ? `Phục hồi ${value} HP`
@@ -31,7 +37,11 @@ function createLevelledPills(type) {
         ? `Phục hồi ${value} MP`
         : type === 'exp'
           ? `Nhận ${value} EXP`
-          : `Nhận ${value} EXP võ kỹ`
+          : type === 'skillExp'
+            ? `Nhận ${value} EXP võ kỹ`
+            : type === 'alchemyExp'
+              ? `Nhận ${value} EXP Luyện Đan`
+              : `Nhận ${value} EXP Luyện Khí`
 
     return createItem({
       id: `${type}_pill_${String(level).padStart(2, '0')}`,
@@ -94,6 +104,8 @@ export const consumables = [
   ...createLevelledPills('mp'),
   ...createLevelledPills('exp'),
   ...createLevelledPills('skillExp'),
+  ...createLevelledPills('alchemyExp'),
+  ...createLevelledPills('forgingExp'),
   ...rebirthPills,
   thienCoDan,
 ]
