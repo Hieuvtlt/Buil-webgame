@@ -1,42 +1,73 @@
+import { CATEGORIES, BUY_ITEMS, SELL_ITEMS, renderItems } from '../screens/ThuongHoiScreen.js'
+
 export function mountMerchantScreen() {
   const root = document.getElementById('content-root')
   if (!root) return
-
   const tabs = Array.from(root.querySelectorAll('[data-tab]'))
-  const rows = Array.from(root.querySelectorAll('.m-row.m-data, [data-row-index], .m-data'))
+  const categoryButtons = Array.from(root.querySelectorAll('[data-category]'))
   const pagination = root.querySelector('#merchant-pagination')
+  const grid = root.querySelector('#merchant-item-grid')
+  const pageLabel = root.querySelector('#merchant-current-page')
+  const modeLabel = root.querySelector('#merchant-mode-label')
+  const tooltip = root.querySelector('#merchant-tooltip')
+  let mode = 'mua'
+  let page = 1
+  let category = CATEGORIES[0]
 
-  const setTab = (tab) => {
-    tabs.forEach((item) => item.classList.remove('merchant-tab-active', 'active'))
-    tab.classList.add('merchant-tab-active', 'active')
-    rows.forEach((row) => row.classList.remove('is-selected'))
-    rows[0]?.classList.add('is-selected')
+  const closeTooltip = () => {
+    tooltip.classList.remove('is-open')
+    tooltip.setAttribute('aria-hidden', 'true')
   }
 
-  tabs.forEach((tab) => tab.addEventListener('click', () => setTab(tab)))
-  if (tabs[0]) setTab(tabs[0])
-
-  rows.forEach((row) => {
-    row.addEventListener('click', () => {
-      rows.forEach((item) => item.classList.remove('is-selected'))
-      row.classList.add('is-selected')
-      const cells = row.querySelectorAll('.m-cell')
-      const info = root.querySelector('.merchant-info')
-      if (!info) return
-      const lines = info.querySelectorAll('.merchant-info-line')
-      if (lines[0]) lines[0].innerHTML = `<b>Tên:</b> ${cells[0]?.textContent?.trim() || '-'}`
-      if (lines[1]) lines[1].innerHTML = `<b>Loại:</b> ${cells[1]?.textContent?.trim() || '-'}`
-      if (lines[2]) lines[2].innerHTML = `<b>Phẩm cấp:</b> ${cells[2]?.textContent?.trim() || '-'}`
-      if (lines[3]) lines[3].innerHTML = `<b>Giá:</b> ${cells[3]?.textContent?.trim() || '-'}`
+  const showTooltip = (button, event) => {
+    const data = button.dataset
+    const action = mode === 'mua' ? 'MUA' : 'BÁN'
+    tooltip.innerHTML = `<div class="merchant-tooltip-title">${data.name}</div><div class="merchant-tooltip-meta">${data.category} · Lv${data.level} · ${data.quality}</div><div class="merchant-tooltip-price">${mode === 'mua' ? 'Giá mua' : 'Giá bán'}: <b>${Number(data.price).toLocaleString('vi-VN')}</b></div><div class="merchant-tooltip-actions"><button type="button" class="merchant-tooltip-action" data-merchant-action="${action}">${action}</button></div>`
+    tooltip.classList.add('is-open')
+    tooltip.setAttribute('aria-hidden', 'false')
+    const pad = 12
+    const rect = tooltip.getBoundingClientRect()
+    let left = event.clientX + 14
+    let top = event.clientY + 14
+    if (left + rect.width > window.innerWidth - pad) left = event.clientX - rect.width - 14
+    if (top + rect.height > window.innerHeight - pad) top = event.clientY - rect.height - 14
+    tooltip.style.left = `${Math.max(pad, left)}px`
+    tooltip.style.top = `${Math.max(pad, top)}px`
+    tooltip.querySelector('[data-merchant-action]')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('game:log', { detail: { message: `${action} ${data.name} tại Thương Hội.`, type: 'item' } }))
+      closeTooltip()
     })
-  })
+  }
 
-  pagination?.querySelectorAll('.merchant-page-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      pagination.querySelectorAll('.merchant-page-btn').forEach((item) => item.classList.remove('active'))
-      btn.classList.add('active')
-      rows.forEach((row) => row.classList.remove('is-selected'))
-      rows[0]?.classList.add('is-selected')
+  const render = () => {
+    grid.innerHTML = renderItems(mode, page, category)
+    pageLabel.textContent = page
+    modeLabel.textContent = mode === 'mua' ? 'Hàng của Thương Hội' : 'Vật phẩm của nhân vật'
+    grid.querySelectorAll('.merchant-item-slot').forEach((button) => button.addEventListener('click', (event) => showTooltip(button, event)))
+    pagination.querySelectorAll('.merchant-page-btn').forEach((button) => {
+      button.classList.toggle('active', Number(button.dataset.page) === page)
     })
-  })
+  }
+
+  const setMode = (nextMode) => {
+    mode = nextMode
+    page = 1
+    tabs.forEach((tab) => tab.classList.toggle('active', tab.dataset.tab === mode))
+    closeTooltip()
+    render()
+  }
+
+  const setCategory = (nextCategory) => {
+    category = nextCategory
+    page = 1
+    categoryButtons.forEach((button) => button.classList.toggle('active', button.dataset.category === category))
+    closeTooltip()
+    render()
+  }
+
+  tabs.forEach((tab) => tab.addEventListener('click', () => setMode(tab.dataset.tab)))
+  categoryButtons.forEach((button) => button.addEventListener('click', () => setCategory(button.dataset.category)))
+  pagination.querySelectorAll('.merchant-page-btn').forEach((button) => button.addEventListener('click', () => { page = Number(button.dataset.page); closeTooltip(); render() }))
+  document.addEventListener('click', (event) => { if (!event.target.closest('.merchant-item-slot, .merchant-tooltip')) closeTooltip() }, { once: true })
+  render()
 }
