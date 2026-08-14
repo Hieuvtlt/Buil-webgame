@@ -3,6 +3,7 @@ import {
   getAlchemyRecipe,
   getForgingRecipe,
 } from '../../data/craftData.js'
+import { getVltkIcon } from '../../data/vltkIconCatalog.js'
 import {
   player,
   getCraftingTraining,
@@ -22,15 +23,29 @@ const ALCHEMY_TYPES = {
 }
 
 const FORGING_TYPES = {
-  vu_khi: { name: 'Vũ khí', folder: 'vukhi', effect: 'Trang bị vũ khí' },
-  mu: { name: 'Mũ', folder: 'mu', effect: 'Trang bị mũ' },
-  ao: { name: 'Áo', folder: 'ao', effect: 'Trang bị áo' },
-  baotay: { name: 'Bao tay', folder: 'baotay', effect: 'Trang bị bao tay' },
-  dailung: { name: 'Đai lưng', folder: 'dailung', effect: 'Trang bị đai lưng' },
-  giay: { name: 'Giày', folder: 'giay', effect: 'Trang bị giày' },
-  daychuyen: { name: 'Dây chuyền', folder: 'daychuyen', effect: 'Trang sức dây chuyền' },
-  ngocboi: { name: 'Ngọc bội', folder: 'ngocboi', effect: 'Trang sức ngọc bội' },
-  nhan: { name: 'Nhẫn', folder: 'nhan', effect: 'Trang sức nhẫn' },
+  vu_khi: { name: 'Vũ khí', category: 'sword', type: 'weapon', effect: 'Trang bị vũ khí' },
+  mu: { name: 'Mũ', category: 'helmet', type: 'armor', effect: 'Trang bị mũ' },
+  ao: { name: 'Áo', category: 'body', type: 'armor', effect: 'Trang bị áo' },
+  baotay: { name: 'Bao tay', category: 'gauntlet', type: 'armor', effect: 'Trang bị bao tay' },
+  dailung: { name: 'Đai lưng', category: 'belt', type: 'armor', effect: 'Trang bị đai lưng' },
+  giay: { name: 'Giày', category: 'boots', type: 'armor', effect: 'Trang bị giày' },
+  daychuyen: { name: 'Dây chuyền', category: 'necklace', type: 'accessory', effect: 'Trang sức dây chuyền' },
+  ngocboi: { name: 'Ngọc bội', category: 'amulet', type: 'accessory', effect: 'Trang sức ngọc bội' },
+  nhan: { name: 'Nhẫn', category: 'ring', type: 'accessory', effect: 'Trang sức nhẫn' },
+}
+
+const FORGING_TIER_NAMES = {
+  1: 'Hoàng cấp',
+  31: 'Huyền cấp',
+  61: 'Địa cấp',
+  91: 'Thiên cấp',
+}
+
+const QUALITY_KEYS = {
+  'Hạ phẩm': 'haPham',
+  'Trung phẩm': 'trungPham',
+  'Thượng phẩm': 'thuongPham',
+  'Cực phẩm': 'cucPham',
 }
 
 function getInventoryRoot() { return globalThis.gameState?.inventory ?? player.inventory ?? globalThis.inventory ?? null }
@@ -62,8 +77,6 @@ function renderMaterials(recipe, kind) {
   return recipe.map((material) => {
     const current = getOwnedCount(material.id, material.name)
     const enough = current >= material.amount
-    // craftData already resolves the correct icon for each material type.
-    // Use that path directly and keep BASE_URL support for GitHub Pages.
     const icon = material.icon?.startsWith('/')
       ? `${import.meta.env.BASE_URL}${material.icon.replace(/^\/+/, '')}`
       : material.icon || ''
@@ -99,12 +112,16 @@ function renderForging(root) {
   const quality = root.querySelector('[data-craft-quality]')?.value || ''
   const info = root.querySelector('[data-craft-info]')
   if (!info) return
-  if (!type || !level || !quality) { info.innerHTML = `<div class="craft-result-placeholder">Chọn loại trang bị, level và phẩm cấp để xem thông tin và nguyên liệu.<br><br><strong>Luyện Khí Training:</strong> ${getCraftingTrainingText('forging')} • EXP chỉ tăng khi luyện thành công.</div>`; return }
+  if (!type || !level || !quality) { info.innerHTML = `<div class="craft-result-placeholder">Chọn loại trang bị, cấp độ và phẩm cấp để xem thông tin và nguyên liệu.<br><br><strong>Luyện Khí Training:</strong> ${getCraftingTrainingText('forging')} • EXP chỉ tăng khi luyện thành công.</div>`; return }
   const data = FORGING_TYPES[type]
   const recipe = getForgingRecipe(level)
   const materialLevel = Math.min(10, Math.ceil(level / 12))
   const learned = isRecipeLearned('forging', { type, level, quality })
-  info.innerHTML = `<div class="craft-selected-head"><div class="craft-selected-name" style="color:${qualityColor(quality)}">${data.name} Lv${level}</div><div class="craft-subtitle" style="color:${qualityColor(quality)}">${quality}</div></div><div class="craft-effect">${data.effect} • Nguyên liệu cấp ${materialLevel}</div><div class="craft-training">Luyện Khí Training: <strong>${getCraftingTrainingText('forging')}</strong></div><div class="craft-recipe-box"><div class="craft-material-title">Bản vẽ</div>${renderLearnButton('forging', { type, level, quality })}</div><div class="craft-material-title">Nguyên liệu cần:</div><div class="craft-material-list">${renderMaterials(recipe, 'forging')}</div><button class="craft-button" type="button" data-craft-action="forging" ${learned ? '' : 'disabled'}>${learned ? 'LUYỆN KHÍ' : 'CẦN HỌC BẢN VẼ'}</button>`
+  const qualityKey = QUALITY_KEYS[quality]
+  const previewIcon = getVltkIcon({ type: data.type, category: data.category, level, quality: qualityKey })
+  const tierName = FORGING_TIER_NAMES[level] || 'Hoàng cấp'
+  const iconHtml = previewIcon ? `<img class="craft-selected-icon" src="${previewIcon}" alt="" />` : '<div class="craft-selected-icon craft-selected-icon-empty"></div>'
+  info.innerHTML = `<div class="craft-selected-head">${iconHtml}<div><div class="craft-selected-name" style="color:${qualityColor(quality)}">${data.name} • ${tierName}</div><div class="craft-subtitle" style="color:${qualityColor(quality)}">${quality}</div></div></div><div class="craft-effect">${data.effect} • Nguyên liệu cấp ${materialLevel}</div><div class="craft-training">Luyện Khí Training: <strong>${getCraftingTrainingText('forging')}</strong></div><div class="craft-recipe-box"><div class="craft-material-title">Bản vẽ</div>${renderLearnButton('forging', { type, level, quality })}</div><div class="craft-material-title">Nguyên liệu cần:</div><div class="craft-material-list">${renderMaterials(recipe, 'forging')}</div><button class="craft-button" type="button" data-craft-action="forging" ${learned ? '' : 'disabled'}>${learned ? 'LUYỆN KHÍ' : 'CẦN HỌC BẢN VẼ'}</button>`
 }
 
 function getSelectedData(root) { return { type: root.querySelector('[data-craft-type]')?.value, level: Number(root.querySelector('[data-craft-level]')?.value || 0), quality: root.querySelector('[data-craft-quality]')?.value || '' } }
