@@ -5,14 +5,49 @@ const CURRENCIES = [
   { id: 'bac', label: 'Bạc' },
   { id: 'dong', label: 'Đồng' },
 ]
-const BUY_ITEMS = Array.from({ length: 60 }, (_, i) => ({ name: `Hàng Thương Hội ${i + 1}`, level: (i % 10) + 1, quality: ['Hạ phẩm', 'Trung phẩm', 'Thượng phẩm', 'Cực phẩm'][i % 4], price: (i + 1) * 1000, category: CATEGORIES[i % CATEGORIES.length] }))
-const SELL_ITEMS = Array.from({ length: 60 }, (_, i) => ({ name: `Vật phẩm túi đồ ${i + 1}`, level: (i % 10) + 1, quality: ['Hạ phẩm', 'Trung phẩm', 'Thượng phẩm', 'Cực phẩm'][i % 4], price: (i + 1) * 500, category: CATEGORIES[i % CATEGORIES.length] }))
+
+const QUALITY = ['Hạ phẩm', 'Trung phẩm', 'Thượng phẩm', 'Cực phẩm']
+const EQUIPMENT_TYPES = ['Kiếm', 'Đao', 'Thương', 'Mũ', 'Áo', 'Hộ uyển', 'Đai', 'Giày', 'Nhẫn', 'Dây chuyền']
+
+function buildItem(i, prefix, priceStep) {
+  const type = EQUIPMENT_TYPES[i % EQUIPMENT_TYPES.length]
+  const quality = QUALITY[i % QUALITY.length]
+  const level = (i % 10) + 1
+  const attackMin = 8 + level * 2 + (i % 5)
+  const attackMax = attackMin + 6 + (i % 7)
+  const defense = 4 + level + (i % 6)
+  const hp = 10 + level * 5 + (i % 4) * 5
+  const description = `${type} cấp ${level}, phù hợp với nhân vật đang phát triển.`
+  const stats = `Ngoại công: ${attackMin}-${attackMax};Ngoại phòng: +${defense};HP: +${hp}`
+  return { name: `${prefix} ${type} ${i + 1}`, level, quality, price: (i + 1) * priceStep, category: 'Trang bị', type, description, stats }
+}
+
+const BUY_ITEMS = Array.from({ length: 60 }, (_, i) => {
+  if (i < 10) return buildItem(i, 'Trang bị Thương Hội', 1000)
+  const category = CATEGORIES[i % CATEGORIES.length]
+  return { name: `Hàng Thương Hội ${i + 1}`, level: (i % 10) + 1, quality: QUALITY[i % 4], price: (i + 1) * 1000, category, type: category, description: `Vật phẩm ${category.toLowerCase()} của Thương Hội.`, stats: 'Không có thuộc tính chiến đấu.' }
+})
+
+const SELL_ITEMS = Array.from({ length: 60 }, (_, i) => {
+  if (i < 10) return buildItem(i, 'Vật phẩm túi đồ', 500)
+  const category = CATEGORIES[i % CATEGORIES.length]
+  return { name: `Vật phẩm túi đồ ${i + 1}`, level: (i % 10) + 1, quality: QUALITY[i % 4], price: (i + 1) * 500, category, type: category, description: `Vật phẩm ${category.toLowerCase()} trong túi đồ.`, stats: 'Không có thuộc tính chiến đấu.' }
+})
 
 function renderItems(mode, page = 1, category = CATEGORIES[0]) {
   const source = (mode === 'mua' ? BUY_ITEMS : SELL_ITEMS).filter((item) => item.category === category)
   const start = (page - 1) * 12
   return source.slice(start, start + 12).map((item, i) => `
-    <button class="merchant-item-slot" type="button" data-merchant-index="${start + i}" data-name="${item.name}" data-level="${item.level}" data-quality="${item.quality}" data-price="${item.price}" data-category="${item.category}">
+    <button class="merchant-item-slot" type="button"
+      data-merchant-index="${start + i}"
+      data-name="${item.name}"
+      data-level="${item.level}"
+      data-quality="${item.quality}"
+      data-price="${item.price}"
+      data-category="${item.category}"
+      data-type="${item.type}"
+      data-description="${item.description}"
+      data-stats="${item.stats}">
       <span class="merchant-item-icon">${i + 1}</span>
       <span class="merchant-item-name">${item.name}</span>
     </button>`).join('')
