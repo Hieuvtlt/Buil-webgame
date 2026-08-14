@@ -34,7 +34,7 @@ export function HopThanhScreen() {
         </section>
         <aside class="craft-side-panel">
           <section class="craft-info-box craft-info-unified"><h3>Thông tin hợp thành</h3><div id="fusion-info" class="craft-result-placeholder">Chọn vật phẩm và level để xem kết quả.</div><div class="craft-material-title">Nguyên liệu cần:</div><div id="fusion-material" class="craft-material-list"></div></section>
-        </section>
+        </aside>
       </div>
     </div>`
 }
