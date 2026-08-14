@@ -17,7 +17,6 @@ const groups = {
 export function HopThanhScreen() {
   return `
     <div class="craft-screen game-screen">
-      <h1 class="craft-title">HỢP THÀNH</h1>
       <div class="craft-layout">
         <section class="craft-main-panel">
           <div class="craft-machine-frame"><div class="craft-machine-placeholder">KHUNG HỢP THÀNH</div></div>
