@@ -4,12 +4,12 @@
 
 - Nhân vật người chơi bắt đầu ở **giữa chiến trường**: tọa độ logic mặc định `50%, 52%`.
 - Quái vật được tạo nhiều đơn vị và hiển thị **thiên về vùng rìa chiến trường**, không gom thành một cụm ngay khi vào combat.
-- Quái vẫn dùng tọa độ logic riêng để di chuyển, áp sát và giao tranh; lớp hiển thị chỉ điều chỉnh cách phân bố ban đầu để tạo cảm giác bao quanh người chơi.
+- Quái vẫn dùng tọa độ logic riêng để di chuyển, áp sát và giao tranh; lớp hiển thị chỉ điều chỉnh cách phân bố để tạo cảm giác bao quanh người chơi.
 - Click trên chiến trường vẫn là lệnh di chuyển nhân vật.
 
 ## Icon đơn vị Combat — vị trí thay đổi về sau
 
-Combat hiện dùng các ô vuông màu để làm placeholder:
+Combat hiện dùng các ô vuông màu làm placeholder:
 
 - Nhân vật: ô trắng.
 - Quái thường: ô đỏ.
@@ -18,7 +18,7 @@ Combat hiện dùng các ô vuông màu để làm placeholder:
 
 Không cần sửa logic combat khi muốn đổi sang ảnh nhân vật/quái. Các biến CSS đã được tách riêng trong:
 
-`public/combat-position-fix.css`
+`combat-position-fix.css`
 
 Các biến:
 
@@ -29,9 +29,11 @@ Các biến:
 
 Hiện tại cả bốn biến đều là `none`, nên game vẫn hiển thị ô màu. Sau này chỉ cần đổi biến thành `url('...')` để đưa PNG/WebP/SVG của nhân vật hoặc quái vào ô tương ứng.
 
-## Logic không phụ thuộc hình ảnh
+Phần xử lý phân bố hiển thị của quái nằm trong:
 
-Phần HP/MP, sát thương, di chuyển, mục tiêu, Auto và hiệu ứng combat không phụ thuộc asset. Vì vậy thay hình sau này không phải viết lại hệ thống chiến đấu.
+`combat-position-fix.js`
+
+File này chỉ điều chỉnh lớp hiển thị; không thay đổi dữ liệu HP/MP, sát thương hay logic chiến đấu.
 
 ## Asset placeholder quái
 
