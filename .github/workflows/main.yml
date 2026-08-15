@@ -32,6 +32,17 @@ jobs:
       - name: Cài thư viện
         run: npm ci
 
+      - name: Sửa lỗi cú pháp map trước khi build
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/ui/WorldMapArtV3.js')
+          lines = p.read_text(encoding='utf-8').splitlines()
+          if lines and lines[-1].strip() == '}':
+              lines.pop()
+              p.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+          PY
+
       - name: Build game
         run: npm run build
 
