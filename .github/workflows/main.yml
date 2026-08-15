@@ -38,9 +38,13 @@ jobs:
           from pathlib import Path
           p = Path('src/ui/WorldMapArtV3.js')
           lines = p.read_text(encoding='utf-8').splitlines()
+          # WorldMapArtV3.js currently contains one stray closing brace after
+          # artSvg(). Strip trailing blank lines first so the repair is reliable.
+          while lines and not lines[-1].strip():
+              lines.pop()
           if lines and lines[-1].strip() == '}':
               lines.pop()
-              p.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+          p.write_text('\n'.join(lines) + '\n', encoding='utf-8')
           PY
 
       - name: Build game
