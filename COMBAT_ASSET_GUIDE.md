@@ -1,56 +1,71 @@
 # Hướng dẫn thay hình Combat
 
-## Khung hình cố định
+## Bố cục Combat hiện tại
 
-- Nhân vật: khung `.fighter-image-frame`.
-- Quái vật: dùng cùng khung `.fighter-image-frame`.
-- Ảnh bên trong dùng `object-fit: contain`, vì vậy thay PNG/WebP không làm vỡ khung.
-- Combat hiện bố trí nhân vật bên trái, quái vật bên phải; thanh HP/MP nằm phía trên hình tương ứng.
+- Nhân vật người chơi bắt đầu ở **giữa chiến trường**: tọa độ logic mặc định `50%, 52%`.
+- Quái vật được tạo nhiều đơn vị và hiển thị **thiên về vùng rìa chiến trường**, không gom thành một cụm ngay khi vào combat.
+- Quái vẫn dùng tọa độ logic riêng để di chuyển, áp sát và giao tranh; lớp hiển thị chỉ điều chỉnh cách phân bố ban đầu để tạo cảm giác bao quanh người chơi.
+- Click trên chiến trường vẫn là lệnh di chuyển nhân vật.
 
-## Vị trí hình quái mặc định
+## Icon đơn vị Combat — vị trí thay đổi về sau
+
+Combat hiện dùng các ô vuông màu để làm placeholder:
+
+- Nhân vật: ô trắng.
+- Quái thường: ô đỏ.
+- Tiểu boss: ô xanh dương.
+- Boss hoàng kim: ô vàng.
+
+Không cần sửa logic combat khi muốn đổi sang ảnh nhân vật/quái. Các biến CSS đã được tách riêng trong:
+
+`public/combat-position-fix.css`
+
+Các biến:
+
+- `--combat-player-icon`
+- `--combat-monster-icon`
+- `--combat-subboss-icon`
+- `--combat-goldboss-icon`
+
+Hiện tại cả bốn biến đều là `none`, nên game vẫn hiển thị ô màu. Sau này chỉ cần đổi biến thành `url('...')` để đưa PNG/WebP/SVG của nhân vật hoặc quái vào ô tương ứng.
+
+## Logic không phụ thuộc hình ảnh
+
+Phần HP/MP, sát thương, di chuyển, mục tiêu, Auto và hiệu ứng combat không phụ thuộc asset. Vì vậy thay hình sau này không phải viết lại hệ thống chiến đấu.
+
+## Asset placeholder quái
 
 `public/assets/combat/monster-common.svg`
 
-Đây là hình placeholder dùng cho tất cả quái trong combat ở phiên bản đầu. Sau này có thể thay trực tiếp file này hoặc tách thành từng file theo từng quái mà không cần thay đổi khung combat.
+Có thể dùng làm hình placeholder hoặc thay bằng asset riêng theo từng loại quái.
 
-## Vị trí hình nhân vật
+## Hình nhân vật
 
-Hình nhân vật lấy từ hệ thống `getCharacterImageSrc()` và vẫn ưu tiên ảnh người chơi đã chọn/lưu trong `localStorage`.
-
-## Vị trí icon Ngoại cảnh
-
-Các icon khu vực đang nằm tại:
-
-`public/assets/world/`
-
-Ví dụ:
-
-- `forest.svg`
-- `cave.svg`
-- `mountain.svg`
-- `bandit.svg`
-- `water.svg`
-- `desert.svg`
-- `snow.svg`
-- `demon.svg`
-
-Tên file hiện tại được khai báo trong `src/ui/screens/NgoaiCanhScreen.js` ở mảng `areas`. Giữ nguyên tên file khi thay hình sẽ không phải sửa logic map.
+Hình nhân vật chính của hệ thống vẫn lấy từ `getCharacterImageSrc()` và có thể thay đổi theo ảnh nhân vật đã chọn/lưu.
 
 ## Icon đan dược trong Combat
-
-Hai ô hồi phục ở HUD Combat dùng trực tiếp asset VLTK:
 
 - Đan HP: `public/assets/vltk/danduoc/hoimau.png`
 - Đan MP: `public/assets/vltk/danduoc/hoimana.png`
 
-CSS hiển thị hai icon này tại `.combat-item-slot:nth-child(1)` và `.combat-item-slot:nth-child(2)` trong `src/ui/combat.css`.
-
 ## 5 ô kỹ năng Combat
 
-Combat luôn có đúng **5 ô kỹ năng**.
+Combat luôn có đúng **5 ô kỹ năng**:
 
-- Khi chưa gán kỹ năng: ô trống và chỉ hiện dấu `+`.
-- Khi hệ thống menu Kỹ năng gán kỹ năng vào slot: thêm class `.has-skill` cho nút slot để hiện icon/tên kỹ năng.
-- Không cần thay đổi vị trí HUD khi đổi kỹ năng.
+- Ô 1–2: kỹ năng tấn công chủ động.
+- Ô 3–5: kỹ năng hỗ trợ chủ động.
+- Kỹ năng bị động không chiếm ô combat.
+- Khi chưa gán kỹ năng, slot để trống.
 
-Các slot được đánh số bằng `data-skill-slot="1"` đến `data-skill-slot="5"`.
+## Quy tắc HP / Mana
+
+- HP không tự hồi theo thời gian.
+- Mana không tự hồi theo thời gian.
+- Chỉ hồi bằng đan dược, kỹ năng, trang bị hoặc hiệu ứng hồi phục.
+- Khi chết, hiện **VỀ THÀNH DƯỠNG SỨC** và bấm vào để về menu Nhân vật.
+
+## Auto
+
+- Auto chỉ tồn tại trong giao diện Combat.
+- Không sử dụng Auto riêng ở cột phải giao diện chính.
+- Bấm Auto trong Combat để mở các lựa chọn Auto.
