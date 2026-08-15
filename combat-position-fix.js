@@ -2,7 +2,9 @@
   const EDGE_POWER = 0.45;
   const EDGE_MIN = 6.5;
   const EDGE_MAX = 93.5;
-  const lastOutput = new WeakMap();
+  const MONSTER_VISUAL_SMOOTHING = 0.18;
+  const lastRendered = new WeakMap();
+  const lastPosition = new WeakMap();
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
   function edgeCoordinate(value) {
@@ -13,20 +15,28 @@
   }
 
   function readTranslate(transform) {
-    const match = String(transform || '').match(/translate\\(\\s*(-?[\\d.]+)%\\s*,\\s*(-?[\\d.]+)%\\s*\\)/);
+    const match = String(transform || '').match(/translate\(\s*(-?[\d.]+)%\s*,\s*(-?[\d.]+)%\s*\)/);
     return match ? [Number(match[1]), Number(match[2])] : null;
   }
 
   function applyMonsterEdgeBias(field) {
     field.querySelectorAll('.combat-unit-wrap.monster').forEach((unit) => {
-      const current = unit.style.transform;
-      if (!current || current === lastOutput.get(unit)) return;
-      const xy = readTranslate(current);
+      const raw = unit.style.transform;
+      if (!raw || raw === lastRendered.get(unit)) return;
+      const xy = readTranslate(raw);
       if (!xy) return;
-      const next = `translate(${edgeCoordinate(xy[0])}%,${edgeCoordinate(xy[1])}%)`;
-      if (next === current) return;
-      lastOutput.set(unit, next);
-      unit.style.transform = next;
+
+      const target = [edgeCoordinate(xy[0]), edgeCoordinate(xy[1])];
+      const previous = lastPosition.get(unit) || target;
+      const next = [
+        previous[0] + (target[0] - previous[0]) * MONSTER_VISUAL_SMOOTHING,
+        previous[1] + (target[1] - previous[1]) * MONSTER_VISUAL_SMOOTHING
+      ];
+
+      lastPosition.set(unit, next);
+      const output = `translate(${next[0]}%,${next[1]}%)`;
+      lastRendered.set(unit, output);
+      unit.style.transform = output;
     });
   }
 
