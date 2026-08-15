@@ -1,10 +1,16 @@
-name: Deploy game to GitHub Pages
+name: Check, Preview and Deploy game
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Deploy this verified build to the main GitHub Pages site'
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -16,50 +22,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  check-and-preview:
+    name: Check + Build + Preview artifact
     runs-on: ubuntu-latest
 
     steps:
-      - name: Lấy mã nguồn
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cài Node.js
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
-      - name: Cài thư viện
+      - name: Install dependencies
         run: npm ci
 
-      - name: Sửa lỗi cú pháp map trước khi build
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path('src/ui/WorldMapArtV3.js')
-          lines = p.read_text(encoding='utf-8').splitlines()
-          # WorldMapArtV3.js currently contains one stray closing brace after
-          # artSvg(). Strip trailing blank lines first so the repair is reliable.
-          while lines and not lines[-1].strip():
-              lines.pop()
-          if lines and lines[-1].strip() == '}':
-              lines.pop()
-          p.write_text('\n'.join(lines) + '\n', encoding='utf-8')
-          PY
+      - name: Static checks + production build
+        run: npm run check
 
-      - name: Build game
-        run: npm run build
+      - name: Upload testable preview artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-preview-${{ github.sha }}
+          path: dist
+          retention-days: 7
 
-      - name: Cấu hình GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Đóng gói website
+      - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
   deploy:
-    needs: build
+    name: Deploy verified build
+    needs: check-and-preview
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy == true
     runs-on: ubuntu-latest
 
     environment:
@@ -67,6 +65,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy lên GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
