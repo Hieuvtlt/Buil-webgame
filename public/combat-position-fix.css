@@ -1,0 +1,46 @@
+:root{
+  --combat-player-icon:none;
+  --combat-monster-icon:none;
+  --combat-subboss-icon:none;
+  --combat-goldboss-icon:none;
+}
+
+/* Combat coordinates are driven by JS as percentages. The wrapper fills the field so
+   translate(x%, y%) becomes a real battlefield coordinate instead of its own 86px box. */
+.combat-unit-wrap{
+  left:-50% !important;
+  top:-50% !important;
+  width:100% !important;
+  height:100% !important;
+  justify-content:center !important;
+}
+
+/* Keep the square readable now; later an actual character/monster image can replace it
+   only by changing the four variables above, without touching combat logic. */
+.combat-unit.white{
+  background-image:var(--combat-player-icon) !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:contain !important;
+}
+.combat-unit.red{
+  background-image:var(--combat-monster-icon) !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:contain !important;
+}
+.combat-unit.blue{
+  background-image:var(--combat-subboss-icon) !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:contain !important;
+}
+.combat-unit.gold{
+  background-image:var(--combat-goldboss-icon) !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:contain !important;
+}
+
+/* The colored square itself is the identity marker for now. */
+.combat-unit-mark{display:none !important}
