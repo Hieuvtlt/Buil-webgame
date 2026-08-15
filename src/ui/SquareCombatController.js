@@ -6,6 +6,9 @@ const PLAYER_START_X=50
 const PLAYER_START_Y=52
 const MIN_MONSTER_PLAYER_DISTANCE=28
 const MIN_MONSTER_DISTANCE=10
+const MONSTER_CHASE_SPEED=0.16
+const MONSTER_WANDER_SPEED=0.07
+const MONSTER_CHASE_RANGE=24
 function loadQuestState(){try{return JSON.parse(localStorage.getItem(QUEST_STATE_KEY))||{monster:[],monsterProgress:{},wanted:null,wantedCount:0}}catch{return{monster:[],monsterProgress:{},wanted:null,wantedCount:0}}}
 function saveQuestState(s){localStorage.setItem(QUEST_STATE_KEY,JSON.stringify(s))}
 function addLog(message,type='system'){window.dispatchEvent(new CustomEvent('game:log',{detail:{message,type}}))}
@@ -52,7 +55,7 @@ export function mountCombatOverlay(){
   function movePlayer(tx,ty,speed){const dx=tx-state.playerX,dy=ty-state.playerY,d=Math.hypot(dx,dy);if(d<=speed){state.playerX=tx;state.playerY=ty;return true}state.playerX+=dx/d*speed;state.playerY+=dy/d*speed;state.playerX=clamp(state.playerX,4,96);state.playerY=clamp(state.playerY,5,92);return false}
   function tick(){if(!state)return;const now=Date.now();if(player.hp<=0){stop();syncDom();return}
     if(state.playerMoveTarget){const arrived=movePlayer(state.playerMoveTarget.x,state.playerMoveTarget.y,.72);if(arrived)state.playerMoveTarget=null}
-    state.units.forEach(u=>{if(u.dead)return;const d=dist(u,state.playerX,state.playerY);if(d<24){u.target='player';movePoint(u,state.playerX,state.playerY,.34)}else{if(now>u.wanderAt){u.vx=rand(-10,10)/10;u.vy=rand(-10,10)/10;u.wanderAt=now+rand(700,1800)}u.x+=u.vx*.16;u.y+=u.vy*.16;u.x=clamp(u.x,5,95);u.y=clamp(u.y,6,92)}if(d<8&&now>u.attackAt){monsterAttack(u);u.attackAt=now+rand(1500,2300)}})
+    state.units.forEach(u=>{if(u.dead)return;const d=dist(u,state.playerX,state.playerY);if(d<MONSTER_CHASE_RANGE){u.target='player';movePoint(u,state.playerX,state.playerY,MONSTER_CHASE_SPEED)}else{if(now>u.wanderAt){u.vx=rand(-10,10)/10;u.vy=rand(-10,10)/10;u.wanderAt=now+rand(900,2200)}u.x+=u.vx*MONSTER_WANDER_SPEED;u.y+=u.vy*MONSTER_WANDER_SPEED;u.x=clamp(u.x,5,95);u.y=clamp(u.y,6,92)}if(d<8&&now>u.attackAt){monsterAttack(u);u.attackAt=now+rand(1700,2600)}})
     if(state.auto&&state.autoSettings.attack&&now>state.playerAttackAt&&!state.playerMoveTarget){const target=nearestMonster();if(target){state.targetName=target.name;const d=dist(target,state.playerX,state.playerY);if(d>7){state.playerMoveTarget={x:target.x,y:target.y}}state.playerAttackAt=now+1250;if(d<=10)playerAttack(target)}}
     syncDom();raf=requestAnimationFrame(tick)
   }
