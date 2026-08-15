@@ -1,0 +1,11 @@
+/* Keep the world map visible underneath the square combat layer.
+   The combat UI stays readable, but the battlefield no longer turns into a second plain-green map. */
+body:has(#world-explorer-root) #world-explorer-root{z-index:2000}
+body:has(#combat-root) #world-explorer-root .world-explorer-overlay{background:rgba(0,0,0,.16)}
+body:has(#combat-root) #combat-root .combat-overlay{background:rgba(5,8,6,.18)}
+body:has(#combat-root) #combat-root .combat-window{background:rgba(8,16,11,.58)}
+body:has(#combat-root) #combat-root .combat-battlefield{background:transparent;border-color:rgba(77,109,61,.72)}
+body:has(#combat-root) #combat-root .combat-battlefield::before,
+body:has(#combat-root) #combat-root .combat-battlefield::after{display:none}
+body:has(#combat-root) #combat-root .combat-log{background:rgba(3,6,4,.9)}
+body:has(#combat-root) #combat-root .combat-controls{background:rgba(7,12,9,.58)}
