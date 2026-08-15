@@ -25,3 +25,6 @@
 ## Hồi phục nhanh
 - Có 2 ô vật phẩm nhỏ trong combat: ô đan HP và ô đan MP.
 - Về sau hai ô này sẽ lấy vật phẩm thực tế từ túi đồ/thư mục dữ liệu vật phẩm thay vì hồi cứng.
+
+## Deployment
+- Xác nhận triển khai lại giao diện Combat mới nhất lên GitHub Pages.
