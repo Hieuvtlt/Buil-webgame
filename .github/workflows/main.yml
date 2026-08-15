@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - world-exploration-next
   workflow_dispatch:
 
 permissions:
@@ -22,6 +23,8 @@ jobs:
     steps:
       - name: Lấy mã nguồn
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
 
       - name: Cài Node.js
         uses: actions/setup-node@v4
@@ -46,11 +49,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - name: Deploy lên GitHub Pages
         id: deployment
