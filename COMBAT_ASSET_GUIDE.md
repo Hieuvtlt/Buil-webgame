@@ -2,10 +2,10 @@
 
 ## Khung hình cố định
 
-- Nhân vật: khung `.fighter-image-frame`, kích thước desktop **220 × 280 px**.
-- Quái vật: dùng cùng khung **220 × 280 px**.
-- Mobile: khung tự thu về **140 × 190 px**.
+- Nhân vật: khung `.fighter-image-frame`.
+- Quái vật: dùng cùng khung `.fighter-image-frame`.
 - Ảnh bên trong dùng `object-fit: contain`, vì vậy thay PNG/WebP không làm vỡ khung.
+- Combat hiện bố trí nhân vật bên trái, quái vật bên phải; thanh HP/MP nằm phía trên hình tương ứng.
 
 ## Vị trí hình quái mặc định
 
@@ -35,3 +35,22 @@ Ví dụ:
 - `demon.svg`
 
 Tên file hiện tại được khai báo trong `src/ui/screens/NgoaiCanhScreen.js` ở mảng `areas`. Giữ nguyên tên file khi thay hình sẽ không phải sửa logic map.
+
+## Icon đan dược trong Combat
+
+Hai ô hồi phục ở HUD Combat dùng trực tiếp asset VLTK:
+
+- Đan HP: `public/assets/vltk/danduoc/hoimau.png`
+- Đan MP: `public/assets/vltk/danduoc/hoimana.png`
+
+CSS hiển thị hai icon này tại `.combat-item-slot:nth-child(1)` và `.combat-item-slot:nth-child(2)` trong `src/ui/combat.css`.
+
+## 5 ô kỹ năng Combat
+
+Combat luôn có đúng **5 ô kỹ năng**.
+
+- Khi chưa gán kỹ năng: ô trống và chỉ hiện dấu `+`.
+- Khi hệ thống menu Kỹ năng gán kỹ năng vào slot: thêm class `.has-skill` cho nút slot để hiện icon/tên kỹ năng.
+- Không cần thay đổi vị trí HUD khi đổi kỹ năng.
+
+Các slot được đánh số bằng `data-skill-slot="1"` đến `data-skill-slot="5"`.
