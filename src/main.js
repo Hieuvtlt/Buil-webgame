@@ -23,7 +23,7 @@ import { NhiemVuScreen, mountNhiemVuScreen } from './ui/screens/NhiemVuScreen.js
 import { NgoaiCanhScreen, mountNgoaiCanhScreen } from './ui/screens/NgoaiCanhScreen.js'
 import { GMScreen } from './ui/screens/GMScreen.js'
 import { SettingsScreen } from './ui/screens/SettingsScreen.js'
-import { mountCombatOverlay } from './ui/CombatController.js'
+import { mountCombatOverlay } from './ui/SquareCombatController.js'
 
 import { mountCharacterScreen } from './ui/controllers/CharacterController.js'
 import { mountInventoryScreen } from './ui/controllers/InventoryController.js'
