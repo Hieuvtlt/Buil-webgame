@@ -1,5 +1,5 @@
-import rungRamVenHoMap from './rung-ram-ven-ho-map.jpg'
-import bachThuyDongMap from './bach-thuy-dong-map.svg'
+const RUNG_RAM_VEN_HO_MAP='/rung-ram-ven-ho-map.jpg'
+const BACH_THUY_DONG_MAP='/bach-thuy-dong-map.svg'
 
 const themeOf=area=>{
   const t=`${area?.name||''} ${area?.terrain||''}`.toLowerCase()
@@ -19,6 +19,6 @@ export function getAreaThemeV3(area){return themeOf(area)}
 
 export function getAreaArtV3(area){
   const name=`${area?.name||''}`.toLowerCase()
-  if(name.includes('bạch thủy động'))return`url("${bachThuyDongMap}")`
-  return`url("${rungRamVenHoMap}")`
+  if(name.includes('bạch thủy động'))return`url("${BACH_THUY_DONG_MAP}")`
+  return`url("${RUNG_RAM_VEN_HO_MAP}")`
 }
