@@ -74,7 +74,6 @@ function genericMap(area){
   if(theme==='cave')bg='#55675d'
   let objs=''
   for(let i=0;i<170;i++){const x=60+r()*2880,y=60+r()*1680,s=.45+r()*.9;objs+=theme==='snow'?tree(x,y,s,c,true):theme==='desert'?(i%3?rock(x,y,s):`<path d="M${x-25} ${y+30}V${y-40}" stroke="#547641" stroke-width="14"/>`):theme==='mountain'?(i%2?cliff(x,y,s):rock(x,y,s)):theme==='cave'?rock(x,y,s):tree(x,y,s,c,i%5===0)}
-  }
   const d=`M-100 1280 C450 1200 520 650 1040 760 C1500 860 1510 380 1970 540 C2410 700 2480 1100 3100 760`
   return {objects:objs,paths:road(d,60),spawnClears:'',labels:''}
 }
