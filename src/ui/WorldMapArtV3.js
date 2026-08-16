@@ -1,4 +1,4 @@
-import rungRamVenHoMap from '../assets/rung-ram-ven-ho-map.jpg'
+const RUNG_RAM_VEN_HO_MAP='./rung-ram-ven-ho-map.jpg'
 
 const themeOf=area=>{
   const t=`${area?.name||''} ${area?.terrain||''}`.toLowerCase()
@@ -16,8 +16,4 @@ const themeOf=area=>{
 
 export function getAreaThemeV3(area){return themeOf(area)}
 
-export function getAreaArtV3(area){
-  const name=String(area?.name||'').toLowerCase()
-  if(name.includes('rừng rậm ven hồ')||name.includes('ven hồ'))return`url("${rungRamVenHoMap}")`
-  return`url("${rungRamVenHoMap}")`
-}
+export function getAreaArtV3(){return`url("${RUNG_RAM_VEN_HO_MAP}")`}
