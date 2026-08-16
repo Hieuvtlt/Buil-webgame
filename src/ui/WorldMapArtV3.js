@@ -1,5 +1,5 @@
-const RUNG_RAM_VEN_HO_MAP='/rung-ram-ven-ho-map.jpg'
-const BACH_THUY_DONG_MAP='/bach-thuy-dong-map.svg'
+const RUNG_RAM_VEN_HO_MAP='./rung-ram-ven-ho-map.jpg'
+const BACH_THUY_DONG_MAP='./bach-thuy-dong-map.svg'
 
 const themeOf=area=>{
   const t=`${area?.name||''} ${area?.terrain||''}`.toLowerCase()
