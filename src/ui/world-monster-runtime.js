@@ -11,10 +11,10 @@ function pointFromStyle(el) {
   }
 }
 
-function correctMonster(el) {
+function correctToWalkable(el, radius) {
   const p = pointFromStyle(el)
   if (isWalkable(p.x, p.y)) return
-  const safe = findNearestWalkable(p.x, p.y, 220)
+  const safe = findNearestWalkable(p.x, p.y, radius)
   if (!safe) return
   el.style.left = `${safe.x}px`
   el.style.top = `${safe.y}px`
@@ -24,11 +24,15 @@ function correctWorldUnits() {
   if (correcting) return
   const root = document.querySelector('#world-explorer-root')
   if (!root) return
-  const units = root.querySelectorAll('.world-monster-node')
-  if (!units.length) return
+
   correcting = true
   try {
-    units.forEach(correctMonster)
+    const player = root.querySelector('#world-player')
+    if (player) correctToWalkable(player, 180)
+
+    root.querySelectorAll('.world-monster-node').forEach(monster => {
+      correctToWalkable(monster, 220)
+    })
   } finally {
     correcting = false
   }
