@@ -15,7 +15,7 @@ function correctVisualUnits(){
   try{
     const player=root.querySelector('#world-player')
     if(player){const p=worldPoint(player);if(!isWalkable(p.x,p.y)){const q=nearest(p.x,p.y);player.style.left=q.x+'px';player.style.top=q.y+'px'}}
-    root.querySelectorAll('.world-monster-node').forEach(monster=>{const p=worldPoint(monster);if(!isWalkable(p.x,p.y)){const q=nearest(p.x,p.y);monster.style.left=q.x+'px';monster.style.top=q.y+'px'}})
+    root.querySelectorAll('.world-monster-node').forEach(monster=>{const p=worldPoint(monster);if(!isWalkable(p.x,p.y)){const q=nearest(p.x,p.y);monster.style.left=q.x+'px';monster.style.top=q.y+'px'})
   }finally{correcting=false}
 }
 
@@ -23,7 +23,7 @@ if(!installed){
   installed=true
   document.addEventListener('click',event=>{
     const field=event.target.closest?.('#world-field')
-    if(!field||event.target.closest('.world-action-bar,.world-minimap,.world-combat-hud'))return
+    if(!field||event.target.closest('.world-action-bar,.world-minimap,.world-combat-hud,.world-npc-node'))return
     const camera=field.querySelector('#world-camera')
     if(!camera)return
     const nums=camera.style.transform.match(/-?[\d.]+/g)||[]
