@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3000" height="1800" viewBox="0 0 3000 1800">
+<defs>
+ <pattern id="stone" width="72" height="54" patternUnits="userSpaceOnUse"><rect width="72" height="54" fill="#29313b"/><path d="M0 4h28v18H0M36 28h36v20H36M10 34h18v14H10" fill="#394653"/><path d="M2 2h25M39 27h33" stroke="#596674" stroke-width="4" opacity=".5"/></pattern>
+ <pattern id="crystal" width="120" height="100" patternUnits="userSpaceOnUse"><rect width="120" height="100" fill="#303946"/><path d="M18 76L42 22l25 55zM72 82l18-60 25 58z" fill="#496c91"/><path d="M42 22l9 44-34 10M90 22l-5 43 30 15" fill="#6d9ac1"/></pattern>
+ <linearGradient id="water" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#263f55"/><stop offset="1" stop-color="#315b70"/></linearGradient>
+</defs>
+<rect width="3000" height="1800" fill="#1c222b"/>
+<rect x="110" y="100" width="2780" height="1600" rx="80" fill="url(#stone)" stroke="#121820" stroke-width="28"/>
+<!-- underground river -->
+<path d="M180 1390 C520 1260 540 1050 860 1010 C1190 970 1200 1190 1450 1210 C1750 1235 1880 1050 2140 930 C2390 810 2590 870 2840 700 L2840 930 C2580 1070 2440 1050 2200 1110 C1920 1180 1810 1380 1500 1400 C1190 1420 1080 1210 850 1240 C590 1280 510 1500 180 1600Z" fill="url(#water)" stroke="#142332" stroke-width="34"/>
+<!-- main cavern floor -->
+<path d="M250 350 Q600 180 980 330 T1660 300 Q2100 150 2700 390 L2700 650 Q2390 530 2140 650 Q1810 820 1530 680 Q1200 520 940 690 Q620 850 280 700Z" fill="#4a4b48"/>
+<path d="M300 820 Q650 700 930 820 T1510 850 Q1800 920 2100 740 Q2380 600 2700 760 L2700 1260 Q2350 1140 2110 1260 Q1780 1430 1510 1280 Q1210 1110 900 1320 Q600 1510 300 1380Z" fill="#55534d"/>
+<!-- crystal chambers -->
+<path d="M360 260h430l120 180-120 210H360l-120-210z" fill="url(#crystal)" stroke="#161d27" stroke-width="24"/>
+<path d="M2150 250h500l140 190-140 220h-500l-130-220z" fill="url(#crystal)" stroke="#161d27" stroke-width="24"/>
+<path d="M1050 1310h430l110 170-110 190h-430l-120-190z" fill="url(#crystal)" stroke="#161d27" stroke-width="24"/>
+<!-- paths -->
+<path d="M250 910 C580 850 730 760 990 820 C1210 870 1260 1050 1510 1080 C1770 1110 1910 900 2160 820 C2380 750 2550 780 2760 680" fill="none" stroke="#9a8667" stroke-width="88" stroke-linecap="round"/>
+<path d="M250 910 C580 850 730 760 990 820 C1210 870 1260 1050 1510 1080 C1770 1110 1910 900 2160 820 C2380 750 2550 780 2760 680" fill="none" stroke="#b7a27b" stroke-width="62" stroke-linecap="round"/>
+<!-- bridges -->
+<g fill="#6e4e36" stroke="#3b2a20" stroke-width="12"><rect x="1260" y="1030" width="210" height="120" rx="16"/><rect x="2040" y="840" width="190" height="120" rx="16"/></g>
+<g stroke="#b58a57" stroke-width="12"><path d="M1280 1050v80m40-80v80m40-80v80m40-80v80m40-80v80M2060 860v80m40-80v80m40-80v80m40-80v80m40-80v80"/></g>
+<!-- stalagmites -->
+<g fill="#707782" stroke="#303742" stroke-width="10"><path d="M530 520l42-150 46 150zM620 590l55-210 60 210zM1870 500l45-170 50 170zM2300 1420l50-190 58 190zM780 1510l55-230 62 230zM2520 520l50-180 60 180z"/></g>
+<!-- rocks and details -->
+<g fill="#74736b" stroke="#36383a" stroke-width="12"><ellipse cx="520" cy="1030" rx="95" ry="55"/><ellipse cx="720" cy="1080" rx="70" ry="44"/><ellipse cx="1840" cy="720" rx="90" ry="50"/><ellipse cx="2420" cy="1180" rx="100" ry="58"/><ellipse cx="2650" cy="1250" rx="70" ry="45"/></g>
+<!-- dungeon gate -->
+<g transform="translate(145 760)"><rect x="0" y="0" width="170" height="230" rx="18" fill="#171b22" stroke="#0c1016" stroke-width="24"/><path d="M35 220V105Q85 35 135 105v115" fill="none" stroke="#8b7354" stroke-width="26"/><circle cx="85" cy="105" r="14" fill="#c4a45e"/></g>
+<!-- camp -->
+<g transform="translate(2440 1320)"><path d="M0 130L95 0l95 130z" fill="#7a4c3d" stroke="#332622" stroke-width="16"/><path d="M35 130l60-95 60 95" fill="#b56a4f"/><circle cx="95" cy="155" r="34" fill="#d18a38" stroke="#5c3824" stroke-width="12"/></g>
+<!-- torches -->
+<g fill="#d68b32" stroke="#4b2d1c" stroke-width="10"><circle cx="930" cy="780" r="20"/><circle cx="1540" cy="1080" r="20"/><circle cx="2180" cy="820" r="20"/><circle cx="1600" cy="650" r="20"/></g>
+<rect x="120" y="110" width="2760" height="1580" rx="70" fill="none" stroke="#8d795f" stroke-width="18" opacity=".45"/>
+</svg>
