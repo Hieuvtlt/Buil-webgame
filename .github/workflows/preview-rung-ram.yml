@@ -1,0 +1,41 @@
+name: Preview Rung Rậm Ven Hồ
+
+on:
+  push:
+    branches:
+      - preview/rung-ram-ven-ho
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rung-ram-ven-ho-preview
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    name: Check + Build preview artifact
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate and build
+        run: npm run check
+
+      - name: Upload playable preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: rung-ram-ven-ho-preview-${{ github.sha }}
+          path: dist
+          retention-days: 14
