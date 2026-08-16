@@ -1,54 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="3000" height="1800" viewBox="0 0 3000 1800">
+<svg xmlns="http://www.w3.org/2000/svg" width="3000" height="1800" viewBox="0 0 3000 1800" shape-rendering="crispEdges">
 <defs>
- <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#172329"/><stop offset="1" stop-color="#0c151b"/></linearGradient>
- <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#59645f"/><stop offset="1" stop-color="#303b3b"/></linearGradient>
- <linearGradient id="water" x2="1" y2="1"><stop stop-color="#17607a"/><stop offset=".5" stop-color="#2789a1"/><stop offset="1" stop-color="#0c405b"/></linearGradient>
- <linearGradient id="wood" x2="0" y2="1"><stop stop-color="#a66d3c"/><stop offset="1" stop-color="#51321f"/></linearGradient>
- <linearGradient id="crystal" x2="0" y2="1"><stop stop-color="#d9fbff"/><stop offset=".45" stop-color="#71cce0"/><stop offset="1" stop-color="#36759a"/></linearGradient>
- <radialGradient id="glow"><stop stop-color="#8de8f5" stop-opacity=".65"/><stop offset="1" stop-color="#54b7d0" stop-opacity="0"/></radialGradient>
- <pattern id="stone" width="130" height="100" patternUnits="userSpaceOnUse"><rect width="130" height="100" fill="url(#floor)"/><path d="M8 15l34-9 30 18-18 26-38-5zM82 61l31-14 14 22-20 22-34-8zM48 80l18-15 18 9-10 20z" fill="#65716d"/><path d="M10 15l32-8M84 61l28-13M50 80l16-14" stroke="#87918b" stroke-width="5" opacity=".5"/></pattern>
- <pattern id="moss" width="90" height="70" patternUnits="userSpaceOnUse"><rect width="90" height="70" fill="#364a3c"/><circle cx="18" cy="20" r="12" fill="#4f7450"/><circle cx="48" cy="45" r="17" fill="#466943"/><path d="M5 58q20-18 40 0M55 12q18-14 32 2" stroke="#6d8b52" stroke-width="7" fill="none"/></pattern>
+ <linearGradient id="cave" x2="0" y2="1"><stop stop-color="#17231f"/><stop offset="1" stop-color="#0b1214"/></linearGradient>
+ <linearGradient id="ground" x2="0" y2="1"><stop stop-color="#6d6759"/><stop offset="1" stop-color="#46483f"/></linearGradient>
+ <linearGradient id="water" x2="1" y2="1"><stop stop-color="#1d7189"/><stop offset=".5" stop-color="#2b9eb0"/><stop offset="1" stop-color="#14536d"/></linearGradient>
+ <linearGradient id="wood" x2="0" y2="1"><stop stop-color="#b57a45"/><stop offset="1" stop-color="#5b3621"/></linearGradient>
+ <linearGradient id="crystal" x2="0" y2="1"><stop stop-color="#e4ffff"/><stop offset=".35" stop-color="#80d8e8"/><stop offset="1" stop-color="#3d739c"/></linearGradient>
+ <radialGradient id="blueGlow"><stop stop-color="#7ee7f4" stop-opacity=".5"/><stop offset="1" stop-color="#7ee7f4" stop-opacity="0"/></radialGradient>
+ <pattern id="floor" width="96" height="80" patternUnits="userSpaceOnUse"><rect width="96" height="80" fill="url(#ground)"/><path d="M8 15l24-7 19 13-10 20-29-5zM58 52l22-12 12 16-13 18-27-6z" fill="#777064"/><path d="M9 15l23-6M60 52l19-11" stroke="#8f8979" stroke-width="4" opacity=".5"/></pattern>
+ <pattern id="rock" width="100" height="80" patternUnits="userSpaceOnUse"><rect width="100" height="80" fill="#27332f"/><path d="M0 12h35v22H0M48 0h52v19H48M25 48h30v27H25M70 34h30v36H70" fill="#34423c"/><path d="M5 12h28M51 2h44M28 50h24M73 36h23" stroke="#516159" stroke-width="4"/></pattern>
 </defs>
-<!-- cavern shell -->
-<rect width="3000" height="1800" fill="url(#bg)"/>
-<path d="M95 170Q220 65 420 95Q650 35 850 105Q1090 40 1300 105Q1530 45 1750 110Q2010 30 2230 105Q2490 50 2720 120Q2900 140 2920 300V1540Q2880 1710 2700 1705Q2470 1760 2240 1690Q2010 1765 1790 1690Q1550 1760 1320 1695Q1080 1760 850 1690Q610 1760 390 1700Q160 1730 90 1510Z" fill="url(#stone)" stroke="#10181d" stroke-width="40"/>
-<!-- upper ledges -->
-<path d="M140 250Q380 150 620 245T1080 220T1530 240T1980 205T2440 235T2860 190L2860 430Q2600 480 2360 390T1900 410T1450 385T1000 405T540 390T140 430Z" fill="#202c31" stroke="#0e151a" stroke-width="20"/>
-<path d="M150 420Q430 330 680 425T1190 410T1690 430T2200 395T2850 420" fill="none" stroke="#6b756f" stroke-width="18" opacity=".6"/>
-<!-- main floor clearings -->
-<path d="M180 560Q390 470 650 560Q870 640 1070 535Q1300 415 1530 540Q1770 670 1990 545Q2230 415 2460 545Q2700 660 2860 560V1500Q2620 1410 2400 1510Q2150 1620 1900 1500Q1660 1390 1410 1510Q1160 1630 920 1500Q680 1380 470 1510Q280 1600 150 1490Z" fill="#4e5955"/>
-<!-- river -->
-<path d="M420 1640C570 1510 640 1360 590 1200C540 1040 620 900 820 840C1030 775 1120 650 1080 470L1350 450C1410 670 1290 870 1070 960C880 1035 840 1130 900 1270C970 1435 890 1580 760 1700Z" fill="url(#water)" stroke="#0a2d3d" stroke-width="38"/>
-<path d="M535 1510q90-50 180 0M600 1300q100-55 190 0M690 1080q90-50 170 0M850 875q90-45 165 0M1030 690q70-40 125 0" fill="none" stroke="#77d7e8" stroke-width="14" opacity=".75"/>
-<!-- walkable paths -->
-<g fill="none" stroke="#342b25" stroke-width="108" stroke-linecap="round"><path d="M250 760C520 690 720 700 900 790C1050 865 1220 980 1430 990C1660 1000 1780 850 1990 760C2210 665 2490 700 2810 820"/><path d="M1420 990C1510 1160 1650 1270 1880 1310C2100 1345 2320 1270 2720 1120"/></g>
-<g fill="none" stroke="#b89a6b" stroke-width="76" stroke-linecap="round"><path d="M250 760C520 690 720 700 900 790C1050 865 1220 980 1430 990C1660 1000 1780 850 1990 760C2210 665 2490 700 2810 820"/><path d="M1420 990C1510 1160 1650 1270 1880 1310C2100 1345 2320 1270 2720 1120"/></g>
-<g fill="none" stroke="#d5bd89" stroke-width="7" stroke-dasharray="24 28" opacity=".7"><path d="M250 760C520 690 720 700 900 790C1050 865 1220 980 1430 990C1660 1000 1780 850 1990 760C2210 665 2490 700 2810 820"/><path d="M1420 990C1510 1160 1650 1270 1880 1310C2100 1345 2320 1270 2720 1120"/></g>
-<!-- side pools -->
-<path d="M2050 1150q220-120 470 20q150 90 300 40v270q-220 80-420-20q-170-80-350 10z" fill="#195a70" stroke="#0b2d3b" stroke-width="30"/>
-<g stroke="#74d6e6" stroke-width="10" opacity=".65"><path d="M2140 1220q100-45 190 0"/><path d="M2370 1320q100-45 190 0"/><path d="M2590 1210q80-35 150 0"/></g>
-<!-- crystals clusters -->
-<g fill="url(#crystal)" stroke="#9be7ef" stroke-width="8">
- <path d="M250 540l55-300 85 280zM350 570l75-380 95 360zM470 550l60-280 80 265zM570 520l45-190 70 180z"/>
- <path d="M2220 520l70-330 90 315zM2350 570l85-410 100 390zM2490 540l70-300 90 285zM2630 510l50-220 80 205z"/>
- <path d="M2350 1450l65-290 90 275zM2470 1490l85-360 100 340zM2620 1460l70-300 90 285z"/>
+<rect width="3000" height="1800" fill="url(#cave)"/>
+<!-- irregular cavern shell -->
+<path d="M90 210Q160 70 390 110Q610 35 830 120Q1050 50 1260 120Q1500 30 1710 120Q1940 45 2160 125Q2400 40 2630 125Q2850 90 2920 260L2910 1530Q2860 1710 2650 1680Q2410 1760 2190 1685Q1960 1760 1740 1690Q1510 1770 1280 1695Q1050 1760 820 1690Q570 1760 350 1690Q150 1710 85 1510Z" fill="url(#rock)" stroke="#0a1013" stroke-width="42"/>
+<!-- ceiling shelves and shadows -->
+<path d="M130 260Q350 145 570 250T1030 230T1500 250T1970 225T2440 255T2880 220L2880 430Q2650 500 2410 405T1940 430T1480 410T1010 435T540 415T130 455Z" fill="#1a2528" stroke="#0c1417" stroke-width="22"/>
+<path d="M145 455Q420 350 700 455T1240 445T1780 455T2320 430T2860 460" fill="none" stroke="#7b8379" stroke-width="14" opacity=".45"/>
+<!-- main playable clearings -->
+<path d="M180 610Q390 500 650 600Q870 685 1080 560Q1300 430 1530 570Q1760 700 1990 565Q2230 440 2470 560Q2700 670 2860 585V1490Q2600 1410 2390 1515Q2140 1630 1900 1505Q1650 1380 1400 1515Q1150 1640 910 1500Q680 1370 460 1515Q280 1600 150 1490Z" fill="url(#floor)"/>
+<!-- underground river with banks -->
+<path d="M2620 340C2390 470 2260 610 2290 770C2320 920 2190 1010 2010 1060C1790 1120 1680 1230 1710 1390C1735 1515 1630 1600 1480 1700L1900 1700C2040 1580 2070 1450 2010 1320C1950 1190 2040 1160 2200 1110C2460 1030 2580 880 2530 700C2490 560 2610 470 2820 410Z" fill="#102f3b" stroke="#081a23" stroke-width="34"/>
+<path d="M2630 375C2420 500 2310 620 2340 770C2370 940 2220 1060 2040 1100C1840 1145 1770 1245 1800 1370C1830 1510 1730 1600 1580 1690L1840 1690C1960 1570 1980 1460 1925 1335C1860 1180 1960 1130 2140 1080C2390 1010 2510 865 2465 705C2425 565 2550 470 2800 410Z" fill="url(#water)"/>
+<g fill="none" stroke="#8de4ed" stroke-width="12" opacity=".65"><path d="M2510 520q90-55 175-5"/><path d="M2370 690q100-55 180 0"/><path d="M2310 900q100-50 180 0"/><path d="M2110 1040q100-50 190 0"/><path d="M1900 1250q90-45 170 0"/><path d="M1870 1450q90-45 150 0"/></g>
+<!-- winding main paths -->
+<g fill="none" stroke="#352b24" stroke-width="120" stroke-linecap="round"><path d="M210 790Q480 670 760 750Q980 810 1190 940Q1380 1055 1580 990Q1770 930 1930 800Q2150 620 2420 700Q2630 760 2820 880"/><path d="M1560 1000Q1630 1190 1500 1320Q1370 1450 1120 1460Q850 1470 650 1360"/><path d="M1110 930Q1040 760 930 620"/></g>
+<g fill="none" stroke="#c2a36f" stroke-width="84" stroke-linecap="round"><path d="M210 790Q480 670 760 750Q980 810 1190 940Q1380 1055 1580 990Q1770 930 1930 800Q2150 620 2420 700Q2630 760 2820 880"/><path d="M1560 1000Q1630 1190 1500 1320Q1370 1450 1120 1460Q850 1470 650 1360"/><path d="M1110 930Q1040 760 930 620"/></g>
+<g fill="none" stroke="#e1ca95" stroke-width="7" stroke-dasharray="22 26"><path d="M210 790Q480 670 760 750Q980 810 1190 940Q1380 1055 1580 990Q1770 930 1930 800Q2150 620 2420 700Q2630 760 2820 880"/><path d="M1560 1000Q1630 1190 1500 1320Q1370 1450 1120 1460Q850 1470 650 1360"/></g>
+<!-- crystal caves -->
+<g fill="url(#crystal)" stroke="#a9f0f4" stroke-width="8">
+<path d="M250 590l60-300 90 280zM350 610l80-390 105 370zM470 600l65-280 85 270zM590 560l48-190 75 180z"/>
+<path d="M2500 570l70-330 90 315zM2620 610l80-390 105 370zM2750 580l60-270 85 255z"/>
+<path d="M650 1420l60-260 85 245zM770 1460l75-350 95 335zM900 1430l55-260 80 245z"/>
 </g>
-<g opacity=".9"><ellipse cx="470" cy="470" rx="300" ry="210" fill="url(#glow)"/><ellipse cx="2440" cy="480" rx="330" ry="240" fill="url(#glow)"/><ellipse cx="2550" cy="1400" rx="300" ry="190" fill="url(#glow)"/></g>
-<!-- stalactites -->
-<g fill="#59656a" stroke="#273138" stroke-width="12"><path d="M180 110l55 0 65 250-95-90z"/><path d="M500 90l55 0 70 220-90-70z"/><path d="M900 80l65 0 75 270-100-90z"/><path d="M1380 80l65 0 80 250-110-85z"/><path d="M1850 80l65 0 70 260-105-85z"/><path d="M2300 90l65 0 75 250-105-80z"/><path d="M2700 100l60 0 80 230-105-75z"/></g>
-<!-- rocks -->
-<g fill="#747b78" stroke="#3b4241" stroke-width="16"><path d="M430 950l75-80 110 25 35 90-80 75-115-20z"/><path d="M1010 1120l55-70 100 5 60 75-55 80-110 0z"/><path d="M1750 700l65-75 105 20 35 85-80 60-110-25z"/><path d="M2130 930l75-85 105 30 35 85-75 70-120-25z"/><path d="M2680 700l60-70 95 20 40 80-70 70-110-30z"/><path d="M1880 1430l70-70 100 25 30 75-75 65-110-25z"/></g>
-<!-- bridges -->
-<g stroke="#382317" stroke-width="18"><rect x="1070" y="710" width="330" height="120" rx="12" fill="url(#wood)"/><path d="M1090 725v90m55-90v90m55-90v90m55-90v90m55-90v90m55-90v90" stroke="#d08a4b" stroke-width="13"/><path d="M1060 700h350M1060 840h350" stroke="#25170f" stroke-width="24"/>
-<rect x="770" y="1240" width="290" height="105" rx="12" fill="url(#wood)"/><path d="M790 1255v75m50-75v75m50-75v75m50-75v75m50-75v75m50-75v75" stroke="#d08a4b" stroke-width="12"/></g>
-<!-- mining camp / shrine -->
-<g transform="translate(1540 1160)"><path d="M0 170l115-105 115 105z" fill="#65442c" stroke="#2b1b13" stroke-width="18"/><path d="M35 170v-80h160v80" fill="#8d5e37" stroke="#39251a" stroke-width="15"/><rect x="92" y="115" width="48" height="55" fill="#1a2020"/><path d="M-15 175h260" stroke="#3a2518" stroke-width="25"/><rect x="250" y="105" width="30" height="70" fill="#7c5738"/><circle cx="265" cy="85" r="38" fill="#e0a341" stroke="#5a351e" stroke-width="12"/></g>
+<g><ellipse cx="500" cy="510" rx="330" ry="250" fill="url(#blueGlow)"/><ellipse cx="2660" cy="500" rx="340" ry="250" fill="url(#blueGlow)"/><ellipse cx="820" cy="1400" rx="300" ry="210" fill="url(#blueGlow)"/></g>
+<!-- stalactites/stalagmites -->
+<g fill="#65716f" stroke="#303a3a" stroke-width="13">
+<path d="M170 95h70l70 280-105-95zM490 80h60l80 250-105-80zM870 85h70l80 270-110-85zM1280 70h70l85 270-115-90zM1700 80h70l80 270-110-90zM2100 75h65l80 265-110-85zM2470 90h70l85 260-110-85zM2800 110h60l75 240-105-80z"/>
+<path d="M420 1510h65l70-240 75 250zM980 1590h70l65-280 85 285zM1320 1600h70l65-260 80 270zM2190 1580h70l70-250 80 260zM2710 1560h65l65-220 75 235z"/>
+</g>
+<!-- rock clusters -->
+<g fill="#80847d" stroke="#424845" stroke-width="16"><path d="M430 1030l75-95 120 25 40 105-90 90-125-25z"/><path d="M820 1120l60-75 100 15 45 80-65 75-110-20z"/><path d="M1240 690l70-80 110 25 35 90-80 70-115-25z"/><path d="M1650 700l60-75 100 20 45 80-70 70-110-20z"/><path d="M1940 1280l70-85 120 25 35 100-80 75-120-30z"/><path d="M2520 1020l65-80 110 20 45 90-75 75-120-25z"/></g>
+<!-- bridges over river -->
+<g stroke="#352115" stroke-width="20"><rect x="2210" y="850" width="330" height="125" rx="10" fill="url(#wood)"/><path d="M2230 870v85m55-85v85m55-85v85m55-85v85m55-85v85m55-85v85" stroke="#d28b4c" stroke-width="13"/><path d="M2200 845h350M2200 980h350" stroke="#24160e" stroke-width="26"/>
+<rect x="1430" y="1160" width="300" height="110" rx="10" fill="url(#wood)"/><path d="M1450 1180v70m50-70v70m50-70v70m50-70v70m50-70v70m50-70v70" stroke="#d28b4c" stroke-width="12"/></g>
+<!-- old shrine / mine camp -->
+<g transform="translate(1080 1120)"><path d="M0 180l150-125 150 125z" fill="#6d4930" stroke="#2a1a12" stroke-width="20"/><path d="M45 180V85h210v95" fill="#9a6339" stroke="#3c2518" stroke-width="16"/><rect x="118" y="120" width="64" height="60" fill="#171d1d"/><path d="M-20 185h340" stroke="#3a2417" stroke-width="28"/><circle cx="150" cy="42" r="34" fill="#e5a642" stroke="#62391c" stroke-width="12"/></g>
+<!-- mine cart and rails -->
+<g transform="translate(370 1220)" stroke="#3a281d"><path d="M0 85h360" stroke="#6c5a48" stroke-width="18"/><path d="M0 110h360" stroke="#6c5a48" stroke-width="18"/><path d="M30 72v50m60-50v50m60-50v50m60-50v50m60-50v50m60-50v50" stroke="#b58b5b" stroke-width="12"/><path d="M110 20h150l-25 75H135z" fill="#7c5130" stroke-width="15"/><circle cx="145" cy="105" r="24" fill="#3c4443" stroke-width="12"/><circle cx="230" cy="105" r="24" fill="#3c4443" stroke-width="12"/></g>
 <!-- torches -->
-<g><g transform="translate(680 650)"><path d="M0 110v-70" stroke="#5b3b24" stroke-width="16"/><path d="M-18 40q18-65 36 0q-18 42-36 0" fill="#ff9d35" stroke="#703719" stroke-width="8"/></g><g transform="translate(1900 620)"><path d="M0 110v-70" stroke="#5b3b24" stroke-width="16"/><path d="M-18 40q18-65 36 0q-18 42-36 0" fill="#ff9d35" stroke="#703719" stroke-width="8"/></g><g transform="translate(1300 1300)"><path d="M0 110v-70" stroke="#5b3b24" stroke-width="16"/><path d="M-18 40q18-65 36 0q-18 42-36 0" fill="#ff9d35" stroke="#703719" stroke-width="8"/></g></g>
+<g stroke="#54361f" stroke-width="16" fill="#ffae3d"><path d="M700 620v90"/><path d="M685 625q15-70 30 0q-15 45-30 0"/><path d="M1850 590v90"/><path d="M1835 595q15-70 30 0q-15 45-30 0"/><path d="M1320 1390v90"/><path d="M1305 1395q15-70 30 0q-15 45-30 0"/></g>
 <!-- mushrooms -->
-<g fill="#c8756b" stroke="#4e3431" stroke-width="8"><path d="M530 1300q45-65 90 0z"/><path d="M620 1360q35-52 70 0z"/><path d="M2200 1050q45-65 90 0z"/><path d="M2270 1110q32-50 65 0z"/></g><g stroke="#ead8b0" stroke-width="7"><path d="M575 1300v55M655 1360v42M2245 1050v55M2300 1110v40"/></g>
-<!-- entrance gate -->
-<g transform="translate(100 760)"><path d="M0 190Q110 20 220 190" fill="none" stroke="#8b6746" stroke-width="34"/><path d="M30 190Q110 55 190 190" fill="none" stroke="#c0945d" stroke-width="18"/><circle cx="110" cy="90" r="22" fill="#b9e9ef"/></g>
-<!-- borders -->
-<rect x="85" y="85" width="2830" height="1630" rx="80" fill="none" stroke="#b39a6b" stroke-width="18" opacity=".75"/>
+<g fill="#d77a70" stroke="#513332" stroke-width="9"><path d="M530 1400q45-70 90 0z"/><path d="M610 1450q35-55 70 0z"/><path d="M2050 1200q45-70 90 0z"/><path d="M2130 1250q35-55 70 0z"/></g>
+<g stroke="#f2ddb0" stroke-width="7"><path d="M575 1400v55M645 1450v40M2095 1200v55M2165 1250v40"/></g>
+<!-- entrance arch and gate -->
+<g transform="translate(110 690)"><path d="M0 210Q115 20 230 210" fill="none" stroke="#8c6948" stroke-width="38"/><path d="M35 210Q115 70 195 210" fill="none" stroke="#d0a16a" stroke-width="18"/><path d="M45 215h140" stroke="#3c291d" stroke-width="30"/><circle cx="115" cy="90" r="24" fill="#bfeff4"/></g>
+<!-- small water pools -->
+<path d="M2450 1320q140-90 300-10q90 45 130 120v120h-500q-100-100 70-230z" fill="#1d6479" stroke="#0b2d3a" stroke-width="28"/>
+<g stroke="#8fe0e9" stroke-width="10"><path d="M2500 1380q90-40 170 0"/><path d="M2620 1450q80-35 150 0"/></g>
+<!-- border -->
+<rect x="82" y="82" width="2836" height="1636" rx="78" fill="none" stroke="#b99b6b" stroke-width="18" opacity=".8"/>
 </svg>
