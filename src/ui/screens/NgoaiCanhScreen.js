@@ -4,6 +4,8 @@ import './NgoaiCanhScreen.css'
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value))
 
+const mapIcon = (className = '') => `<span class="map-icon ${className}" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5.5 9 3l6 2.5L20 3v15.5L15 21l-6-2.5L4 21z"/><path d="M9 3v15.5M15 5.5V21"/><path d="m7 9 2-1 2 1 2-1 2 1"/></svg></span>`
+
 function mapCard(map, index, currentId) {
   const unlocked = player.level >= map.levelMin
   const current = currentId === map.id
@@ -13,6 +15,7 @@ function mapCard(map, index, currentId) {
         <img src="${map.image}" alt="${map.name}" loading="lazy" data-map-image="1"/>
         <div class="world-map-image-fallback" aria-hidden="true"><span>${map.id}</span><b>${map.name}</b></div>
         <span class="world-map-number">${String(index + 1).padStart(2, '0')}</span>
+        ${mapIcon('world-map-card-icon')}
         ${current ? '<span class="world-map-current">ĐANG Ở ĐÂY</span>' : ''}
         ${!unlocked ? `<span class="world-map-lock">🔒 Lv.${map.levelMin}</span>` : ''}
       </div>
@@ -27,10 +30,13 @@ function mapCard(map, index, currentId) {
 export function NgoaiCanhScreen() {
   return `<section class="new-world-screen">
     <div class="world-intro">
-      <div>
-        <div class="eyebrow">THẾ GIỚI • NGOẠI CẢNH</div>
-        <h2>BẢN ĐỒ GIANG HỒ</h2>
-        <p>17 khu vực được nối thành tuyến phiêu lưu. Chọn bản đồ để xem toàn cảnh, phóng to, kéo bản đồ và tiến vào khu vực để bắt đầu chiến đấu.</p>
+      <div class="world-intro-main">
+        ${mapIcon('world-intro-icon')}
+        <div>
+          <div class="eyebrow">THẾ GIỚI • NGOẠI CẢNH</div>
+          <h2>BẢN ĐỒ GIANG HỒ</h2>
+          <p>17 khu vực được nối thành tuyến phiêu lưu. Chọn bản đồ để xem toàn cảnh, phóng to, kéo bản đồ và tiến vào khu vực để bắt đầu chiến đấu.</p>
+        </div>
       </div>
       <div class="world-count"><strong>17</strong><span>KHU VỰC</span></div>
     </div>
