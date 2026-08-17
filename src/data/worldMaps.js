@@ -13,9 +13,9 @@ export const WORLD_MAPS = [
   ['12','Phu Dung Dong','12_Phu_Dung_Dong.webp','Động Phù Dung',136,150,'Động ngầm rộng với hồ nước, cầu gỗ và tinh thể phát sáng.'],
   ['13','Phong Lang Do','13_Phong_Lang_Do.webp','Phong Lang Độ',151,165,'Khu vực vượt sông và thác, tập trung các tuyến đường qua cầu.'],
   ['14','Huyet Sa Mac','14_Huyet_Sa_Mac.webp','Sa mạc Huyết Sa',166,180,'Địa vực khô cằn với khe núi, ốc đảo và các mỏ tinh thể.'],
-  ['15','Thien Son Tuyet Coc','15_Thien_Son_Tuyet_Coc.webp','Cốc tuyết Thiên Sơn',181,200,'Băng hồ trung tâm bao quanh bởi phế tích và những cây cầu gỗ.'],
-  ['16','Con Lon Son','16_Con_Lon_Son.webp','Núi Côn Lôn',201,220,'Núi tuyết cao tầng với nhiều đạo quán và đường vòng trên vách đá.'],
-  ['17','Van Doc Coc','17_Van_Doc_Coc.webp','Cốc Vạn Độc',221,240,'Địa vực độc khí, đầm lầy phát sáng và những cây cầu xuyên hang.'],
+  ['15','Thien Son Tuyet Coc','15_Thien_Son_Tuyet_Coc.webp','Cốc tuyết Thiên Sơn',181,190,'Băng hồ trung tâm bao quanh bởi phế tích và những cây cầu gỗ.'],
+  ['16','Con Lon Son','16_Con_Lon_Son.webp','Núi Côn Lôn',191,195,'Núi tuyết cao tầng với nhiều đạo quán và đường vòng trên vách đá.'],
+  ['17','Van Doc Coc','17_Van_Doc_Coc.webp','Cốc Vạn Độc',196,200,'Địa vực độc khí, đầm lầy phát sáng và những cây cầu xuyên hang.'],
 ].map(([id,key,file,name,levelMin,levelMax,description]) => ({
   id,
   key,
