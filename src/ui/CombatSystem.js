@@ -31,7 +31,11 @@ let timer = null
 function stopTimer(){ if(timer) clearInterval(timer); timer = null }
 function closeCombat(){ stopTimer(); if(root) root.innerHTML=''; state=null; window.dispatchEvent(new CustomEvent('game:combat-closed')) }
 function log(message,type='system') { state.logs.push({message,type}); if(state.logs.length>80) state.logs.shift(); renderLogOnly() }
-function renderLogOnly(){ const el=root?.querySelector('#new-combat-log'); if(!el || !state) return; el.innerHTML=state.logs.map(x=>`<div class="new-combat-log-line ${x.type}">${x.message}</div>`).join(''); el.scrollTop=el.scrollHeight }
+function renderLogOnly(){
+  const el=root?.querySelector('#new-combat-log'); if(!el || !state) return
+  el.innerHTML=state.logs.map(x=>`<div class="new-combat-log-line ${x.type}">${x.message}</div>`).join('')
+  el.scrollTop=el.scrollHeight
+}
 function createEnemy(area, source){
   const entry = source ?? area.monsters[rand(0, area.monsters.length-1)]
   const level = source?.level ?? rand(Number(entry[1]), Number(entry[2]))
@@ -48,11 +52,6 @@ function syncBars(){
   const hpText=root.querySelector('#combat-player-hp-text'); if(hpText) hpText.textContent=`${Math.max(0,Math.floor(player.hp))}/${stats.maxHp}`
   const mpText=root.querySelector('#combat-player-mp-text'); if(mpText) mpText.textContent=`${Math.max(0,Math.floor(player.mp))}/${stats.maxMp}`
   const enemyText=root.querySelector('#combat-enemy-hp-text'); if(enemyText) enemyText.textContent=`${Math.max(0,Math.floor(enemy.hp))}/${enemy.maxHp}`
-}
-function renderLogOnly(){
-  const el=root?.querySelector('#new-combat-log'); if(!el || !state) return
-  el.innerHTML=state.logs.map(x=>`<div class="new-combat-log-line ${x.type}">${x.message}</div>`).join('')
-  el.scrollTop=el.scrollHeight
 }
 function playerAttack(){
   if(!state || state.enemy.dead || player.hp<=0) return
