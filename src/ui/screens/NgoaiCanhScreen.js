@@ -1,2 +1,0 @@
-export function NgoaiCanhScreen(){return `<section style="padding:24px;color:#ddd"><h2 style="color:#e8c45e">NGOẠI CẢNH</h2><p>Hệ thống bản đồ cũ đã được xóa hoàn toàn.</p><p>Bản đồ mới sẽ được xây dựng lại từ đầu.</p></section>`}
-export function mountNgoaiCanhScreen(){}
