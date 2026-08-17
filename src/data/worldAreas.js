@@ -1,0 +1,20 @@
+export const WORLD_AREAS = [
+  { id:'rung-ram-ven-ho', name:'Rừng Rậm Ven Hồ', min:1, max:10, icon:'forest.svg', terrain:'Rừng hồ', monsters:[['Huyết Lang',5,7],['Linh Hầu',6,8],['Thanh Mao Hùng',8,10]] },
+  { id:'bach-thuy-dong', name:'Bạch Thủy Động', min:6, max:15, icon:'cave.svg', terrain:'Hang động', monsters:[['Động Quật Xà',8,10],['Hắc Nha Lang',10,13],['Thạch Giáp Thú',12,15]] },
+  { id:'hac-ho-lam', name:'Hắc Hổ Lâm', min:11, max:20, icon:'forest.svg', terrain:'Rừng sâu', monsters:[['Hắc Hổ',12,15],['Sơn Viên',14,18],['Cuồng Nộ Dã Trư',17,20]] },
+  { id:'thanh-xa-coc', name:'Thanh Xà Cốc', min:16, max:25, icon:'cave.svg', terrain:'Thung lũng', monsters:[['Thanh Xà',17,20],['Xích Luyện Xà',19,23],['Xà Vương Thủ Vệ',22,25]] },
+  { id:'vu-lang-son', name:'Vũ Lăng Sơn', min:21, max:30, icon:'mountain.svg', terrain:'Núi rừng', monsters:[['Hắc Hùng',22,25],['Thiết Bối Sơn Miêu',24,28],['Vũ Lăng Hổ Yêu',27,30]] },
+  { id:'thien-nhan-coc', name:'Thiên Nhẫn Cốc', min:31, max:40, icon:'forest.svg', terrain:'Cốc địa', monsters:[['Độc Hạt',32,35],['Huyết Nhãn Lang',35,38],['Thiên Nhẫn Yêu Thú',37,40]] },
+  { id:'vo-dang-son', name:'Võ Đang Sơn', min:41, max:50, icon:'mountain.svg', terrain:'Đạo sơn', monsters:[['Thanh Phong Linh Lộc',42,45],['Huyền Vũ Thú',45,48],['Kim Sí Điêu',48,50]] },
+  { id:'duong-mon-co-dia', name:'Đường Môn Cổ Địa', min:51, max:60, icon:'bandit.svg', terrain:'Cổ địa', monsters:[['Đường Môn Thổ Phỉ',52,55],['Hắc Y Sơn Tặc',55,58],['Độc Tiễn Ác Tặc',58,60]], wantedTarget:{name:'Hắc Phong Đao Khách',level:55} },
+  { id:'duoc-vuong-coc', name:'Dược Vương Cốc', min:61, max:70, icon:'forest.svg', terrain:'Linh cốc', monsters:[['Sơn Tặc Đầu Mục',62,65],['Huyết Đao Thổ Phỉ',65,68],['Ác Tặc Dược Cốc',68,70]], wantedTarget:{name:'Huyết Ảnh Ma Nhân',level:68} },
+  { id:'lao-ho-dong', name:'Lão Hổ Động', min:71, max:80, icon:'cave.svg', terrain:'Sơn động', monsters:[['Hắc Phong Đạo Tặc',72,75],['Cuồng Đao Ác Tặc',75,78],['Sơn Trại Đại Đầu Mục',78,80]], wantedTarget:{name:'Thiết Diện Quỷ',level:78} },
+  { id:'tan-lang', name:'Tần Lăng', min:81, max:90, icon:'cave.svg', terrain:'Cổ lăng', monsters:[['Tần Lăng Thổ Phỉ',82,85],['Đoạt Mệnh Sơn Tặc',85,88],['Huyết Sát Ác Tặc',88,90]] },
+  { id:'phu-dung-dong', name:'Phù Dung Động', min:91, max:100, icon:'cave.svg', terrain:'Địa huyệt', monsters:[['Phù Dung Đạo Tặc',92,95],['Xích Viêm Ác Tặc',95,98],['Ma Đao Sơn Tặc',98,100]], wantedTarget:{name:'Bạch Cốt Khách',level:96} },
+  { id:'phong-lang-do', name:'Phong Lăng Độ', min:101, max:115, icon:'water.svg', terrain:'Bến nước', monsters:[['Phong Lăng Thủy Quái',103,107],['Hắc Phong Yêu',107,111],['Rolin Thủy Vệ',111,115]], wantedTarget:{name:'Thiết Diện Thủy Quỷ',level:110} },
+  { id:'huyet-sa-mac', name:'Huyết Sa Mạc', min:116, max:130, icon:'desert.svg', terrain:'Sa mạc', monsters:[['Huyết Sa Thủy Yêu',118,122],['Xích Viêm Yêu Quái',122,126],['Rolin Huyết Giáp',126,130]], wantedTarget:{name:'Xích Viêm Cuồng Đồ',level:125} },
+  { id:'thien-son-tuyet-coc', name:'Thiên Sơn Tuyết Cốc', min:131, max:150, icon:'snow.svg', terrain:'Tuyết vực', monsters:[['Băng Hải Thủy Quái',133,138],['Thiên Sơn Tuyết Yêu',138,144],['Rolin Huyền Băng',144,150]] },
+  { id:'con-lon-son', name:'Côn Lôn Sơn', min:151, max:175, icon:'mountain.svg', terrain:'Côn Lôn', monsters:[['Côn Lôn Ma Tu',153,160],['Huyết Kiếm Cao Nhân',160,168],['Thanh Lân Thần Thú',168,175]], wantedTarget:{name:'Côn Lôn Ma Kiếm',level:165} },
+  { id:'van-doc-coc', name:'Vạn Độc Cốc', min:176, max:200, icon:'demon.svg', terrain:'Độc cốc', monsters:[['Vạn Độc Ma Tu',178,185],['Thiên Diện Ác Nhân',185,192],['Cửu Thiên Thần Thú',192,200]], wantedTarget:{name:'Vạn Độc Ma Quân',level:188} },
+]
+export const getWorldArea = id => WORLD_AREAS.find(area => area.id === id) ?? WORLD_AREAS[0]
