@@ -5,6 +5,7 @@
   const areaName=()=>document.querySelector('#world-explorer-root .world-explorer-window header b')?.textContent?.replace(/^⚔\s*/,'')||'Khu vực'
   const showMenu=(node,event)=>{
     closeMenu()
+    const selectedArea=areaName()
     const label=node.querySelector('b')?.textContent||'Quái vật'
     const match=label.match(/·\s*Lv\.(\d+)/)
     const level=Number(match?.[1]||1)
@@ -19,7 +20,7 @@
     menu.querySelector('button').addEventListener('click',()=>{
       closeMenu()
       document.querySelector('#world-exit')?.click()
-      const area={name:areaName(),min:level,max:level,terrain:'Khu vực',monsters:[[name,level,level]]}
+      const area={name:selectedArea,min:level,max:level,terrain:'Khu vực',monsters:[[name,level,level]]}
       const monster={id:'click-'+Date.now(),name,level,rank}
       window.dispatchEvent(new CustomEvent('game:start-combat',{detail:{area,monster}}))
     })
