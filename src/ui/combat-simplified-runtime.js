@@ -39,7 +39,7 @@ function compactSlots(root) {
 }
 function enhanceAutoMenu(root) {
   const menu = root.querySelector('.combat-auto-menu')
-  if (!menu) return
+  if (!menu || menu.dataset.simplifiedEnhanced === '1') return
   const settings = readAuto()
   menu.innerHTML = `
     <b>CÀI ĐẶT AUTO</b>
@@ -50,13 +50,13 @@ function enhanceAutoMenu(root) {
     <label><input type="checkbox" data-auto-extra="skill" ${settings.skill ? 'checked' : ''}> Tự dùng kỹ năng</label>
     <label><input type="checkbox" data-auto-extra="loot" ${settings.loot ? 'checked' : ''}> Tự nhặt đồ</label>
     <button id="combat-auto-close" type="button">ĐÓNG</button>`
+  menu.dataset.simplifiedEnhanced = '1'
 
   menu.querySelectorAll('[data-auto]').forEach((input) => {
     input.addEventListener('change', () => {
       const next = readAuto()
       next[input.dataset.auto] = input.checked
       saveAuto(next)
-      // Preserve the controller's native attack/hp/mp state when available.
       window.dispatchEvent(new CustomEvent('game:auto-setting-changed', { detail: { key: input.dataset.auto, value: input.checked } }))
     })
   })
@@ -75,10 +75,7 @@ function enhanceAutoMenu(root) {
       saveAuto(next)
     })
   })
-  menu.querySelector('#combat-auto-close')?.addEventListener('click', () => {
-    // The native controller closes its own menu when this button is clicked.
-    root.querySelector('#combat-auto')?.click()
-  })
+  menu.querySelector('#combat-auto-close')?.addEventListener('click', () => root.querySelector('#combat-auto')?.click())
 }
 
 function apply(root) {
@@ -98,8 +95,8 @@ function boot() {
   })
   observer.observe(root, { childList: true, subtree: true })
   run()
-  window.addEventListener('game:inventory-changed', () => run())
-  window.addEventListener('game:item-equipped', () => run())
+  window.addEventListener('game:inventory-changed', run)
+  window.addEventListener('game:item-equipped', run)
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot)
