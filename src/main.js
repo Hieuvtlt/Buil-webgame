@@ -9,6 +9,7 @@ import './inventory-screen-redesign.css'
 import './inventory-tooltip.css'
 import './skills-screen-redesign.css'
 import './merchant-screen.css'
+import './ui/screens/map-scroll-fix.css'
 
 import { player, getPlayerStats } from './data/character.js'
 import { getCharacterImageSrc, CharacterScreen } from './ui/screens/CharacterScreen.js'
