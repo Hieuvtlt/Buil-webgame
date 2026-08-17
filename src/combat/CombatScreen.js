@@ -7,36 +7,17 @@ const esc = value => String(value ?? '').replace(/[&<>\"]/g, char => ({ '&': '&a
 
 function actionSlot(skill, key, type) {
   const label = type === 'attack' ? 'TẤN CÔNG' : 'BUFF'
-  return `<button type="button" class="combat-action-slot ${skill ? 'has-skill' : 'empty-slot'} ${type}" data-skill="${skill?.id ?? ''}" data-skill-type="${type}" ${skill ? '' : 'disabled'}>
-    <span class="slot-key">${key}</span><span class="slot-type">${label}</span>
-    ${skill ? `<img src="${esc(skill.icon)}" alt=""><b>${esc(skill.name)}</b><small>${Number(skill.manaCost ?? 0)} MP</small>` : '<span class="slot-empty">CHƯA TRANG BỊ</span>'}
-  </button>`
+  return `<button type="button" class="combat-action-slot ${skill ? 'has-skill' : 'empty-slot'} ${type}" data-skill="${skill?.id ?? ''}" data-skill-type="${type}" ${skill ? '' : 'disabled'}><span class="slot-key">${key}</span><span class="slot-type">${label}</span>${skill ? `<img src="${esc(skill.icon)}" alt=""><b>${esc(skill.name)}</b><small>${Number(skill.manaCost ?? 0)} MP</small>` : '<span class="slot-empty">CHƯA TRANG BỊ</span>'}</button>`
 }
 
 function potionSlot(item, type, key) {
-  return `<button type="button" class="combat-potion-slot ${item ? 'has-potion' : 'empty-slot'} ${type}" data-potion="${type}" ${item ? '' : 'disabled'}>
-    <span class="slot-key">${key}</span>${item ? `<img src="${esc(item.icon)}" alt=""><b>${esc(item.name)}</b><small>+${item.effect[type]} ${type.toUpperCase()}</small>` : `<span class="slot-empty">${type === 'hp' ? 'KHÍ HUYẾT ĐAN' : 'HỒI KHÍ ĐAN'}<br>CHƯA CÓ</span>`}
-  </button>`
+  return `<button type="button" class="combat-potion-slot ${item ? 'has-potion' : 'empty-slot'} ${type}" data-potion="${type}" ${item ? '' : 'disabled'}><span class="slot-key">${key}</span>${item ? `<img src="${esc(item.icon)}" alt=""><b>${esc(item.name)}</b><small>+${item.effect[type]} ${type.toUpperCase()}</small>` : `<span class="slot-empty">${type === 'hp' ? 'KHÍ HUYẾT ĐAN' : 'HỒI KHÍ ĐAN'}<br>CHƯA CÓ</span>`}</button>`
 }
 
 export function CombatScreen() {
   const map = getActiveCombatMap()
   if (!map) return `<section class="combat-screen combat-empty"><div class="combat-empty-box"><h3>CHƯA CÓ CHIẾN TRƯỜNG</h3><p>Hãy chọn một bản đồ trong Ngoại cảnh và bấm TIẾN VÀO.</p></div></section>`
-  return `<section class="combat-screen">
-    <header class="combat-topbar"><div><span class="eyebrow">CHIẾN TRƯỜNG • ${esc(map.key)}</span><h2>${esc(map.name)}</h2></div><div class="combat-wave"><span>WAVE</span><strong id="combat-wave">1</strong></div><button class="combat-leave" type="button" data-leave>RỜI CHIẾN TRƯỜNG</button></header>
-    <div class="combat-log-panel"><div class="panel-label">DIỄN BIẾN TRẬN ĐÁNH</div><div class="combat-log" id="combat-log"></div></div>
-    <main class="combat-field">
-      <section class="combat-side player-side"><div class="side-caption">NHÂN VẬT</div><div class="fighter-card player-card"><div class="fighter-avatar player-avatar">♙</div><div class="fighter-name">${esc(player.name)}<small>Lv.${player.level} • ${esc(player.sect)}</small></div><div class="fighter-bars"><div class="fighter-bar hp"><span>HP</span><i id="combat-hp-bar"></i><b id="combat-hp-text"></b></div><div class="fighter-bar mp"><span>MP</span><i id="combat-mp-bar"></i><b id="combat-mp-text"></b></div></div></div><div class="fighter-effects" id="player-buffs"></div></section>
-      <section class="combat-middle"><div class="battle-floor"></div><div class="vs-mark">VS</div></section>
-      <section class="combat-side enemy-side"><div class="side-caption enemy-caption">QUÁI VẬT</div><div class="enemy-list" id="combat-enemies"></div><div class="enemy-target-detail" id="combat-target-detail">Chọn mục tiêu</div></section>
-    </main>
-    <footer class="combat-command-bar">
-      <div class="command-group skill-group"><span class="group-title">KỸ NĂNG • 5 Ô</span><div class="command-row" id="combat-skills"></div></div>
-      <div class="command-group potion-group"><span class="group-title">ĐAN DƯỢC • HP / MP</span><div class="command-row" id="combat-potions"></div></div>
-      <div class="command-group auto-group"><span class="group-title">TỰ ĐỘNG</span><button type="button" class="auto-main" data-auto>TẮT AUTO</button><button type="button" class="auto-options-button" data-auto-menu>⚙ LỰA CHỌN</button></div>
-    </footer>
-    <div class="auto-menu hidden" id="auto-menu"><div class="auto-menu-head"><strong>TỰ ĐỘNG CHIẾN ĐẤU</strong><button type="button" data-auto-close>×</button></div><label><input type="checkbox" data-auto-option="autoBuff"> Tự buff</label><label><input type="checkbox" data-auto-option="autoSkill"> Tự dùng kỹ năng</label><label><input type="checkbox" data-auto-option="autoLoot" checked> Tự nhặt đồ</label><div class="auto-range"><label>Tự hồi HP khi dưới <b id="hp-threshold-value">50%</b></label><input type="range" min="10" max="90" value="50" data-auto-option="hpThreshold"></div><div class="auto-range"><label>Tự hồi MP khi dưới <b id="mp-threshold-value">30%</b></label><input type="range" min="10" max="90" value="30" data-auto-option="mpThreshold"></div></div>
-  </section>`
+  return `<section class="combat-screen"><header class="combat-topbar"><div><span class="eyebrow">CHIẾN TRƯỜNG • ${esc(map.key)}</span><h2>${esc(map.name)}</h2></div><div class="combat-wave"><span>WAVE</span><strong id="combat-wave">1</strong></div><button class="combat-leave" type="button" data-leave>RỜI CHIẾN TRƯỜNG</button></header><div class="combat-log-panel"><div class="panel-label">DIỄN BIẾN TRẬN ĐÁNH</div><div class="combat-log" id="combat-log"></div></div><main class="combat-field"><section class="combat-side player-side"><div class="side-caption">NHÂN VẬT</div><div class="fighter-card player-card"><div class="fighter-avatar player-avatar">♙</div><div class="fighter-name">${esc(player.name)}<small>Lv.${player.level} • ${esc(player.sect)}</small></div><div class="fighter-bars"><div class="fighter-bar hp"><span>HP</span><i id="combat-hp-bar"></i><b id="combat-hp-text"></b></div><div class="fighter-bar mp"><span>MP</span><i id="combat-mp-bar"></i><b id="combat-mp-text"></b></div></div></div><div class="fighter-effects" id="player-buffs"></div></section><section class="combat-middle"><div class="battle-floor"></div><div class="vs-mark">VS</div></section><section class="combat-side enemy-side"><div class="side-caption enemy-caption">QUÁI VẬT</div><div class="enemy-list" id="combat-enemies"></div><div class="enemy-target-detail" id="combat-target-detail">Chọn mục tiêu</div></section></main><footer class="combat-command-bar"><div class="command-group skill-group"><span class="group-title">KỸ NĂNG • 5 Ô</span><div class="command-row" id="combat-skills"></div></div><div class="command-group potion-group"><span class="group-title">ĐAN DƯỢC • HP / MP</span><div class="command-row" id="combat-potions"></div></div><div class="command-group auto-group"><span class="group-title">TỰ ĐỘNG</span><button type="button" class="auto-main" data-auto>TẮT AUTO</button><button type="button" class="auto-options-button" data-auto-menu>⚙ LỰA CHỌN</button></div></footer><div class="auto-menu hidden" id="auto-menu"><div class="auto-menu-head"><strong>TỰ ĐỘNG CHIẾN ĐẤU</strong><button type="button" data-auto-close>×</button></div><label><input type="checkbox" data-auto-option="autoBuff"> Tự buff</label><label><input type="checkbox" data-auto-option="autoSkill"> Tự dùng kỹ năng</label><label><input type="checkbox" data-auto-option="autoLoot" checked> Tự nhặt đồ</label><div class="auto-range"><label>Tự hồi HP khi dưới <b id="hp-threshold-value">50%</b></label><input type="range" min="10" max="90" value="50" data-auto-option="hpThreshold"></div><div class="auto-range"><label>Tự hồi MP khi dưới <b id="mp-threshold-value">30%</b></label><input type="range" min="10" max="90" value="30" data-auto-option="mpThreshold"></div></div></section>`
 }
 
 export function mountCombatScreen() {
@@ -58,6 +39,7 @@ export function mountCombatScreen() {
   const autoButton = screen.querySelector('[data-auto]')
   const autoMenu = screen.querySelector('#auto-menu')
   let ended = false
+  let engine = null
 
   const log = (message, type = 'system') => {
     const line = document.createElement('div')
@@ -68,8 +50,11 @@ export function mountCombatScreen() {
     logRoot.scrollTop = logRoot.scrollHeight
   }
 
-  const engine = new CombatEngine(map, { onChange: render, onLog: log, onEnd: result => { ended = true; render(); showEnd(result) } })
-  setActiveCombatEngine(engine)
+  function enemyCard(enemy, selected) {
+    const hpPct = enemy.maxHp ? Math.max(0, enemy.hp / enemy.maxHp * 100) : 0
+    const icon = enemy.color === 'ice' ? '❄' : enemy.color === 'poison' ? '☠' : enemy.color === 'mythic' ? '✦' : enemy.color === 'blood' ? '♠' : '◆'
+    return `<button type="button" class="combat-enemy-row ${selected ? 'is-selected' : ''} ${enemy.dead ? 'is-dead' : ''}" data-target="${enemy.id}" ${enemy.dead ? 'disabled' : ''}><span class="enemy-mini-icon ${enemy.color}">${icon}</span><span class="enemy-info"><b>${esc(enemy.name)}</b><small>Lv.${enemy.level}</small><span class="enemy-hp"><i style="width:${hpPct}%"></i></span></span>${selected ? '<span class="enemy-target-badge">MỤC TIÊU</span>' : ''}</button>`
+  }
 
   function showEnd(result) {
     const box = document.createElement('div')
@@ -78,13 +63,8 @@ export function mountCombatScreen() {
     field.appendChild(box)
   }
 
-  function enemyCard(enemy, selected) {
-    const hpPct = enemy.maxHp ? Math.max(0, enemy.hp / enemy.maxHp * 100) : 0
-    const icon = enemy.color === 'ice' ? '❄' : enemy.color === 'poison' ? '☠' : enemy.color === 'mythic' ? '✦' : enemy.color === 'blood' ? '♠' : '◆'
-    return `<button type="button" class="combat-enemy-row ${selected ? 'is-selected' : ''} ${enemy.dead ? 'is-dead' : ''}" data-target="${enemy.id}" ${enemy.dead ? 'disabled' : ''}><span class="enemy-mini-icon ${enemy.color}">${icon}</span><span class="enemy-info"><b>${esc(enemy.name)}</b><small>Lv.${enemy.level}</small><span class="enemy-hp"><i style="width:${hpPct}%"></i></span></span>${selected ? '<span class="enemy-target-badge">MỤC TIÊU</span>' : ''}</button>`
-  }
-
   function render() {
+    if (!engine) return
     const state = engine.snapshot()
     wave.textContent = state.wave
     hpText.textContent = `${Math.round(state.player.hp)} / ${Math.round(state.player.maxHp)}`
@@ -113,6 +93,9 @@ export function mountCombatScreen() {
     screen.querySelector('#mp-threshold-value').textContent = `${state.autoSettings.mpThreshold}%`
   }
 
+  engine = new CombatEngine(map, { onChange: render, onLog: log, onEnd: result => { ended = true; render(); showEnd(result) } })
+  setActiveCombatEngine(engine)
+
   const onClick = event => {
     const target = event.target.closest('[data-target]')
     if (target) { engine.selectEnemy(target.dataset.target); return }
@@ -130,8 +113,6 @@ export function mountCombatScreen() {
     if (!control) return
     const key = control.dataset.autoOption
     engine.setAutoOption(key, key === 'hpThreshold' || key === 'mpThreshold' ? Number(control.value) : control.checked)
-    if (key === 'hpThreshold') screen.querySelector('#hp-threshold-value').textContent = `${control.value}%`
-    if (key === 'mpThreshold') screen.querySelector('#mp-threshold-value').textContent = `${control.value}%`
   }
   const onKey = event => {
     if (event.code === 'Space') { event.preventDefault(); engine.basicAttack() }
