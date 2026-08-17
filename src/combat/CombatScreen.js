@@ -95,6 +95,7 @@ export function mountCombatScreen() {
 
   engine = new CombatEngine(map, { onChange: render, onLog: log, onEnd: result => { ended = true; render(); showEnd(result) } })
   setActiveCombatEngine(engine)
+  if (engine.snapshot().autoAttack) engine.toggleAutoAttack()
 
   const onClick = event => {
     const target = event.target.closest('[data-target]')
