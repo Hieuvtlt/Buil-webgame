@@ -30,12 +30,12 @@ export function NgoaiCanhScreen() {
       <div>
         <div class="eyebrow">THẾ GIỚI • NGOẠI CẢNH</div>
         <h2>BẢN ĐỒ GIANG HỒ</h2>
-        <p>17 khu vực được nối thành tuyến phiêu lưu. Chọn bản đồ để xem toàn cảnh, phóng to, kéo bản đồ và tiến vào khu vực.</p>
+        <p>17 khu vực được nối thành tuyến phiêu lưu. Chọn bản đồ để xem toàn cảnh, phóng to, kéo bản đồ và tiến vào khu vực để bắt đầu chiến đấu.</p>
       </div>
       <div class="world-count"><strong>17</strong><span>KHU VỰC</span></div>
     </div>
     <div class="world-toolbar">
-      <div class="world-progress"><span class="world-progress-label">Hành trình</span><div class="world-progress-track"><i style="width:${Math.round((player.level / 240) * 100)}%"></i></div><b>Lv.${player.level}</b></div>
+      <div class="world-progress"><span class="world-progress-label">Hành trình</span><div class="world-progress-track"><i style="width:${Math.round((player.level / 200) * 100)}%"></i></div><b>Lv.${player.level}</b></div>
       <div class="world-filter"><button class="world-filter-btn active" type="button" data-filter="all">TẤT CẢ</button><button class="world-filter-btn" type="button" data-filter="available">CÓ THỂ VÀO</button></div>
     </div>
     <div class="world-map-grid">${WORLD_MAPS.map((map,index)=>mapCard(map,index,null)).join('')}</div>
@@ -92,14 +92,13 @@ export function mountNgoaiCanhScreen() {
           <h3>${map.name}</h3>
           <div class="world-map-level">Lv. ${map.levelMin}–${map.levelMax}</div>
           <p>${map.description}</p>
-          <div class="world-map-route"><span>◈ Điểm vào</span><b>${map.name}</b><span>→ Khu vực ${String(Math.min(Number(map.id) + 1, 17)).padStart(2, '0')}</span></div>
+          <div class="world-map-route"><span>◈ Điểm vào</span><b>${map.name}</b><span>⚔ Chiến trường thời gian thực</span></div>
           <div class="world-map-dialog-actions"><button class="map-cancel" type="button" data-close="1">ĐÓNG</button><button class="map-enter" type="button" data-enter="${map.id}" ${unlocked ? '' : 'disabled'}>${unlocked ? 'TIẾN VÀO' : `CẦN LV.${map.levelMin}`}</button></div>
         </div>
       </div>
     </div>`
 
     const viewer = modal.querySelector('[data-viewer]')
-    const canvas = modal.querySelector('[data-canvas]')
     const image = modal.querySelector('[data-pan-image]')
     const zoomLabel = modal.querySelector('[data-zoom-label]')
     let zoom = 1
@@ -113,18 +112,8 @@ export function mountNgoaiCanhScreen() {
       image.style.transform = `translate3d(${x}px,${y}px,0) scale(${zoom})`
       zoomLabel.textContent = `${Math.round(zoom * 100)}%`
     }
-    const fit = () => {
-      zoom = 1
-      x = 0
-      y = 0
-      render()
-    }
-    const changeZoom = direction => {
-      const next = clamp(zoom + direction * 0.2, 0.7, 2.8)
-      zoom = Math.round(next * 10) / 10
-      render()
-    }
-
+    const fit = () => { zoom = 1; x = 0; y = 0; render() }
+    const changeZoom = direction => { const next = clamp(zoom + direction * 0.2, 0.7, 2.8); zoom = Math.round(next * 10) / 10; render() }
     const onWheel = event => { event.preventDefault(); changeZoom(event.deltaY > 0 ? -1 : 1) }
     const onDown = event => { dragging = true; startX = event.clientX - x; startY = event.clientY - y; viewer.classList.add('is-dragging') }
     const onMove = event => { if (!dragging) return; x = event.clientX - startX; y = event.clientY - startY; render() }
@@ -143,7 +132,6 @@ export function mountNgoaiCanhScreen() {
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerup', onUp)
     }
-
     image.addEventListener('error', () => image.parentElement?.classList.add('has-error'), { once: true })
   }
 
@@ -154,10 +142,11 @@ export function mountNgoaiCanhScreen() {
     const enter = event.target.closest('[data-enter]')
     if (enter && !enter.disabled) {
       const map = getMap(enter.dataset.enter)
-      if (!map) return
+      if (!map || player.level < map.levelMin) return
       close()
       markCurrent(map)
       emit(`Tiến vào ${map.name}.`, 'map')
+      window.dispatchEvent(new CustomEvent('game:combat-start', { detail: { map } }))
     }
 
     if (event.target.closest('[data-close]')) close()
